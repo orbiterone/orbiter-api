@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+  app:
+    container_name: orbiter-api
+    build:
+      dockerfile: docker/app/Dockerfile
+      context: .
+      target: development
+    volumes:
+      - ./app:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev
+    env_file:
+      - ./docker/app/.env
+    depends_on:
+      - redis
+      - mongodb
+    restart: always
+
+  nginx:
+    build: docker/nginx
+    container_name: orbiter-nginx
+    restart: always
+    volumes:
+      - ./app:/usr/src/app
+    ports:
+      - 8010:80
+
+  mongodb:
+    container_name: orbiter-mongodb
+    image: mongo:6
+    environment:
+      - MONGO_INITDB_DATABASE=orbiter
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rUxRvTNvUyHrRAhYyY9Uz4bD
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./volumes/mongodb:/data/db
+    ports:
+      - 27017:27017
+
+  redis:
+    image: redis
+    container_name: orbiter-redis
+    volumes:
+      - ./volumes/redis:/data
+    restart: always
