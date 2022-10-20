@@ -9,6 +9,9 @@ services:
       context: .
     command: npm run start:dev
     # command: npm run start:prod
+    volumes:
+      - /var/www/orbiter/app/node_modules/
+      - ./app:/var/www/orbiter/app
     env_file:
       - ./docker/app/.env
     depends_on:
