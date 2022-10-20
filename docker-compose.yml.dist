@@ -4,19 +4,17 @@ services:
   app:
     container_name: orbiter-api
     build:
-      dockerfile: docker/app/Dockerfile
+      # dockerfile: docker/app/Dockerfile
+      dockerfile: docker/app/Dockerfile.dev
       context: .
-      target: development
-    volumes:
-      - ./app:/usr/src/app
-      - /usr/src/app/node_modules
     command: npm run start:dev
+    # command: npm run start:prod
     env_file:
       - ./docker/app/.env
     depends_on:
       - redis
       - mongodb
-    restart: always
+    restart: unless-stopped
 
   nginx:
     build: docker/nginx

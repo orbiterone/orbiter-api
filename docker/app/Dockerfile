@@ -1,28 +1,19 @@
-FROM node:16.18-alpine As development
-
-WORKDIR /usr/src/app
-
+FROM node:16.18.0 as dist
+WORKDIR /otp/app
 COPY ./app/package*.json ./
-
 RUN npm install
-
 COPY ./app ./
-
 RUN npm run build
 
-FROM node:16.18-alpine as production
-
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-
-WORKDIR /usr/src/app
-
+FROM node:16.18.0 as node_modules
+WORKDIR /otp/app
 COPY ./app/package*.json ./
+RUN npm install --production
 
-RUN npm install --only=production
+FROM node:16.18.0
+WORKDIR /var/www/orbiter/app
 
-COPY ./app ./
+COPY --from=dist /otp/app/dist ./dist
+COPY --from=node_modules /otp/app ./
 
-COPY --from=development /usr/src/app/dist ./dist
-
-CMD ["node", "dist/main"]
+CMD [ "npm", "run", "start:prod" ]
