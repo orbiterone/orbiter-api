@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { RedisModule } from '@webeleon/nestjs-redis';
+import { MongooseModule } from '@nestjs/mongoose';
+
+const { REDIS_URI, MONGO_URL } = process.env;
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    RedisModule.forRoot({ url: REDIS_URI }),
+    MongooseModule.forRoot(MONGO_URL),
+  ],
 })
 export class AppModule {}
