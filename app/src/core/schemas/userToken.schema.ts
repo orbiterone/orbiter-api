@@ -18,6 +18,9 @@ export class UserToken {
 
   @Prop(decimalObj)
   totalBorrow: Types.Decimal128;
+
+  @Prop()
+  typeNetwork: string;
 }
 
 export const UserTokenSchema = SchemaFactory.createForClass(UserToken);

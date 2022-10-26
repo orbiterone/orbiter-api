@@ -21,6 +21,9 @@ export class Transaction {
 
   @Prop(decimalObj)
   amount: Types.Decimal128;
+
+  @Prop()
+  typeNetwork: string;
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(Transaction);
