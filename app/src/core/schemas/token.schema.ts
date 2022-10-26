@@ -24,14 +24,14 @@ export class Token {
   @Prop()
   tokenAddress: string;
 
-  @Prop(decimalObj)
-  collateralFactor: Types.Decimal128;
+  @Prop()
+  typeNetwork: string;
 
-  @Prop(decimalObj)
-  reserveFactor: Types.Decimal128;
+  @Prop()
+  collateralFactor: number;
 
-  @Prop(decimalObj)
-  closeFactor: Types.Decimal128;
+  @Prop()
+  reserveFactor: number;
 
   @Prop(decimalObj)
   exchangeRate: Types.Decimal128;
@@ -49,13 +49,47 @@ export class Token {
   totalBorrow: Types.Decimal128;
 
   @Prop(decimalObj)
-  reserves: Types.Decimal128;
+  totalReserves: Types.Decimal128;
+
+  @Prop(decimalObj)
+  lastPrice: Types.Decimal128;
 
   @Prop()
   suppliers: number;
 
   @Prop()
   borrowers: number;
+
+  createdAt: Date;
+
+  updatedAt: Date;
 }
 
-export const TokenSchema = SchemaFactory.createForClass(Token);
+export const TokenSchema = SchemaFactory.createForClass(Token).set('toJSON', {
+  getters: true,
+  transform: (doc, ret) => {
+    if (ret.exchangeRate) {
+      ret.exchangeRate = ret.exchangeRate.toString();
+    }
+    if (ret.supplyRate) {
+      ret.supplyRate = ret.supplyRate.toString();
+    }
+    if (ret.borrowRate) {
+      ret.borrowRate = ret.borrowRate.toString();
+    }
+    if (ret.totalSupply) {
+      ret.totalSupply = ret.totalSupply.toString();
+    }
+    if (ret.totalBorrow) {
+      ret.totalBorrow = ret.totalBorrow.toString();
+    }
+    if (ret.totalReserves) {
+      ret.totalReserves = ret.totalReserves.toString();
+    }
+    if (ret.lastPrice) {
+      ret.lastPrice = ret.lastPrice.toString();
+    }
+    delete ret.__v;
+    return ret;
+  },
+});
