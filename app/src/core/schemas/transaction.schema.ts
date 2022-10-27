@@ -7,6 +7,8 @@ export type TransactionDocument = Transaction & Document;
 
 @Schema({ timestamps: true })
 export class Transaction {
+  _id: Types.ObjectId;
+
   @Prop({ type: Types.ObjectId, ref: 'Token' })
   token: Token | Types.ObjectId | string;
 

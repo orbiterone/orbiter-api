@@ -7,6 +7,8 @@ export type UserTokenDocument = UserToken & Document;
 
 @Schema({ timestamps: true })
 export class UserToken {
+  _id: Types.ObjectId;
+
   @Prop({ type: Types.ObjectId, ref: 'Token' })
   token: Token | Types.ObjectId | string;
 

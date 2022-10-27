@@ -25,6 +25,8 @@ export const decimalObj = {
 
 @Schema({ timestamps: true })
 export class User {
+  _id: Types.ObjectId;
+
   @Prop({ unique: true })
   address: string;
 }
