@@ -9,7 +9,7 @@ import { DEFAULT_TOKEN, SUPPORT_MARKET } from '@app/core/constant';
 import { Token } from '@app/core/schemas/token.schema';
 import { OTokenOrbiterCore } from '@app/core/orbiter/oToken.orbiter';
 import { Erc20OrbiterCore } from '@app/core/orbiter/erc20.orbiter';
-import { ComptrollerOrbiterCore } from '@app/core/orbiter/comptroller.orbiter';
+import { ControllerOrbiterCore } from '@app/core/orbiter/controller.orbiter';
 import { OracleOrbiterCore } from '@app/core/orbiter/oracle.orbiter';
 
 const web3 = new Web3();
@@ -23,7 +23,7 @@ export class AssetService implements OnModuleInit {
     private readonly assetRepository: AssetRepository,
     private readonly oTokenCore: OTokenOrbiterCore,
     private readonly erc20OrbierCore: Erc20OrbiterCore,
-    private readonly comptrollerOrbiterCore: ComptrollerOrbiterCore,
+    private readonly comptrollerOrbiterCore: ControllerOrbiterCore,
     private readonly oracleOrbiterCore: OracleOrbiterCore,
   ) {
     (async () => {

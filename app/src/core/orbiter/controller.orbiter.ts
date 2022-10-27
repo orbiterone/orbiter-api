@@ -8,7 +8,7 @@ import { comptrollerAbi } from '@app/core/abi/contracts.json';
 const { NODE_TYPE } = process.env;
 
 @Injectable()
-export class ComptrollerOrbiterCore {
+export class ControllerOrbiterCore {
   constructor(private readonly web3Service: Web3Service) {}
 
   private contract(): Contract {
