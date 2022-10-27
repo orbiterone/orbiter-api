@@ -70,25 +70,17 @@ export class OTokenOrbiterCore {
     return await this.contract().methods.borrowRatePerBlock().call();
   }
 
-  async supplyApy(): Promise<number> {
+  private calculateApy(rate: number): number {
     return (
-      (Math.pow(
-        (+(await this.supplyRatePerBlock()) / ethMantissa) * blocksPerDay + 1,
-        daysPerYear,
-      ) -
-        1) *
-      100
+      (Math.pow((rate / ethMantissa) * blocksPerDay + 1, daysPerYear) - 1) * 100
     );
   }
 
+  async supplyApy(): Promise<number> {
+    return this.calculateApy(+(await this.supplyRatePerBlock()));
+  }
+
   async borrowApy(): Promise<number> {
-    return (
-      (Math.pow(
-        (+(await this.borrowRatePerBlock()) / ethMantissa) * blocksPerDay + 1,
-        daysPerYear,
-      ) -
-        1) *
-      100
-    );
+    return this.calculateApy(+(await this.borrowRatePerBlock()));
   }
 }
