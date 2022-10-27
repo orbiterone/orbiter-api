@@ -143,6 +143,7 @@ export class AssetService implements OnModuleInit {
   }
 
   async onModuleInit() {
+    return;
     const comptroller = this.web3Service.getContract(
       NODE_TYPE,
       COMPTROLLER,

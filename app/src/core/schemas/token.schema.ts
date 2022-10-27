@@ -6,6 +6,8 @@ export type TokenDocument = Token & Document;
 
 @Schema({ timestamps: true })
 export class Token {
+  _id: Types.ObjectId;
+
   @Prop()
   name: string;
 
