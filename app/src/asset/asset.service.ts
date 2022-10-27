@@ -1,27 +1,16 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
-import { Contract } from 'web3-eth-contract';
 
-import {
-  comptrollerAbi,
-  cErcAbi,
-  cEthAbi,
-  erc20Abi,
-  priceFeedAbi,
-} from '@app/core/abi/contracts.json';
 import { Web3Service } from '@app/core/web3/web3.service';
 import { AssetRepository } from './asset.repository';
 import { Decimal128 } from '@app/core/schemas/user.schema';
-import {
-  blocksPerDay,
-  COMPTROLLER,
-  daysPerYear,
-  DEFAULT_TOKEN,
-  ethMantissa,
-  SUPPORT_MARKET,
-} from '@app/core/constant';
+import { DEFAULT_TOKEN, SUPPORT_MARKET } from '@app/core/constant';
 import { Token } from '@app/core/schemas/token.schema';
+import { OTokenOrbiterCore } from '@app/core/orbiter/oToken.orbiter';
+import { Erc20OrbiterCore } from '@app/core/orbiter/erc20.orbiter';
+import { ComptrollerOrbiterCore } from '@app/core/orbiter/comptroller.orbiter';
+import { OracleOrbiterCore } from '@app/core/orbiter/oracle.orbiter';
 
 const web3 = new Web3();
 
@@ -32,22 +21,25 @@ export class AssetService implements OnModuleInit {
   constructor(
     private readonly web3Service: Web3Service,
     private readonly assetRepository: AssetRepository,
-  ) {}
-
-  private async getAssetInfoFromBlockchain(
-    oToken: string,
-    comptroller: Contract,
-    oracle: Contract,
+    private readonly oTokenCore: OTokenOrbiterCore,
+    private readonly erc20OrbierCore: Erc20OrbiterCore,
+    private readonly comptrollerOrbiterCore: ComptrollerOrbiterCore,
+    private readonly oracleOrbiterCore: OracleOrbiterCore,
   ) {
+    (async () => {
+      this.oracleOrbiterCore.setToken(
+        await this.comptrollerOrbiterCore.oracle(),
+      );
+    })();
+  }
+
+  private async getAssetInfoFromBlockchain(oToken: string) {
     const client = this.web3Service.getClient(NODE_TYPE);
-    const contractOToken = this.web3Service.getContract(
-      NODE_TYPE,
-      oToken,
-      oToken.toLowerCase() === DEFAULT_TOKEN.toLowerCase() ? cEthAbi : cErcAbi,
-    );
+    this.oTokenCore.setToken(oToken);
+
     let underlying: string = null;
     if (oToken.toLowerCase() !== DEFAULT_TOKEN.toLowerCase()) {
-      underlying = await contractOToken.methods.underlying().call();
+      underlying = await this.oTokenCore.underlying();
     }
     const tokenData = {
       name: ['moonriver', 'moonbase'].includes(NODE_TYPE)
@@ -56,57 +48,34 @@ export class AssetService implements OnModuleInit {
       symbol: ['moonriver', 'moonbase'].includes(NODE_TYPE) ? 'MOVR' : 'GLMR',
       tokenDecimal: 18,
     };
-    let erc20Token = null;
     if (underlying) {
-      erc20Token = this.web3Service.getContract(
-        NODE_TYPE,
-        underlying,
-        erc20Abi,
-      );
-      tokenData.name = await erc20Token.methods.name().call();
-      tokenData.symbol = await erc20Token.methods.symbol().call();
-      tokenData.tokenDecimal = +(await erc20Token.methods.decimals().call());
+      this.erc20OrbierCore.setToken(underlying);
+      tokenData.name = await this.erc20OrbierCore.name();
+      tokenData.symbol = await this.erc20OrbierCore.symbol();
+      tokenData.tokenDecimal = +(await this.erc20OrbierCore.decimals());
     }
-    const { 1: collateralFactorMantissa } = await comptroller.methods
-      .markets(oToken)
-      .call();
+    const collateralFactorMantissa =
+      await this.comptrollerOrbiterCore.collateralFactorMantissa(oToken);
 
-    const totalSupply = new BigNumber(
-      await contractOToken.methods.totalSupply().call(),
-    ).div(Math.pow(10, tokenData.tokenDecimal));
-    const totalBorrow = new BigNumber(
-      await contractOToken.methods.totalBorrows().call(),
-    ).div(Math.pow(10, tokenData.tokenDecimal));
+    const totalSupply = new BigNumber(await this.oTokenCore.totalSupply()).div(
+      Math.pow(10, tokenData.tokenDecimal),
+    );
+    const totalBorrow = new BigNumber(await this.oTokenCore.totalBorrows()).div(
+      Math.pow(10, tokenData.tokenDecimal),
+    );
     const totalReserves = new BigNumber(
-      await contractOToken.methods.totalReserves().call(),
+      await this.oTokenCore.totalReserves(),
     ).div(Math.pow(10, tokenData.tokenDecimal));
     const lastPrice = web3.utils.fromWei(
-      `${await oracle.methods.getUnderlyingPrice(oToken).call()}`,
+      `${await this.oracleOrbiterCore.getUnderlyingPrice(oToken)}`,
       'ether',
     );
     const exchangeRate = new BigNumber(
-      await contractOToken.methods.exchangeRateCurrent().call(),
+      await this.oTokenCore.exchangeRateCurrent(),
     ).div(Math.pow(10, 18 + tokenData.tokenDecimal - 8));
-    const supplyRatePerBlock = await contractOToken.methods
-      .supplyRatePerBlock()
-      .call();
-    const borrowRatePerBlock = await contractOToken.methods
-      .borrowRatePerBlock()
-      .call();
-    const supplyApy =
-      (Math.pow(
-        (supplyRatePerBlock / ethMantissa) * blocksPerDay + 1,
-        daysPerYear,
-      ) -
-        1) *
-      100;
-    const borrowApy =
-      (Math.pow(
-        (borrowRatePerBlock / ethMantissa) * blocksPerDay + 1,
-        daysPerYear,
-      ) -
-        1) *
-      100;
+    const supplyApy = await this.oTokenCore.supplyApy();
+    const borrowApy = await this.oTokenCore.borrowApy();
+
     let liquidity = new BigNumber(0);
     if (!underlying) {
       liquidity = new BigNumber(
@@ -114,13 +83,13 @@ export class AssetService implements OnModuleInit {
       );
     } else {
       liquidity = new BigNumber(
-        await erc20Token.methods.balanceOf(oToken).call(),
+        await this.erc20OrbierCore.balanceOf(oToken),
       ).div(Math.pow(10, tokenData.tokenDecimal));
     }
 
     return {
       oTokenAddress: oToken,
-      oTokenDecimal: +(await contractOToken.methods.decimals().call()),
+      oTokenDecimal: +(await this.oTokenCore.decimals()),
       tokenAddress: underlying || '',
       ...tokenData,
       typeNetwork: NODE_TYPE,
@@ -128,7 +97,7 @@ export class AssetService implements OnModuleInit {
         +web3.utils.fromWei(`${collateralFactorMantissa}`, 'ether') * 100,
       reserveFactor:
         +web3.utils.fromWei(
-          `${await contractOToken.methods.reserveFactorMantissa().call()}`,
+          `${await this.oTokenCore.reserveFactorMantissa()}`,
           'ether',
         ) * 100,
       totalSupply: Decimal128(totalSupply.toString()),
@@ -143,28 +112,11 @@ export class AssetService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    return;
-    const comptroller = this.web3Service.getContract(
-      NODE_TYPE,
-      COMPTROLLER,
-      comptrollerAbi,
-    );
-
-    const oracle = this.web3Service.getContract(
-      NODE_TYPE,
-      await comptroller.methods.oracle().call(),
-      priceFeedAbi,
-    );
-
     const supportMarkets = Object.values(SUPPORT_MARKET);
     if (supportMarkets && supportMarkets.length > 0) {
       for (const oToken of supportMarkets) {
         if (oToken == '') continue;
-        const assetInfo = await this.getAssetInfoFromBlockchain(
-          oToken,
-          comptroller,
-          oracle,
-        );
+        const assetInfo = await this.getAssetInfoFromBlockchain(oToken);
         await this.assetRepository.getTokenModel().findOneAndUpdate(
           {
             oTokenAddress: { $regex: oToken, $options: 'i' },

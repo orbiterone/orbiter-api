@@ -98,6 +98,7 @@ export const TokenSchema = SchemaFactory.createForClass(Token).set('toJSON', {
       ret.liquidity = ret.liquidity.toString();
     }
     delete ret.__v;
+    delete ret.id;
     return ret;
   },
 });
