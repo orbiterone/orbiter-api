@@ -5,29 +5,35 @@ import { Contract } from 'web3-eth-contract';
 const {
   WSS_NODE_MOONRIVER_HOST,
   WSS_NODE_MOONBASE_HOST,
+  WSS_NODE_MOONBEAM_HOST,
   NODE_MOONRIVER_HOST,
   NODE_MOONBASE_HOST,
+  NODE_MOONBEAM_HOST,
 } = process.env;
 
 const NODE_GETH_WEBSOCKET = {
-  testnet: WSS_NODE_MOONBASE_HOST,
-  mainnet: WSS_NODE_MOONRIVER_HOST,
+  moonbase: WSS_NODE_MOONBASE_HOST,
+  moonriver: WSS_NODE_MOONRIVER_HOST,
+  moonbeam: WSS_NODE_MOONBEAM_HOST,
 };
 
 const NODE_GETH = {
-  testnet: NODE_MOONBASE_HOST,
-  mainnet: NODE_MOONRIVER_HOST,
+  moonbase: NODE_MOONBASE_HOST,
+  moonriver: NODE_MOONRIVER_HOST,
+  moonbeam: NODE_MOONBEAM_HOST,
 };
 
 @Injectable()
 export class Web3Service {
   private nodeClientWebsocket = {
-    testnet: null,
-    mainnet: null,
+    moonbase: null,
+    moonriver: null,
+    moonbeam: null,
   };
   private nodeClient = {
-    testnet: null,
-    mainnet: null,
+    moonbase: null,
+    moonriver: null,
+    moonbeam: null,
   };
   private contracts = [];
 

@@ -53,6 +53,9 @@ export class AssetInfoResponse {
   lastPrice: string;
 
   @ApiProperty()
+  liquidity: string;
+
+  @ApiProperty()
   suppliers: number;
 
   @ApiProperty()
