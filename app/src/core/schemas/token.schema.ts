@@ -54,6 +54,9 @@ export class Token {
   @Prop(decimalObj)
   lastPrice: Types.Decimal128;
 
+  @Prop(decimalObj)
+  liquidity: Types.Decimal128;
+
   @Prop()
   suppliers: number;
 
@@ -88,6 +91,9 @@ export const TokenSchema = SchemaFactory.createForClass(Token).set('toJSON', {
     }
     if (ret.lastPrice) {
       ret.lastPrice = ret.lastPrice.toString();
+    }
+    if (ret.liquidity) {
+      ret.liquidity = ret.liquidity.toString();
     }
     delete ret.__v;
     return ret;

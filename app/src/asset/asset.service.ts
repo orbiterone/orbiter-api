@@ -19,6 +19,7 @@ import {
   daysPerYear,
   DEFAULT_TOKEN,
   ethMantissa,
+  SUPPORT_MARKET,
 } from '@app/core/constant';
 import { Token } from '@app/core/schemas/token.schema';
 
@@ -38,6 +39,7 @@ export class AssetService implements OnModuleInit {
     comptroller: Contract,
     oracle: Contract,
   ) {
+    const client = this.web3Service.getClient(NODE_TYPE);
     const contractOToken = this.web3Service.getContract(
       NODE_TYPE,
       oToken,
@@ -48,12 +50,15 @@ export class AssetService implements OnModuleInit {
       underlying = await contractOToken.methods.underlying().call();
     }
     const tokenData = {
-      name: 'Moonriver',
-      symbol: 'MOVR',
+      name: ['moonriver', 'moonbase'].includes(NODE_TYPE)
+        ? 'Moonriver'
+        : 'Moonbeam',
+      symbol: ['moonriver', 'moonbase'].includes(NODE_TYPE) ? 'MOVR' : 'GLMR',
       tokenDecimal: 18,
     };
+    let erc20Token = null;
     if (underlying) {
-      const erc20Token = this.web3Service.getContract(
+      erc20Token = this.web3Service.getContract(
         NODE_TYPE,
         underlying,
         erc20Abi,
@@ -102,6 +107,16 @@ export class AssetService implements OnModuleInit {
       ) -
         1) *
       100;
+    let liquidity = new BigNumber(0);
+    if (!underlying) {
+      liquidity = new BigNumber(
+        `${client.utils.fromWei(await client.eth.getBalance(oToken), 'ether')}`,
+      );
+    } else {
+      liquidity = new BigNumber(
+        await erc20Token.methods.balanceOf(oToken).call(),
+      ).div(Math.pow(10, tokenData.tokenDecimal));
+    }
 
     return {
       oTokenAddress: oToken,
@@ -123,6 +138,7 @@ export class AssetService implements OnModuleInit {
       exchangeRate: Decimal128(exchangeRate.toString()),
       supplyRate: Decimal128(supplyApy.toString()),
       borrowRate: Decimal128(borrowApy.toString()),
+      liquidity: Decimal128(liquidity.toString()),
     };
   }
 
@@ -139,9 +155,10 @@ export class AssetService implements OnModuleInit {
       priceFeedAbi,
     );
 
-    const allMarkets = await comptroller.methods.getAllMarkets().call();
-    if (allMarkets && allMarkets.length > 0) {
-      for (const oToken of allMarkets) {
+    const supportMarkets = Object.values(SUPPORT_MARKET);
+    if (supportMarkets && supportMarkets.length > 0) {
+      for (const oToken of supportMarkets) {
+        if (oToken == '') continue;
         const assetInfo = await this.getAssetInfoFromBlockchain(
           oToken,
           comptroller,

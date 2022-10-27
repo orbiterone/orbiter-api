@@ -1,0 +1,59 @@
+{
+    "contracts": {
+        "PriceOracle": "",
+        "Comptroller": ""
+    },
+    "tokens": {
+        "FRAX": "0x1A93B23281CC1CDE4C4741353F3064709A16197d",
+        "BUSD": "0x5D9ab5522c64E1F6ef5e3627ECCc093f56167818",
+        "AVAX": "0x14a0243C333A5b238143068dC3A7323Ba4C30ECB",
+        "DAI": "0x80A16016cC4A2E6a2CACA8a4a498b1699fF0f844",
+        "USDT": "0xB44a9B6905aF7c801311e8F4E76932ee959c663C",
+        "BNB": "0x2bF9b864cdc97b08B6D79ad4663e71B8aB65c45c",
+        "ETH": "0x639A647fbe20b6c8ac19E48E2de44ea792c62c5C",
+        "xcKSM": "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080",
+        "WBTC": "0x6aB6d61428fde76768D7b45D8BFeec19c6eF91A8",
+        "LINK": "0x0dCb0CB0120d355CdE1ce56040be57Add0185BAa",
+        "USDC": "0xE3F5a90F9cb311505cd691a46596599aA1A0AD7D",
+        "FTM": "0xaD12daB5959f30b9fF3c2d6709f53C335dC39908",
+        "ORBIT": "",
+        "MAI": "0xFb2019DfD635a03cfFF624D210AEe6AF2B00fC2C",
+        "xcAUSD": "0xFfFffFFfa1B026a00FbAA67c86D5d1d5BF8D8228"
+    },
+    "markets": {
+        "oBNB": "",
+        "oLINK": "",
+        "oWBTC": "",
+        "oETH": "",
+        "oUSDC": "",
+        "oMOVR": "",
+        "oFTM": "",
+        "oFRAX": "",
+        "oBUSD": "",
+        "oKSM": "",
+        "oAVAX": "",
+        "oORBIT": "",
+        "oUSDT": "",
+        "oDAI": "",
+        "oMAI": "",
+        "oAUSD": ""
+    },
+    "supportMarkets": {
+        "oBNB": "",
+        "oLINK": "",
+        "oWBTC": "",
+        "oETH": "",
+        "oUSDC": "",
+        "oMOVR": "",
+        "oFTM": "",
+        "oFRAX": "",
+        "oBUSD": "",
+        "oKSM": "",
+        "oAVAX": "",
+        "oUSDT": "",
+        "oDAI": "",
+        "oMAI": "",
+        "oAUSD": ""
+    },
+    "defaultMarket": ""
+}
