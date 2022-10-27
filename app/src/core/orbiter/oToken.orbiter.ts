@@ -10,8 +10,6 @@ import {
 import { Web3Service } from '../web3/web3.service';
 import { cErcAbi, cEthAbi } from '@app/core/abi/contracts.json';
 
-const { NODE_TYPE } = process.env;
-
 @Injectable()
 export class OTokenOrbiterCore {
   private oToken: string;
@@ -26,7 +24,6 @@ export class OTokenOrbiterCore {
     if (!this.oToken) throw new Error('Need set oToken address');
 
     return this.web3Service.getContract(
-      NODE_TYPE,
       this.oToken,
       this.oToken.toLowerCase() === DEFAULT_TOKEN.toLowerCase()
         ? cEthAbi

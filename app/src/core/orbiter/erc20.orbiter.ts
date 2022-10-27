@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Contract } from 'web3-eth-contract';
 
-import { DEFAULT_TOKEN } from '../constant';
 import { Web3Service } from '../web3/web3.service';
 import { erc20Abi } from '@app/core/abi/contracts.json';
-
-const { NODE_TYPE } = process.env;
 
 @Injectable()
 export class Erc20OrbiterCore {
@@ -20,7 +17,7 @@ export class Erc20OrbiterCore {
   private contract(): Contract {
     if (!this.erc20Token) throw new Error('Need set erc20Token address');
 
-    return this.web3Service.getContract(NODE_TYPE, this.erc20Token, erc20Abi);
+    return this.web3Service.getContract(this.erc20Token, erc20Abi);
   }
 
   async name(): Promise<string> {

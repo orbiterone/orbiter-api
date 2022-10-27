@@ -23,6 +23,8 @@ const NODE_GETH = {
   moonbeam: NODE_MOONBEAM_HOST,
 };
 
+const { NODE_TYPE: typeNetwork } = process.env;
+
 @Injectable()
 export class Web3Service {
   private nodeClientWebsocket = {
@@ -39,7 +41,7 @@ export class Web3Service {
 
   private contractsWebsocket = [];
 
-  getClient(typeNetwork: string): Web3 {
+  getClient(): Web3 {
     const urlNode = NODE_GETH[typeNetwork];
 
     if (!this.nodeClient[typeNetwork]) {
@@ -52,7 +54,7 @@ export class Web3Service {
     }
   }
 
-  getClientWebsocket(typeNetwork: string): Web3 {
+  getClientWebsocket(): Web3 {
     const urlNode = NODE_GETH_WEBSOCKET[typeNetwork];
 
     if (!this.nodeClientWebsocket[typeNetwork]) {
@@ -80,16 +82,12 @@ export class Web3Service {
     return this.nodeClientWebsocket[typeNetwork];
   }
 
-  getContract(
-    typeNetwork: string,
-    contractAddress: string,
-    abi: any,
-  ): Contract {
+  getContract(contractAddress: string, abi: any): Contract {
     if (
       !this.contracts[typeNetwork] ||
       !this.contracts[typeNetwork][contractAddress]
     ) {
-      const client = this.getClient(typeNetwork);
+      const client = this.getClient();
       const contract = new client.eth.Contract(abi, contractAddress);
       if (!this.contracts[typeNetwork]) {
         this.contracts[typeNetwork] = {};
@@ -100,16 +98,12 @@ export class Web3Service {
     return this.contracts[typeNetwork][contractAddress];
   }
 
-  getContractByWebsocket(
-    typeNetwork: string,
-    contractAddress: string,
-    abi: any,
-  ): Contract {
+  getContractByWebsocket(contractAddress: string, abi: any): Contract {
     if (
       !this.contractsWebsocket[typeNetwork] ||
       !this.contractsWebsocket[typeNetwork][contractAddress]
     ) {
-      const client = this.getClientWebsocket(typeNetwork);
+      const client = this.getClientWebsocket();
       const contract = new client.eth.Contract(abi, contractAddress);
       if (!this.contractsWebsocket[typeNetwork]) {
         this.contractsWebsocket[typeNetwork] = {};

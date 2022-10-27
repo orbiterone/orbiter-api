@@ -34,7 +34,7 @@ export class AssetService implements OnModuleInit {
   }
 
   private async getAssetInfoFromBlockchain(oToken: string) {
-    const client = this.web3Service.getClient(NODE_TYPE);
+    const client = this.web3Service.getClient();
     this.oTokenCore.setToken(oToken);
 
     let underlying: string = null;
