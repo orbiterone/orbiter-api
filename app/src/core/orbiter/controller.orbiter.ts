@@ -9,8 +9,16 @@ import { comptrollerAbi } from '@app/core/abi/contracts.json';
 export class ControllerOrbiterCore {
   constructor(private readonly web3Service: Web3Service) {}
 
-  private contract(): Contract {
-    return this.web3Service.getContract(COMPTROLLER, comptrollerAbi);
+  contract(websocket = false): Contract {
+    switch (websocket) {
+      case true:
+        return this.web3Service.getContractByWebsocket(
+          COMPTROLLER,
+          comptrollerAbi,
+        );
+      case false:
+        return this.web3Service.getContract(COMPTROLLER, comptrollerAbi);
+    }
   }
 
   async collateralFactorMantissa(oToken: string): Promise<string> {
