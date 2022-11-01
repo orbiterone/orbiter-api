@@ -26,7 +26,7 @@ export class UserRepository {
 
   async findOneAndUpdate(data: { address: string }): Promise<User> {
     return await this.userModel.findOneAndUpdate(
-      { ...data },
+      { address: { $regex: data.address, $options: 'i' } },
       { $set: { ...data } },
       { upsert: true, new: true },
     );

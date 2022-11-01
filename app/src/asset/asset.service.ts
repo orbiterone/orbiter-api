@@ -23,12 +23,12 @@ export class AssetService implements OnModuleInit {
     public readonly assetRepository: AssetRepository,
     private readonly oTokenCore: OTokenOrbiterCore,
     private readonly erc20OrbierCore: Erc20OrbiterCore,
-    private readonly comptrollerOrbiterCore: ControllerOrbiterCore,
+    private readonly controllerOrbiterCore: ControllerOrbiterCore,
     private readonly oracleOrbiterCore: OracleOrbiterCore,
   ) {
     (async () => {
       this.oracleOrbiterCore.setToken(
-        await this.comptrollerOrbiterCore.oracle(),
+        await this.controllerOrbiterCore.oracle(),
       );
     })();
   }
@@ -55,7 +55,7 @@ export class AssetService implements OnModuleInit {
       tokenData.tokenDecimal = +(await this.erc20OrbierCore.decimals());
     }
     const collateralFactorMantissa =
-      await this.comptrollerOrbiterCore.collateralFactorMantissa(oToken);
+      await this.controllerOrbiterCore.collateralFactorMantissa(oToken);
 
     const exchangeRate = new BigNumber(
       await this.oTokenCore.exchangeRateCurrent(),
@@ -112,6 +112,10 @@ export class AssetService implements OnModuleInit {
       supplyRate: Decimal128(supplyApy.toString()),
       borrowRate: Decimal128(borrowApy.toString()),
       liquidity: Decimal128(liquidity.toString()),
+      supplyPaused: await this.controllerOrbiterCore.mintGuardianPaused(oToken),
+      borrowPaused: await this.controllerOrbiterCore.borrowGuardianPaused(
+        oToken,
+      ),
     };
   }
 

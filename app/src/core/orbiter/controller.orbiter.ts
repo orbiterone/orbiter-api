@@ -36,4 +36,12 @@ export class ControllerOrbiterCore {
   async getAssetsIn(account: string): Promise<string[]> {
     return await this.contract().methods.getAssetsIn(account).call();
   }
+
+  async mintGuardianPaused(oToken: string): Promise<boolean> {
+    return await this.contract().methods.mintGuardianPaused(oToken).call();
+  }
+
+  async borrowGuardianPaused(oToken: string): Promise<boolean> {
+    return await this.contract().methods.borrowGuardianPaused(oToken).call();
+  }
 }

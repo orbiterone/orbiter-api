@@ -25,7 +25,6 @@ export class MarketEvent extends EventService {
         })
         .on('data', async (event) => {
           const { returnValues, transactionHash: txHash } = event;
-          console.log(event);
           switch (event.event) {
             case MARKET_TOKEN_EVENT.MINT:
               await this.handleMintEvent({
@@ -52,6 +51,12 @@ export class MarketEvent extends EventService {
               });
               break;
             case MARKET_TOKEN_EVENT.REDEEM:
+              await this.handleRedeemEvent({
+                ...returnValues,
+                token,
+                event: event.event,
+                txHash,
+              });
               break;
 
             case MARKET_TOKEN_EVENT.LIQUIDATE_BORROW:
@@ -110,13 +115,17 @@ export class MarketEvent extends EventService {
         typeNetwork: NODE_TYPE,
         txHash,
         data: {
-          minter,
-          mintAmount: new BigNumber(mintAmount)
-            .dividedBy(Math.pow(10, checkToken.tokenDecimal))
-            .toString(),
-          mintTokens: new BigNumber(mintTokens)
-            .dividedBy(Math.pow(10, checkToken.oTokenDecimal))
-            .toString(),
+          user: minter,
+          amount: Decimal128(
+            new BigNumber(mintAmount)
+              .dividedBy(Math.pow(10, checkToken.tokenDecimal))
+              .toString(),
+          ),
+          mintTokens: Decimal128(
+            new BigNumber(mintTokens)
+              .dividedBy(Math.pow(10, checkToken.oTokenDecimal))
+              .toString(),
+          ),
         },
       });
       await this.assetService.updateAssetInfo(token);
@@ -170,16 +179,22 @@ export class MarketEvent extends EventService {
         typeNetwork: NODE_TYPE,
         txHash,
         data: {
-          borrower,
-          borrowAmount: new BigNumber(borrowAmount)
-            .dividedBy(Math.pow(10, checkToken.tokenDecimal))
-            .toString(),
-          accountBorrows: new BigNumber(accountBorrows)
-            .dividedBy(Math.pow(10, checkToken.tokenDecimal))
-            .toString(),
-          totalBorrows: new BigNumber(totalBorrows)
-            .dividedBy(Math.pow(10, checkToken.tokenDecimal))
-            .toString(),
+          user: borrower,
+          amount: Decimal128(
+            new BigNumber(borrowAmount)
+              .dividedBy(Math.pow(10, checkToken.tokenDecimal))
+              .toString(),
+          ),
+          accountBorrows: Decimal128(
+            new BigNumber(accountBorrows)
+              .dividedBy(Math.pow(10, checkToken.tokenDecimal))
+              .toString(),
+          ),
+          totalBorrows: Decimal128(
+            new BigNumber(totalBorrows)
+              .dividedBy(Math.pow(10, checkToken.tokenDecimal))
+              .toString(),
+          ),
         },
       });
       await this.assetService.updateAssetInfo(token);
@@ -236,17 +251,87 @@ export class MarketEvent extends EventService {
         typeNetwork: NODE_TYPE,
         txHash,
         data: {
-          payer,
-          borrower,
-          repayAmount: new BigNumber(repayAmount)
-            .dividedBy(Math.pow(10, checkToken.tokenDecimal))
-            .toString(),
-          accountBorrows: new BigNumber(accountBorrows)
-            .dividedBy(Math.pow(10, checkToken.tokenDecimal))
-            .toString(),
-          totalBorrows: new BigNumber(totalBorrows)
-            .dividedBy(Math.pow(10, checkToken.tokenDecimal))
-            .toString(),
+          user: payer,
+          amount: Decimal128(
+            new BigNumber(repayAmount)
+              .dividedBy(Math.pow(10, checkToken.tokenDecimal))
+              .toString(),
+          ),
+          accountBorrows: Decimal128(
+            new BigNumber(accountBorrows)
+              .dividedBy(Math.pow(10, checkToken.tokenDecimal))
+              .toString(),
+          ),
+          totalBorrows: Decimal128(
+            new BigNumber(totalBorrows)
+              .dividedBy(Math.pow(10, checkToken.tokenDecimal))
+              .toString(),
+          ),
+        },
+      });
+      await this.assetService.updateAssetInfo(token);
+    }
+  }
+
+  private async handleRedeemEvent({
+    redeemer,
+    redeemAmount,
+    redeemTokens,
+    token,
+    event,
+    txHash,
+  }) {
+    const checkUser = await this.userService.createUpdateGetUser(redeemer);
+    const checkToken = await this.assetService.assetRepository
+      .getTokenModel()
+      .findOne({ oTokenAddress: { $regex: token, $options: 'i' } });
+    if (checkToken) {
+      const totalSupply = new BigNumber(
+        await this.oTokenCore.setToken(token).balanceOfUnderlying(redeemer),
+      ).div(Math.pow(10, checkToken.tokenDecimal));
+      if (totalSupply.eq(0) && checkToken.suppliers.includes(redeemer)) {
+        checkToken.suppliers = checkToken.suppliers.filter(
+          (el) => el.toLowerCase() != redeemer.toLowerCase(),
+        );
+        await checkToken.save();
+      }
+      await this.userService.userRepository
+        .getUserTokenModel()
+        .findOneAndUpdate(
+          {
+            user: checkUser._id,
+            token: checkToken._id,
+          },
+          {
+            $set: {
+              user: checkUser._id,
+              token: checkToken._id,
+              totalSupply: Decimal128(totalSupply.toString()),
+              typeNetwork: NODE_TYPE,
+            },
+          },
+          { upsert: true },
+        );
+
+      await this.transactionService.transactionRepository.transactionCreate({
+        token: checkToken._id,
+        user: checkUser._id,
+        event,
+        status: true,
+        typeNetwork: NODE_TYPE,
+        txHash,
+        data: {
+          user: redeemer,
+          amount: Decimal128(
+            new BigNumber(redeemAmount)
+              .dividedBy(Math.pow(10, checkToken.tokenDecimal))
+              .toString(),
+          ),
+          redeemTokens: Decimal128(
+            new BigNumber(redeemTokens)
+              .dividedBy(Math.pow(10, checkToken.oTokenDecimal))
+              .toString(),
+          ),
         },
       });
       await this.assetService.updateAssetInfo(token);
