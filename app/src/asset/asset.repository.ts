@@ -33,4 +33,8 @@ export class AssetRepository {
       .select(select || '')
       .sort({ ...sort });
   }
+
+  async getAggregateValue(value): Promise<any> {
+    return this.tokenModel.aggregate([...value]);
+  }
 }

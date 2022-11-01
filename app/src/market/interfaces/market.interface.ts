@@ -19,14 +19,14 @@ export class MarketHistoryResponse {
 
 export class MarketOverviewResponse {
   @ApiProperty()
-  totalSupply: string;
+  totalSupplyAmount: string;
 
   @ApiProperty()
-  totalBorrow: string;
+  totalBorrowAmount: string;
 
   @ApiProperty()
-  mostSuppliedAsset: string;
+  mostSupply: string;
 
   @ApiProperty()
-  mostBorrowedAsset: string;
+  mostBorrow: string;
 }
