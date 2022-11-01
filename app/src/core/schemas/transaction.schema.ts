@@ -31,4 +31,19 @@ export class Transaction {
   typeNetwork: string;
 }
 
-export const TransactionSchema = SchemaFactory.createForClass(Transaction);
+export const TransactionSchema = SchemaFactory.createForClass(Transaction).set(
+  'toJSON',
+  {
+    getters: true,
+    transform: (doc, ret) => {
+      console.log(ret);
+      if (ret.data && ret.data.amount) {
+        ret.data.amount = ret.data.amount.toString();
+      }
+
+      delete ret.__v;
+
+      return ret;
+    },
+  },
+);

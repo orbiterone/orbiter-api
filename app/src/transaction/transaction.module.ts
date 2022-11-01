@@ -9,6 +9,7 @@ import {
 import { TransactionController } from './transaction.controller';
 import { TransactionRepository } from './transaction.repository';
 import { TransactionService } from './transaction.service';
+import { UserModule } from '@app/user/user.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TransactionService } from './transaction.service';
     MongooseModule.forFeature([
       { name: Transaction.name, schema: TransactionSchema },
     ]),
+    UserModule,
   ],
   controllers: [TransactionController],
   providers: [TransactionService, TransactionRepository],
