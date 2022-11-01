@@ -36,6 +36,12 @@ export class Token {
   @Prop()
   reserveFactor: number;
 
+  @Prop()
+  supplyPaused: boolean;
+
+  @Prop()
+  borrowPaused: boolean;
+
   @Prop(decimalObj)
   exchangeRate: Types.Decimal128;
 

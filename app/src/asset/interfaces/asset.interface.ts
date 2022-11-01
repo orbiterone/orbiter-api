@@ -65,6 +65,12 @@ export class AssetInfoResponse {
   utilization: number;
 
   @ApiProperty()
+  supplyPaused: boolean;
+
+  @ApiProperty()
+  borrowPaused: boolean;
+
+  @ApiProperty()
   createdAt: Date;
 
   @ApiProperty()

@@ -21,6 +21,7 @@ export enum CONTROLLER_EVENT {
   MARKET_LISTED = 'MarketListed',
   MARKET_ENTERED = 'MarketEntered',
   MARKET_EXITED = 'MarketExited',
+  ACTION_PAUSED = 'ActionPaused',
 }
 
 export enum AVAILABLE_EVENT {

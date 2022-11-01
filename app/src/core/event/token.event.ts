@@ -3,6 +3,7 @@ import { Timeout } from '@nestjs/schedule';
 import BigNumber from 'bignumber.js';
 
 import { NODE_TYPE } from '../constant';
+import { Decimal128 } from '../schemas/user.schema';
 import { EventService } from './event.service';
 import { TOKEN_EVENT } from './interfaces/event.interface';
 
@@ -45,10 +46,12 @@ export class TokenEvent extends EventService {
                     typeNetwork: NODE_TYPE,
                     txHash,
                     data: {
-                      spender,
-                      amount: new BigNumber(value)
-                        .dividedBy(Math.pow(10, checkToken.tokenDecimal))
-                        .toString(),
+                      user: spender,
+                      amount: Decimal128(
+                        new BigNumber(value)
+                          .dividedBy(Math.pow(10, checkToken.tokenDecimal))
+                          .toString(),
+                      ),
                     },
                   },
                 );
