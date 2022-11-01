@@ -23,6 +23,9 @@ export class UserToken {
 
   @Prop()
   typeNetwork: string;
+
+  @Prop({ default: false })
+  collateral: boolean;
 }
 
 export const UserTokenSchema = SchemaFactory.createForClass(UserToken);

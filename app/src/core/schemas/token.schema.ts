@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import BigNumber from 'bignumber.js';
 import { Document, Types } from 'mongoose';
 import { decimalObj } from './user.schema';
 
@@ -59,11 +60,15 @@ export class Token {
   @Prop(decimalObj)
   liquidity: Types.Decimal128;
 
-  @Prop()
-  suppliers: number;
+  @Prop({ type: [String] })
+  suppliers: string[];
 
-  @Prop()
-  borrowers: number;
+  @Prop({ type: [String] })
+  borrowers: string[];
+
+  countSuppliers: number;
+  countBorrowers: number;
+  utilization: number;
 
   createdAt: Date;
 
@@ -97,8 +102,18 @@ export const TokenSchema = SchemaFactory.createForClass(Token).set('toJSON', {
     if (ret.liquidity) {
       ret.liquidity = ret.liquidity.toString();
     }
+    ret.countSuppliers = ret.suppliers ? ret.suppliers.length : 0;
+    ret.countBorrowers = ret.borrowers ? ret.borrowers.length : 0;
+    ret.utilization = ret.totalSupply
+      ? new BigNumber(ret.totalBorrow.toString() || 0)
+          .dividedBy(ret.totalSupply.toString())
+          .multipliedBy(100)
+          .toNumber()
+      : 0;
     delete ret.__v;
     delete ret.id;
+    delete ret.suppliers;
+    delete ret.borrowers;
     return ret;
   },
 });

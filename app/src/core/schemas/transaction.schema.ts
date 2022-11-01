@@ -16,13 +16,16 @@ export class Transaction {
   user: User | Types.ObjectId | string;
 
   @Prop()
+  txHash: string;
+
+  @Prop()
   event: string;
 
   @Prop()
   status: boolean;
 
-  @Prop(decimalObj)
-  amount: Types.Decimal128;
+  @Prop({ type: Types.Map })
+  data: Record<string, any>;
 
   @Prop()
   typeNetwork: string;

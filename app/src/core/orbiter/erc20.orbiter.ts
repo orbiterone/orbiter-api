@@ -10,14 +10,24 @@ export class Erc20OrbiterCore {
 
   constructor(private readonly web3Service: Web3Service) {}
 
-  setToken(erc20Token: string) {
+  setToken(erc20Token: string): this {
     this.erc20Token = erc20Token;
+
+    return this;
   }
 
-  private contract(): Contract {
+  contract(websocket = false): Contract {
     if (!this.erc20Token) throw new Error('Need set erc20Token address');
 
-    return this.web3Service.getContract(this.erc20Token, erc20Abi);
+    switch (websocket) {
+      case true:
+        return this.web3Service.getContractByWebsocket(
+          this.erc20Token,
+          erc20Abi,
+        );
+      case false:
+        return this.web3Service.getContract(this.erc20Token, erc20Abi);
+    }
   }
 
   async name(): Promise<string> {

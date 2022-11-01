@@ -16,19 +16,31 @@ export class OTokenOrbiterCore {
 
   constructor(private readonly web3Service: Web3Service) {}
 
-  setToken(oToken: string) {
+  setToken(oToken: string): this {
     this.oToken = oToken;
+
+    return this;
   }
 
-  private contract(): Contract {
+  contract(websocket = false): Contract {
     if (!this.oToken) throw new Error('Need set oToken address');
 
-    return this.web3Service.getContract(
-      this.oToken,
-      this.oToken.toLowerCase() === DEFAULT_TOKEN.toLowerCase()
-        ? cEthAbi
-        : cErcAbi,
-    );
+    switch (websocket) {
+      case true:
+        return this.web3Service.getContractByWebsocket(
+          this.oToken,
+          this.oToken.toLowerCase() === DEFAULT_TOKEN.toLowerCase()
+            ? cEthAbi
+            : cErcAbi,
+        );
+      case false:
+        return this.web3Service.getContract(
+          this.oToken,
+          this.oToken.toLowerCase() === DEFAULT_TOKEN.toLowerCase()
+            ? cEthAbi
+            : cErcAbi,
+        );
+    }
   }
 
   async underlying(): Promise<string> {
@@ -79,5 +91,17 @@ export class OTokenOrbiterCore {
 
   async borrowApy(): Promise<number> {
     return this.calculateApy(+(await this.borrowRatePerBlock()));
+  }
+
+  async balanceOf(account: string) {
+    return await this.contract().methods.balanceOf(account).call();
+  }
+
+  async balanceOfUnderlying(account: string) {
+    return await this.contract().methods.balanceOfUnderlying(account).call();
+  }
+
+  async borrowBalanceCurrent(account: string) {
+    return await this.contract().methods.borrowBalanceCurrent(account).call();
   }
 }
