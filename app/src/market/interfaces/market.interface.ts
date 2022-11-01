@@ -16,3 +16,17 @@ export class MarketHistoryResponse {
   @ApiProperty()
   createdAt: Date;
 }
+
+export class MarketOverviewResponse {
+  @ApiProperty()
+  totalSupplyAmount: string;
+
+  @ApiProperty()
+  totalBorrowAmount: string;
+
+  @ApiProperty()
+  mostSupply: string;
+
+  @ApiProperty()
+  mostBorrow: string;
+}

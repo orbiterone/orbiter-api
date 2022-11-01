@@ -5,7 +5,10 @@ import moment from 'moment';
 import { AssetRepository } from '@app/asset/asset.repository';
 import { Token } from '@app/core/schemas/token.schema';
 import { Decimal128 } from '@app/core/schemas/user.schema';
-import { MarketHistoryResponse } from './interfaces/market.interface';
+import {
+  MarketHistoryResponse,
+  MarketOverviewResponse,
+} from './interfaces/market.interface';
 import { MarketRepository } from './market.repository';
 
 @Injectable()
@@ -29,6 +32,35 @@ export class MarketService {
       },
       sort: { createdAt: 1 },
     })) as unknown as MarketHistoryResponse[];
+  }
+
+  async getMarketOverview(): Promise<MarketOverviewResponse> {
+    return await this.assetRepository.getAggregateValue([
+      {
+        $addFields: {
+          totalSupplyUSD: { $multiply: ['$totalSupply', '$lastPrice'] },
+          totalBorrowUSD: { $multiply: ['$totalBorrow', '$lastPrice'] },
+        },
+      },
+      {
+        $facet: {
+          maxSupply: [{ $sort: { totalSupplyUSD: -1 } }],
+          maxBorrow: [{ $sort: { totalBorrowUSD: -1 } }],
+        },
+      },
+      {
+        $project: {
+          totalSupplyAmount: {
+            $toString: { $sum: '$maxSupply.totalSupplyUSD' },
+          },
+          totalBorrowAmount: {
+            $toString: { $sum: '$maxBorrow.totalBorrowUSD' },
+          },
+          mostSupply: { $first: '$maxSupply.name' },
+          mostBorrow: { $first: '$maxBorrow.name' },
+        },
+      },
+    ]);
   }
 
   @Cron('55 23 * * *')
