@@ -20,7 +20,7 @@ const { NODE_TYPE } = process.env;
 export class AssetService implements OnModuleInit {
   constructor(
     private readonly web3Service: Web3Service,
-    private readonly assetRepository: AssetRepository,
+    public readonly assetRepository: AssetRepository,
     private readonly oTokenCore: OTokenOrbiterCore,
     private readonly erc20OrbierCore: Erc20OrbiterCore,
     private readonly comptrollerOrbiterCore: ControllerOrbiterCore,
@@ -57,9 +57,15 @@ export class AssetService implements OnModuleInit {
     const collateralFactorMantissa =
       await this.comptrollerOrbiterCore.collateralFactorMantissa(oToken);
 
-    const totalSupply = new BigNumber(await this.oTokenCore.totalSupply()).div(
-      Math.pow(10, tokenData.tokenDecimal),
-    );
+    const exchangeRate = new BigNumber(
+      await this.oTokenCore.exchangeRateCurrent(),
+    ).div(Math.pow(10, 18 + tokenData.tokenDecimal - 8));
+
+    const oTokenDecimal = +(await this.oTokenCore.decimals());
+
+    const totalSupply = new BigNumber(await this.oTokenCore.totalSupply())
+      .div(Math.pow(10, oTokenDecimal))
+      .multipliedBy(exchangeRate);
     const totalBorrow = new BigNumber(await this.oTokenCore.totalBorrows()).div(
       Math.pow(10, tokenData.tokenDecimal),
     );
@@ -70,9 +76,7 @@ export class AssetService implements OnModuleInit {
       `${await this.oracleOrbiterCore.getUnderlyingPrice(oToken)}`,
       'ether',
     );
-    const exchangeRate = new BigNumber(
-      await this.oTokenCore.exchangeRateCurrent(),
-    ).div(Math.pow(10, 18 + tokenData.tokenDecimal - 8));
+
     const supplyApy = await this.oTokenCore.supplyApy();
     const borrowApy = await this.oTokenCore.borrowApy();
 
@@ -89,7 +93,7 @@ export class AssetService implements OnModuleInit {
 
     return {
       oTokenAddress: oToken,
-      oTokenDecimal: +(await this.oTokenCore.decimals()),
+      oTokenDecimal: oTokenDecimal,
       tokenAddress: underlying || '',
       ...tokenData,
       typeNetwork: NODE_TYPE,
@@ -111,26 +115,33 @@ export class AssetService implements OnModuleInit {
     };
   }
 
+  async updateAssetInfo(oToken: string) {
+    const assetInfo = await this.getAssetInfoFromBlockchain(oToken);
+    await this.assetRepository.getTokenModel().findOneAndUpdate(
+      {
+        oTokenAddress: { $regex: oToken, $options: 'i' },
+      },
+      {
+        $set: { ...assetInfo },
+      },
+      { upsert: true },
+    );
+  }
+
   async onModuleInit() {
+    return;
     const supportMarkets = Object.values(SUPPORT_MARKET);
     if (supportMarkets && supportMarkets.length > 0) {
       for (const oToken of supportMarkets) {
         if (oToken == '') continue;
-        const assetInfo = await this.getAssetInfoFromBlockchain(oToken);
-        await this.assetRepository.getTokenModel().findOneAndUpdate(
-          {
-            oTokenAddress: { $regex: oToken, $options: 'i' },
-          },
-          {
-            $set: { ...assetInfo },
-          },
-          { upsert: true },
-        );
+        await this.updateAssetInfo(oToken);
       }
     }
   }
 
   async assetsList(): Promise<Token[]> {
-    return await this.assetRepository.find({ sort: { name: 1 } });
+    return await this.assetRepository.find({
+      sort: { name: 1 },
+    });
   }
 }

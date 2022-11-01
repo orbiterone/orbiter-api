@@ -56,10 +56,13 @@ export class AssetInfoResponse {
   liquidity: string;
 
   @ApiProperty()
-  suppliers: number;
+  countSuppliers: number;
 
   @ApiProperty()
-  borrowers: number;
+  countBorrowers: number;
+
+  @ApiProperty()
+  utilization: number;
 
   @ApiProperty()
   createdAt: Date;

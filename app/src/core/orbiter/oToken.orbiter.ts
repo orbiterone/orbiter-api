@@ -92,4 +92,16 @@ export class OTokenOrbiterCore {
   async borrowApy(): Promise<number> {
     return this.calculateApy(+(await this.borrowRatePerBlock()));
   }
+
+  async balanceOf(account: string) {
+    return await this.contract().methods.balanceOf(account).call();
+  }
+
+  async balanceOfUnderlying(account: string) {
+    return await this.contract().methods.balanceOfUnderlying(account).call();
+  }
+
+  async borrowBalanceCurrent(account: string) {
+    return await this.contract().methods.borrowBalanceCurrent(account).call();
+  }
 }

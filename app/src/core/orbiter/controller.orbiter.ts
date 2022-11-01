@@ -32,4 +32,8 @@ export class ControllerOrbiterCore {
   async oracle(): Promise<string> {
     return await this.contract().methods.oracle().call();
   }
+
+  async getAssetsIn(account: string): Promise<string[]> {
+    return await this.contract().methods.getAssetsIn(account).call();
+  }
 }

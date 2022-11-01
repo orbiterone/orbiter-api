@@ -59,4 +59,5 @@ export {
   DEFAULT_TOKEN,
   SUPPORT_MARKET,
   TOKENS,
+  NODE_TYPE,
 };

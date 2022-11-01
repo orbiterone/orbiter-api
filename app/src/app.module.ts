@@ -7,6 +7,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AssetModule } from './asset/asset.module';
 import { MarketModule } from './market/market.module';
 import { EventModule } from './core/event/event.module';
+import { UserModule } from './user/user.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 const { REDIS_URI, MONGO_URL } = process.env;
 
@@ -19,6 +21,8 @@ const { REDIS_URI, MONGO_URL } = process.env;
     EventModule,
     AssetModule,
     MarketModule,
+    UserModule,
+    TransactionModule,
   ],
 })
 export class AppModule {}

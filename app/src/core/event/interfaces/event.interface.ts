@@ -1,20 +1,28 @@
 export enum TOKEN_EVENT {
-  Approval = 'Approval',
-  Transfer = 'Transfer',
+  APPROVAL = 'Approval',
+  TRANSFER = 'Transfer',
 }
 
 export enum MARKET_TOKEN_EVENT {
-  Mint = 'Mint',
-  Redeem = 'Redeem',
-  Borrow = 'Borrow',
-  RepayBorrow = 'RepayBorrow',
-  LiquidateBorrow = 'LiquidateBorrow',
-  Transfer = 'Transfer',
-  Approval = 'Approval',
+  MINT = 'Mint',
+  REDEEM = 'Redeem',
+  BORROW = 'Borrow',
+  REPAY_BORROW = 'RepayBorrow',
+  LIQUIDATE_BORROW = 'LiquidateBorrow',
+  TRANSFER = 'Transfer',
+  APPROVAL = 'Approval',
+}
+
+export enum FAIL_EVENT {
+  FAILURE = 'Failure',
 }
 
 export enum CONTROLLER_EVENT {
-  MarketListed = 'MarketListed',
-  MarketEntered = 'MarketEntered',
-  MarketExited = 'MarketExited',
+  MARKET_LISTED = 'MarketListed',
+  MARKET_ENTERED = 'MarketEntered',
+  MARKET_EXITED = 'MarketExited',
+}
+
+export enum AVAILABLE_EVENT {
+  USER_CREATE_UPDATE = 'UserCreateUpdate',
 }
