@@ -16,6 +16,12 @@ export class Token {
   symbol: string;
 
   @Prop()
+  image: string;
+
+  @Prop()
+  color: string;
+
+  @Prop()
   oTokenDecimal: number;
 
   @Prop()

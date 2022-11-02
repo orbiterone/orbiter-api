@@ -35,16 +35,42 @@ export class TransactionRepository extends BaseRepository {
     return await this.pagination(
       this.transactionModel,
       {
-        token: 1,
+        token: {
+          _id: '$token._id',
+          symbol: '$token.symbol',
+          name: '$token.name',
+          image: '$token.image',
+          color: '$token.color',
+        },
         txHash: 1,
         event: 1,
         status: 1,
-        data: 1,
+        data: {
+          amount: { $toString: '$data.amount' },
+          error: '$data.error',
+        },
         createdAt: 1,
       },
-      {
-        user: user ? user._id : null,
-      },
+      [
+        {
+          $match: {
+            user: user ? user._id : null,
+          },
+        },
+        {
+          $lookup: {
+            from: 'tokens',
+            localField: 'token',
+            foreignField: '_id',
+            as: 'token',
+          },
+        },
+        {
+          $unwind: {
+            path: '$token',
+          },
+        },
+      ],
       { limit: 20, order: 'DESC' },
     );
   }

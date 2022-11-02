@@ -56,6 +56,12 @@ export class AssetInfoResponse {
   liquidity: string;
 
   @ApiProperty()
+  image: string;
+
+  @ApiProperty()
+  color: string;
+
+  @ApiProperty()
   countSuppliers: number;
 
   @ApiProperty()

@@ -11,8 +11,8 @@ interface IKeyable {
 export class BaseRepository {
   async pagination(
     model: Model<any>,
-    project: object,
-    find?: IKeyable,
+    project: Record<string, any>,
+    aggregateData?: any,
     options?: IKeyable,
   ): Promise<PaginatedDto<any>> {
     const perPage = +options.limit || 10;
@@ -26,7 +26,7 @@ export class BaseRepository {
     return new Promise(async (resolve, reject) => {
       model
         .aggregate([
-          { $match: find || {} },
+          ...aggregateData,
           { $sort: sort },
           {
             $facet: {
