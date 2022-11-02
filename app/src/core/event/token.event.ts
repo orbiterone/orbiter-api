@@ -27,10 +27,10 @@ export class TokenEvent extends EventService {
           const { returnValues, transactionHash: txHash } = event;
           switch (event.event) {
             case TOKEN_EVENT.APPROVAL:
-              const { user, spender, value } = returnValues;
+              const { owner, spender, value } = returnValues;
               if (value == 0) return;
               const checkUser = await this.userService.createUpdateGetUser(
-                user,
+                owner,
               );
               const checkToken = await this.assetService.assetRepository
                 .getTokenModel()
@@ -46,7 +46,7 @@ export class TokenEvent extends EventService {
                     typeNetwork: NODE_TYPE,
                     txHash,
                     data: {
-                      user: spender,
+                      user: owner,
                       amount: Decimal128(
                         new BigNumber(value)
                           .dividedBy(Math.pow(10, checkToken.tokenDecimal))

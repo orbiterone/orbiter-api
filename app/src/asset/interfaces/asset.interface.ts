@@ -82,3 +82,42 @@ export class AssetInfoResponse {
   @ApiProperty()
   updatedAt: Date;
 }
+
+class AssetInfo {
+  @ApiProperty()
+  _id: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  symbol: string;
+
+  @ApiProperty()
+  image: string;
+
+  @ApiProperty()
+  apy: string;
+
+  @ApiProperty()
+  tokenDecimal: number;
+}
+
+class SupplyBorrowInfoByAssetAccount {
+  @ApiProperty({ type: AssetInfo })
+  token: AssetInfo;
+
+  @ApiProperty()
+  collateral: boolean;
+
+  @ApiProperty()
+  value: string;
+}
+
+export class AssetByAccountResponse {
+  @ApiProperty({ type: [SupplyBorrowInfoByAssetAccount] })
+  supplied: SupplyBorrowInfoByAssetAccount[];
+
+  @ApiProperty({ type: [SupplyBorrowInfoByAssetAccount] })
+  borrowed: SupplyBorrowInfoByAssetAccount[];
+}
