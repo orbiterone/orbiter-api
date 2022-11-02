@@ -14,6 +14,7 @@ import { AssetService } from './asset.service';
 import { ApiDataResponse } from '@app/core/interface/response';
 import {
   AssetByAccountResponse,
+  AssetCompositionByAccountResponse,
   AssetInfoResponse,
 } from './interfaces/asset.interface';
 import { UserByAddressPipe } from '@app/core/pipes/user-by-address.pipe';
@@ -22,7 +23,11 @@ import { User } from '@app/core/schemas/user.schema';
 @Controller('assets')
 @UseGuards(ApiKeyGuard)
 @ApiTags('assets')
-@ApiExtraModels(AssetInfoResponse, AssetByAccountResponse)
+@ApiExtraModels(
+  AssetInfoResponse,
+  AssetByAccountResponse,
+  AssetCompositionByAccountResponse,
+)
 export class AssetController {
   constructor(private readonly assetService: AssetService) {}
 
@@ -44,5 +49,19 @@ export class AssetController {
     return res
       .status(HttpStatus.OK)
       .json(jsend.success(await this.assetService.assetsByAccount(user)));
+  }
+
+  @Get(':account/composition')
+  @ApiDataResponse(AssetCompositionByAccountResponse)
+  @ApiParam({ name: 'account', type: 'string' })
+  async assetsCompositionByAccount(
+    @Response() res: any,
+    @Param('account', UserByAddressPipe) user: User | null,
+  ) {
+    return res
+      .status(HttpStatus.OK)
+      .json(
+        jsend.success(await this.assetService.assetsCompositionByAccount(user)),
+      );
   }
 }
