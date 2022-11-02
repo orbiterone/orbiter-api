@@ -103,6 +103,23 @@ class AssetInfo {
   tokenDecimal: number;
 }
 
+class AssetCompositionInfo {
+  @ApiProperty()
+  _id: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  symbol: string;
+
+  @ApiProperty()
+  image: string;
+
+  @ApiProperty()
+  color: string;
+}
+
 class SupplyBorrowInfoByAssetAccount {
   @ApiProperty({ type: AssetInfo })
   token: AssetInfo;
@@ -120,4 +137,20 @@ export class AssetByAccountResponse {
 
   @ApiProperty({ type: [SupplyBorrowInfoByAssetAccount] })
   borrowed: SupplyBorrowInfoByAssetAccount[];
+}
+
+class SupplyBorrowInfoCompositionByAssetAccount {
+  @ApiProperty({ type: AssetCompositionInfo })
+  token: AssetCompositionInfo;
+
+  @ApiProperty()
+  percent: string;
+}
+
+export class AssetCompositionByAccountResponse {
+  @ApiProperty({ type: [SupplyBorrowInfoCompositionByAssetAccount] })
+  supplied: SupplyBorrowInfoCompositionByAssetAccount[];
+
+  @ApiProperty({ type: [SupplyBorrowInfoCompositionByAssetAccount] })
+  borrowed: SupplyBorrowInfoCompositionByAssetAccount[];
 }

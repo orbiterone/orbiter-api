@@ -11,7 +11,10 @@ import { OTokenOrbiterCore } from '@app/core/orbiter/oToken.orbiter';
 import { Erc20OrbiterCore } from '@app/core/orbiter/erc20.orbiter';
 import { ControllerOrbiterCore } from '@app/core/orbiter/controller.orbiter';
 import { OracleOrbiterCore } from '@app/core/orbiter/oracle.orbiter';
-import { AssetByAccountResponse } from './interfaces/asset.interface';
+import {
+  AssetByAccountResponse,
+  AssetCompositionByAccountResponse,
+} from './interfaces/asset.interface';
 
 const web3 = new Web3();
 
@@ -226,6 +229,148 @@ export class AssetService implements OnModuleInit {
         },
       ])
     ).pop() || { supplied: [], borrowed: [] };
+
+    return { supplied, borrowed };
+  }
+
+  async assetsCompositionByAccount(
+    user: User | null,
+  ): Promise<AssetCompositionByAccountResponse> {
+    const { supplied = [], borrowed = [] } = (
+      await this.assetRepository.getAggregateValueUserToken([
+        {
+          $match: {
+            user: user ? user._id : null,
+          },
+        },
+        {
+          $lookup: {
+            from: 'tokens',
+            localField: 'token',
+            foreignField: '_id',
+            as: 'token',
+          },
+        },
+        {
+          $unwind: {
+            path: '$token',
+          },
+        },
+        { $sort: { 'token.name': 1 } },
+        {
+          $group: {
+            _id: null,
+            totalSupplyUSD: {
+              $sum: {
+                $multiply: ['$totalSupply', '$token.lastPrice'],
+              },
+            },
+            totalBorrowUSD: {
+              $sum: {
+                $multiply: ['$totalBorrow', '$token.lastPrice'],
+              },
+            },
+            supplied: {
+              $push: {
+                token: {
+                  _id: '$token._id',
+                  name: '$token.name',
+                  symbol: '$token.symbol',
+                  image: '$token.image',
+                  color: '$token.color',
+                },
+                usd: { $multiply: ['$totalSupply', '$token.lastPrice'] },
+              },
+            },
+            borrowed: {
+              $push: {
+                token: {
+                  _id: '$token._id',
+                  name: '$token.name',
+                  symbol: '$token.symbol',
+                  image: '$token.image',
+                  color: '$token.color',
+                },
+                usd: { $multiply: ['$totalBorrow', '$token.lastPrice'] },
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            totalSupplyUSD: 1,
+            totalBorrowUSD: 1,
+            supplied: {
+              $filter: {
+                input: '$supplied',
+                as: 'item',
+                cond: { $gt: ['$$item.usd', 0] },
+              },
+            },
+            borrowed: {
+              $filter: {
+                input: '$borrowed',
+                as: 'item',
+                cond: { $gt: ['$$item.usd', 0] },
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            supplied: {
+              $map: {
+                input: '$supplied',
+                as: 'item',
+                in: {
+                  token: '$$item.token',
+                  percent: {
+                    $toString: {
+                      $round: [
+                        {
+                          $divide: [
+                            { $multiply: ['$$item.usd', 100] },
+                            '$totalSupplyUSD',
+                          ],
+                        },
+                        2,
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+            borrowed: {
+              $map: {
+                input: '$borrowed',
+                as: 'item',
+                in: {
+                  token: '$$item.token',
+                  percent: {
+                    $toString: {
+                      $round: [
+                        {
+                          $divide: [
+                            { $multiply: ['$$item.usd', 100] },
+                            '$totalBorrowUSD',
+                          ],
+                        },
+                        2,
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      ])
+    ).pop() || {
+      supplied: [],
+      borrowed: [],
+    };
 
     return { supplied, borrowed };
   }
