@@ -1,8 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class TransactionResponse {
+class TokenInfoByTx {
   @ApiProperty()
-  token: string;
+  _id: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  symbol: string;
+
+  @ApiProperty()
+  image: string;
+
+  @ApiProperty()
+  color: string;
+}
+
+export class TransactionResponse {
+  @ApiProperty({ type: TokenInfoByTx })
+  token: TokenInfoByTx;
 
   @ApiProperty()
   txHash: string;
