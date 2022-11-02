@@ -18,6 +18,6 @@ import { UserToken, UserTokenSchema } from '@app/core/schemas/userToken.schema';
   ],
   controllers: [UserController],
   providers: [UserService, UserRepository],
-  exports: [UserService, UserRepository],
+  exports: [UserService, UserRepository, MongooseModule],
 })
 export class UserModule {}

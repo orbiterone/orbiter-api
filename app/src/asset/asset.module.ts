@@ -7,12 +7,14 @@ import { AssetService } from './asset.service';
 import { Token, TokenSchema } from '@app/core/schemas/token.schema';
 import { AssetRepository } from './asset.repository';
 import { OrbiterModule } from '@app/core/orbiter/orbiter.module';
+import { UserModule } from '@app/user/user.module';
 
 @Module({
   imports: [
     CoreModule,
     MongooseModule.forFeature([{ name: Token.name, schema: TokenSchema }]),
     OrbiterModule,
+    UserModule,
   ],
   controllers: [AssetController],
   providers: [AssetService, AssetRepository],

@@ -4,13 +4,14 @@ import BigNumber from 'bignumber.js';
 
 import { Web3Service } from '@app/core/web3/web3.service';
 import { AssetRepository } from './asset.repository';
-import { Decimal128 } from '@app/core/schemas/user.schema';
+import { Decimal128, User } from '@app/core/schemas/user.schema';
 import { DEFAULT_TOKEN, SUPPORT_MARKET } from '@app/core/constant';
 import { Token } from '@app/core/schemas/token.schema';
 import { OTokenOrbiterCore } from '@app/core/orbiter/oToken.orbiter';
 import { Erc20OrbiterCore } from '@app/core/orbiter/erc20.orbiter';
 import { ControllerOrbiterCore } from '@app/core/orbiter/controller.orbiter';
 import { OracleOrbiterCore } from '@app/core/orbiter/oracle.orbiter';
+import { AssetByAccountResponse } from './interfaces/asset.interface';
 
 const web3 = new Web3();
 
@@ -147,5 +148,85 @@ export class AssetService implements OnModuleInit {
     return await this.assetRepository.find({
       sort: { name: 1 },
     });
+  }
+
+  async assetsByAccount(user: User | null): Promise<AssetByAccountResponse> {
+    const { supplied = [], borrowed = [] } = (
+      await this.assetRepository.getAggregateValueUserToken([
+        {
+          $match: {
+            user: user ? user._id : null,
+          },
+        },
+        {
+          $lookup: {
+            from: 'tokens',
+            localField: 'token',
+            foreignField: '_id',
+            as: 'token',
+          },
+        },
+        {
+          $unwind: {
+            path: '$token',
+          },
+        },
+        { $sort: { 'token.name': 1 } },
+        {
+          $group: {
+            _id: null,
+            supplied: {
+              $push: {
+                token: {
+                  _id: '$token._id',
+                  name: '$token.name',
+                  symbol: '$token.symbol',
+                  image: '$token.image',
+                  apy: { $toString: '$token.supplyRate' },
+                  tokenDecimal: '$token.tokenDecimal',
+                },
+                collateral: '$collateral',
+                value: { $toString: '$totalSupply' },
+              },
+            },
+            borrowed: {
+              $push: {
+                token: {
+                  _id: '$token._id',
+                  name: '$token.name',
+                  symbol: '$token.symbol',
+                  image: '$token.image',
+                  apy: { $toString: '$token.borrowRate' },
+                  tokenDecimal: '$token.tokenDecimal',
+                },
+                collateral: '$collateral',
+                value: { $toString: '$totalBorrow' },
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            supplied: {
+              $filter: {
+                input: '$supplied',
+                as: 'item',
+                cond: { $gt: ['$$item.value', 0] },
+              },
+            },
+            borrowed: {
+              $filter: {
+                input: '$borrowed',
+                as: 'item',
+                cond: { $gt: ['$$item.value', 0] },
+              },
+            },
+          },
+        },
+      ])
+    ).pop() || { supplied: [], borrowed: [] };
+
+    return { supplied, borrowed };
   }
 }
