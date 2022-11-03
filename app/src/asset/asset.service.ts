@@ -15,6 +15,7 @@ import {
   AssetByAccountResponse,
   AssetCompositionByAccountResponse,
 } from './interfaces/asset.interface';
+import { UserRepository } from '@app/user/user.repository';
 
 const web3 = new Web3();
 
@@ -23,12 +24,13 @@ const { NODE_TYPE } = process.env;
 @Injectable()
 export class AssetService implements OnModuleInit {
   constructor(
-    private readonly web3Service: Web3Service,
+    public readonly web3Service: Web3Service,
     public readonly assetRepository: AssetRepository,
-    private readonly oTokenCore: OTokenOrbiterCore,
-    private readonly erc20OrbierCore: Erc20OrbiterCore,
-    private readonly controllerOrbiterCore: ControllerOrbiterCore,
-    private readonly oracleOrbiterCore: OracleOrbiterCore,
+    public readonly oTokenCore: OTokenOrbiterCore,
+    public readonly erc20OrbierCore: Erc20OrbiterCore,
+    public readonly controllerOrbiterCore: ControllerOrbiterCore,
+    public readonly oracleOrbiterCore: OracleOrbiterCore,
+    public readonly userRepository: UserRepository,
   ) {
     (async () => {
       this.oracleOrbiterCore.setToken(
