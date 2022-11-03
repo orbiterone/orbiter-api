@@ -29,6 +29,9 @@ export class User {
 
   @Prop({ unique: true })
   address: string;
+
+  @Prop()
+  lastRequest: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

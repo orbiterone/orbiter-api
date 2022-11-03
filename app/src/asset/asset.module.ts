@@ -8,6 +8,7 @@ import { Token, TokenSchema } from '@app/core/schemas/token.schema';
 import { AssetRepository } from './asset.repository';
 import { OrbiterModule } from '@app/core/orbiter/orbiter.module';
 import { UserModule } from '@app/user/user.module';
+import { AssetCron } from './asset.cron';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { UserModule } from '@app/user/user.module';
     UserModule,
   ],
   controllers: [AssetController],
-  providers: [AssetService, AssetRepository],
-  exports: [AssetService, AssetRepository],
+  providers: [AssetService, AssetRepository, AssetCron],
+  exports: [AssetService, AssetRepository, AssetCron],
 })
 export class AssetModule {}

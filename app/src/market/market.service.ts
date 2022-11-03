@@ -65,6 +65,7 @@ export class MarketService {
 
   @Cron('55 23 * * *')
   async createSnapshotByMarkets() {
+    console.log(`Job createSnapshotByMarkets start - ${Date.now()}`);
     const assets = await this.assetRepository.find({});
     if (assets && assets.length) {
       for (const asset of assets) {

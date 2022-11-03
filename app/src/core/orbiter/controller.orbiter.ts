@@ -44,4 +44,10 @@ export class ControllerOrbiterCore {
   async borrowGuardianPaused(oToken: string): Promise<boolean> {
     return await this.contract().methods.borrowGuardianPaused(oToken).call();
   }
+
+  async checkMembership(account: string, oToken: string): Promise<boolean> {
+    return await this.contract()
+      .methods.checkMembership(account, oToken)
+      .call();
+  }
 }

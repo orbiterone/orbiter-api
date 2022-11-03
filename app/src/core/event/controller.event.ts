@@ -38,17 +38,16 @@ export class ControllerEvent extends EventService {
             .getTokenModel()
             .findOne({ oTokenAddress: { $regex: oToken, $options: 'i' } });
           if (checkToken) {
-            const checkEnteredAsset = (
-              await this.controllerOrbiterCore.getAssetsIn(account)
-            ).filter((el) => el.toLowerCase() == oToken.toLowerCase());
+            const checkEnteredAsset =
+              await this.controllerOrbiterCore.checkMembership(account, oToken);
 
             let collateral = false;
 
             if (
               (event.event == CONTROLLER_EVENT.MARKET_ENTERED &&
-                checkEnteredAsset.length) ||
+                checkEnteredAsset) ||
               (event.event == CONTROLLER_EVENT.MARKET_EXITED &&
-                checkEnteredAsset.length)
+                checkEnteredAsset)
             ) {
               collateral = true;
             }
@@ -80,7 +79,7 @@ export class ControllerEvent extends EventService {
                   user: account,
                   error:
                     event.event == CONTROLLER_EVENT.MARKET_EXITED &&
-                    checkEnteredAsset.length
+                    checkEnteredAsset
                       ? true
                       : false,
                 },

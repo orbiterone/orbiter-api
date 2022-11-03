@@ -21,9 +21,15 @@ export class UserByAddressPipe implements PipeTransform<string> {
         'Address is not correct.',
         HttpStatus.BAD_REQUEST,
       );
-    const user = await this.userRepository
-      .getUserModel()
-      .findOne({ address: { $regex: value, $options: 'i' } });
+    const user = await this.userRepository.getUserModel().findOneAndUpdate(
+      { address: { $regex: value, $options: 'i' } },
+      {
+        $set: {
+          lastRequest: new Date(),
+        },
+      },
+      { new: true },
+    );
 
     return user;
   }
