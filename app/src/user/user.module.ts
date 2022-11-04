@@ -7,6 +7,7 @@ import { UserService } from './user.service';
 import { User, UserSchema } from '@app/core/schemas/user.schema';
 import { UserRepository } from './user.repository';
 import { UserToken, UserTokenSchema } from '@app/core/schemas/userToken.schema';
+import { ControllerOrbiterCore } from '@app/core/orbiter/controller.orbiter';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { UserToken, UserTokenSchema } from '@app/core/schemas/userToken.schema';
     ]),
   ],
   controllers: [UserController],
-  providers: [UserService, UserRepository],
+  providers: [UserService, UserRepository, ControllerOrbiterCore],
   exports: [UserService, UserRepository, MongooseModule],
 })
 export class UserModule {}

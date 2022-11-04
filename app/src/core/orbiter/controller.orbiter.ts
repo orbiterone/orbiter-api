@@ -50,4 +50,8 @@ export class ControllerOrbiterCore {
       .methods.checkMembership(account, oToken)
       .call();
   }
+
+  async getAccountLiquidity(account: string): Promise<string> {
+    return await this.contract().methods.getAccountLiquidity(account).call();
+  }
 }
