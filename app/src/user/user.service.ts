@@ -4,6 +4,7 @@ import Web3 from 'web3';
 
 import { UserRepository } from './user.repository';
 import { ControllerOrbiterCore } from '@app/core/orbiter/controller.orbiter';
+import { UserBalanceResponse } from '@app/user/interfaces/user.interface';
 
 const web3 = new Web3();
 
@@ -18,58 +19,60 @@ export class UserService {
     return await this.userRepository.findOneAndUpdate({ address });
   }
 
-  async getUserAccountBalance(user) {
+  async getUserAccountBalance(user: User | null): Promise<UserBalanceResponse> {
     const availableToBorrow = web3.utils.fromWei(
       `${
         (await this.controllerOrbiterCore.getAccountLiquidity(user.address))[0]
       }`,
       'ether',
     );
-    return this.userRepository.getAggregateValueUserToken([
-      {
-        $match: {
-          user: user ? user._id : null,
+    return (
+      await this.userRepository.getAggregateValueUserToken([
+        {
+          $match: {
+            user: user ? user._id : null,
+          },
         },
-      },
-      {
-        $lookup: {
-          from: 'tokens',
-          localField: 'token',
-          foreignField: '_id',
-          as: 'token',
+        {
+          $lookup: {
+            from: 'tokens',
+            localField: 'token',
+            foreignField: '_id',
+            as: 'token',
+          },
         },
-      },
-      {
-        $unwind: {
-          path: '$token',
+        {
+          $unwind: {
+            path: '$token',
+          },
         },
-      },
-      {
-        $addFields: {
-          totalSupplyUSD: { $multiply: ['$totalSupply', '$token.lastPrice'] },
-          totalBorrowUSD: { $multiply: ['$totalBorrow', '$token.lastPrice'] },
+        {
+          $addFields: {
+            totalSupplyUSD: { $multiply: ['$totalSupply', '$token.lastPrice'] },
+            totalBorrowUSD: { $multiply: ['$totalBorrow', '$token.lastPrice'] },
+          },
         },
-      },
-      {
-        $project: {
-          totalSupplied: { $sum: 'totalSupplyUSD' },
-          totalBorrowed: { $sum: 'totalBorrowUSD' },
-          availableToBorrow,
-          positionHealth: {
-            coefficient: {
-              $divide: [availableToBorrow, { $sum: 'totalBorrowUSD' }],
-            },
-            percentage: {
-              $multiply: [
-                {
-                  $divide: [{ $sum: 'totalBorrowUSD' }, availableToBorrow],
-                },
-                100,
-              ],
+        {
+          $project: {
+            totalSupplied: { $sum: 'totalSupplyUSD' },
+            totalBorrowed: { $sum: 'totalBorrowUSD' },
+            availableToBorrow,
+            positionHealth: {
+              coefficient: {
+                $divide: [availableToBorrow, { $sum: 'totalBorrowUSD' }],
+              },
+              percentage: {
+                $multiply: [
+                  {
+                    $divide: [{ $sum: 'totalBorrowUSD' }, availableToBorrow],
+                  },
+                  100,
+                ],
+              },
             },
           },
         },
-      },
-    ]);
+      ])
+    ).pop();
   }
 }

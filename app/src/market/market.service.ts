@@ -35,42 +35,44 @@ export class MarketService {
   }
 
   async getMarketOverview(): Promise<MarketOverviewResponse> {
-    return await this.assetRepository.getAggregateValue([
-      {
-        $addFields: {
-          totalSupplyUSD: { $multiply: ['$totalSupply', '$lastPrice'] },
-          totalBorrowUSD: { $multiply: ['$totalBorrow', '$lastPrice'] },
-        },
-      },
-      {
-        $facet: {
-          maxSupply: [{ $sort: { totalSupplyUSD: -1 } }],
-          maxBorrow: [{ $sort: { totalBorrowUSD: -1 } }],
-        },
-      },
-      {
-        $project: {
-          totalSupplyAmount: {
-            $toString: { $sum: '$maxSupply.totalSupplyUSD' },
-          },
-          totalBorrowAmount: {
-            $toString: { $sum: '$maxBorrow.totalBorrowUSD' },
-          },
-          mostSupply: {
-            _id: { $first: '$maxSupply._id' },
-            name: { $first: '$maxSupply.name' },
-            symbol: { $first: '$maxSupply.symbol' },
-            image: { $first: '$maxSupply.image' },
-          },
-          mostBorrow: {
-            _id: { $first: '$maxBorrow._id' },
-            name: { $first: '$maxBorrow.name' },
-            symbol: { $first: '$maxBorrow.symbol' },
-            image: { $first: '$maxBorrow.image' },
+    return (
+      await this.assetRepository.getAggregateValue([
+        {
+          $addFields: {
+            totalSupplyUSD: { $multiply: ['$totalSupply', '$lastPrice'] },
+            totalBorrowUSD: { $multiply: ['$totalBorrow', '$lastPrice'] },
           },
         },
-      },
-    ]);
+        {
+          $facet: {
+            maxSupply: [{ $sort: { totalSupplyUSD: -1 } }],
+            maxBorrow: [{ $sort: { totalBorrowUSD: -1 } }],
+          },
+        },
+        {
+          $project: {
+            totalSupplyAmount: {
+              $toString: { $sum: '$maxSupply.totalSupplyUSD' },
+            },
+            totalBorrowAmount: {
+              $toString: { $sum: '$maxBorrow.totalBorrowUSD' },
+            },
+            mostSupply: {
+              _id: { $first: '$maxSupply._id' },
+              name: { $first: '$maxSupply.name' },
+              symbol: { $first: '$maxSupply.symbol' },
+              image: { $first: '$maxSupply.image' },
+            },
+            mostBorrow: {
+              _id: { $first: '$maxBorrow._id' },
+              name: { $first: '$maxBorrow.name' },
+              symbol: { $first: '$maxBorrow.symbol' },
+              image: { $first: '$maxBorrow.image' },
+            },
+          },
+        },
+      ])
+    ).pop();
   }
 
   @Cron('55 23 * * *')
