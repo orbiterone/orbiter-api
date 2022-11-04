@@ -56,8 +56,18 @@ export class MarketService {
           totalBorrowAmount: {
             $toString: { $sum: '$maxBorrow.totalBorrowUSD' },
           },
-          mostSupply: { $first: '$maxSupply.name' },
-          mostBorrow: { $first: '$maxBorrow.name' },
+          mostSupply: {
+            _id: { $first: '$maxSupply._id' },
+            name: { $first: '$maxSupply.name' },
+            symbol: { $first: '$maxSupply.symbol' },
+            image: { $first: '$maxSupply.image' },
+          },
+          mostBorrow: {
+            _id: { $first: '$maxBorrow._id' },
+            name: { $first: '$maxBorrow.name' },
+            symbol: { $first: '$maxBorrow.symbol' },
+            image: { $first: '$maxBorrow.image' },
+          },
         },
       },
     ]);

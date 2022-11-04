@@ -17,6 +17,20 @@ export class MarketHistoryResponse {
   createdAt: Date;
 }
 
+class MostBorrowOrSupply {
+  @ApiProperty()
+  _id: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  symbol: string;
+
+  @ApiProperty()
+  image: string;
+}
+
 export class MarketOverviewResponse {
   @ApiProperty()
   totalSupplyAmount: string;
@@ -24,9 +38,9 @@ export class MarketOverviewResponse {
   @ApiProperty()
   totalBorrowAmount: string;
 
-  @ApiProperty()
-  mostSupply: string;
+  @ApiProperty({ type: MostBorrowOrSupply })
+  mostSupply: MostBorrowOrSupply;
 
-  @ApiProperty()
-  mostBorrow: string;
+  @ApiProperty({ type: MostBorrowOrSupply })
+  mostBorrow: MostBorrowOrSupply;
 }
