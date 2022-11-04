@@ -6,7 +6,7 @@ import {
   Response,
   UseGuards,
 } from '@nestjs/common';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiExtraModels, ApiParam, ApiTags } from '@nestjs/swagger';
 
 import { ApiKeyGuard } from '@app/core/guard/apikey';
 import { UserService } from './user.service';
@@ -18,6 +18,7 @@ import jsend from 'jsend';
 
 @Controller('users')
 @UseGuards(ApiKeyGuard)
+@ApiExtraModels(UserBalanceResponse)
 @ApiTags('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
