@@ -52,6 +52,10 @@ export class ControllerOrbiterCore {
   }
 
   async getAccountLiquidity(account: string): Promise<string> {
-    return await this.contract().methods.getAccountLiquidity(account).call();
+    const { 1: availableToBorrow } = await this.contract()
+      .methods.getAccountLiquidity(account)
+      .call();
+
+    return availableToBorrow;
   }
 }

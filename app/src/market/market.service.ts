@@ -52,10 +52,10 @@ export class MarketService {
         {
           $project: {
             totalSupplyAmount: {
-              $toString: { $sum: '$maxSupply.totalSupplyUSD' },
+              $toString: { $round: [{ $sum: '$maxSupply.totalSupplyUSD' }, 2] },
             },
             totalBorrowAmount: {
-              $toString: { $sum: '$maxBorrow.totalBorrowUSD' },
+              $toString: { $round: [{ $sum: '$maxBorrow.totalBorrowUSD' }, 2] },
             },
             mostSupply: {
               _id: { $first: '$maxSupply._id' },
