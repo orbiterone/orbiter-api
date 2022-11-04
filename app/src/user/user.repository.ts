@@ -31,4 +31,8 @@ export class UserRepository {
       { upsert: true, new: true },
     );
   }
+
+  async getAggregateValueUserToken(value): Promise<any> {
+    return this.userTokenModel.aggregate([...value]);
+  }
 }
