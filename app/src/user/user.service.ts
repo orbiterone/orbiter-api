@@ -101,7 +101,7 @@ export class UserService {
         totalSupplied: '0',
         totalBorrowed: '0',
         availableToBorrow: '0',
-        positionHealth: { coefficient: 'N/A', percentage: '0' },
+        positionHealth: { coefficient: '0', percentage: '0' },
       }
     );
   }
