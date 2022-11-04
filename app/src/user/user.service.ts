@@ -57,26 +57,12 @@ export class UserService {
           availableToBorrow,
           positionHealth: {
             coefficient: {
-              $divide: [
-                {
-                  $multiply: ['$collateral', 0.01, { $sum: 'totalSupplyUSD' }],
-                },
-                { $sum: 'totalBorrowUSD' },
-              ],
+              $divide: [availableToBorrow, { $sum: 'totalBorrowUSD' }],
             },
             percentage: {
               $multiply: [
                 {
-                  $divide: [
-                    { $sum: 'totalBorrowUSD' },
-                    {
-                      $multiply: [
-                        '$collateral',
-                        0.01,
-                        { $sum: 'totalSupplyUSD' },
-                      ],
-                    },
-                  ],
+                  $divide: [{ $sum: 'totalBorrowUSD' }, availableToBorrow],
                 },
                 100,
               ],
