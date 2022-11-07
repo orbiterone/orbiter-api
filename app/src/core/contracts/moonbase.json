@@ -99,21 +99,13 @@
             "color": "#F75454",
             "image": "https://assets.orbiterdev.one/images/tokens/avax.svg"
         },
-        "AUSD": {
-            "color": "#F754AC",
-            "image": "https://assets.orbiterdev.one/images/tokens/ausd.svg"
-        },
-        "MIMATIC": {
-            "color": "#F7547B",
-            "image": "https://assets.orbiterdev.one/images/tokens/mai.svg"
-        },
-        "kBTC": {
-            "color": "#6B54F7",
-            "image": "https://assets.orbiterdev.one/images/tokens/kbtc.svg"
-        },
         "MOVR": {
             "color": "#53CBC8",
             "image": "https://assets.orbiterdev.one/images/tokens/movr.svg"
+        },
+        "GLMR": {
+            "color": "",
+            "image": ""
         }
     }
 }

@@ -54,11 +54,11 @@ export class AssetService implements OnModuleInit {
       symbol: ['moonriver', 'moonbase'].includes(NODE_TYPE) ? 'MOVR' : 'GLMR',
       tokenDecimal: 18,
       color: ['moonriver', 'moonbase'].includes(NODE_TYPE)
-        ? 'Moonriver'
-        : 'Moonbeam',
+        ? SETTINGS.MOVR.color
+        : SETTINGS.GLMR.color,
       image: ['moonriver', 'moonbase'].includes(NODE_TYPE)
-        ? 'Moonriver'
-        : 'Moonbeam',
+        ? SETTINGS.MOVR.image
+        : SETTINGS.GLMR.image,
     };
     if (underlying) {
       this.erc20OrbierCore.setToken(underlying);
