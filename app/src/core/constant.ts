@@ -3,18 +3,21 @@ import {
   defaultMarket as MoonbaseDefaultMarket,
   supportMarkets as MoonbaseSupportMarket,
   tokens as MoonbaseTokens,
+  settings as MoonbaseSettings,
 } from '@app/core/contracts/moonbase.json';
 import {
   contracts as MoonriverContracts,
   defaultMarket as MoonriverDefaultMarket,
   supportMarkets as MoonriverSupportMarket,
   tokens as MoonriverTokens,
+  settings as MoonriverSettings,
 } from '@app/core/contracts/moonriver.json';
 import {
   contracts as MoonbeamContracts,
   defaultMarket as MoonbeamDefaultMarket,
   supportMarkets as MoonbeamSupportMarket,
   tokens as MoonbeamTokens,
+  settings as MoonbeamSettings,
 } from '@app/core/contracts/moonbeam.json';
 
 const { NODE_TYPE } = process.env;
@@ -51,6 +54,13 @@ const TOKENS =
     ? MoonriverTokens
     : MoonbeamTokens;
 
+const SETTINGS =
+  NODE_TYPE == 'moonbase'
+    ? MoonbaseSettings
+    : NODE_TYPE == 'moonriver'
+    ? MoonriverSettings
+    : MoonbeamSettings;
+
 export {
   ethMantissa,
   blocksPerDay,
@@ -60,4 +70,5 @@ export {
   SUPPORT_MARKET,
   TOKENS,
   NODE_TYPE,
+  SETTINGS,
 };

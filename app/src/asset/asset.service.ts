@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { Web3Service } from '@app/core/web3/web3.service';
 import { AssetRepository } from './asset.repository';
 import { Decimal128, User } from '@app/core/schemas/user.schema';
-import { DEFAULT_TOKEN, SUPPORT_MARKET } from '@app/core/constant';
+import { DEFAULT_TOKEN, SUPPORT_MARKET, SETTINGS } from '@app/core/constant';
 import { Token } from '@app/core/schemas/token.schema';
 import { OTokenOrbiterCore } from '@app/core/orbiter/oToken.orbiter';
 import { Erc20OrbiterCore } from '@app/core/orbiter/erc20.orbiter';
@@ -53,12 +53,20 @@ export class AssetService implements OnModuleInit {
         : 'Moonbeam',
       symbol: ['moonriver', 'moonbase'].includes(NODE_TYPE) ? 'MOVR' : 'GLMR',
       tokenDecimal: 18,
+      color: ['moonriver', 'moonbase'].includes(NODE_TYPE)
+        ? 'Moonriver'
+        : 'Moonbeam',
+      image: ['moonriver', 'moonbase'].includes(NODE_TYPE)
+        ? 'Moonriver'
+        : 'Moonbeam',
     };
     if (underlying) {
       this.erc20OrbierCore.setToken(underlying);
       tokenData.name = await this.erc20OrbierCore.name();
       tokenData.symbol = await this.erc20OrbierCore.symbol();
       tokenData.tokenDecimal = +(await this.erc20OrbierCore.decimals());
+      tokenData.color = SETTINGS[tokenData.symbol].color;
+      tokenData.image = SETTINGS[tokenData.symbol].image;
     }
     const collateralFactorMantissa =
       await this.controllerOrbiterCore.collateralFactorMantissa(oToken);

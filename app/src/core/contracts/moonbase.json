@@ -49,5 +49,71 @@
         "oUSDT": "0xD805415d0690F53a889786E72076d2404607eDdF",
         "oDAI": "0x12F8ef5F6f6A61B6A9864969CfddA54845fA5A57"
     },
-    "defaultMarket": "0xF358689114D350aE54429853A8e770E4FB86ad01"
+    "defaultMarket": "0xF358689114D350aE54429853A8e770E4FB86ad01",
+    "settings": {
+        "WBTC": {
+            "color": "#FB8D28",
+            "image": "https://assets.orbiterdev.one/images/tokens/WBTC.svg"
+        },
+        "ETH": {
+            "color": "#939DC2",
+            "image": "https://assets.orbiterdev.one/images/tokens/ETH.svg"
+        },
+        "BNB": {
+            "color": "#FBC028",
+            "image": "https://assets.orbiterdev.one/images/tokens/BNB.svg"
+        },
+        "BUSD": {
+            "color": "#F7B654",
+            "image": "https://assets.orbiterdev.one/images/tokens/BUSD.svg"
+        },
+        "USDC": {
+            "color": "#5493F7",
+            "image": "https://assets.orbiterdev.one/images/tokens/USDC.svg"
+        },
+        "USDT": {
+            "color": "#53CBA0",
+            "image": "https://assets.orbiterdev.one/images/tokens/USDT.svg"
+        },
+        "LINK": {
+            "color": "#5464F7",
+            "image": "https://assets.orbiterdev.one/images/tokens/LINK.svg"
+        },
+        "FRAX": {
+            "color": "#0A1018",
+            "image": "https://assets.orbiterdev.one/images/tokens/frax.svg"
+        },
+        "xcKSM": {
+            "color": "#8854F7",
+            "image": "https://assets.orbiterdev.one/images/tokens/xcKSM.svg"
+        },
+        "DAI": {
+            "color": "#F78F54",
+            "image": "https://assets.orbiterdev.one/images/tokens/DAI.svg"
+        },
+        "FTM": {
+            "color": "#54BCF7",
+            "image": "https://assets.orbiterdev.one/images/tokens/FTM.svg"
+        },
+        "AVAX": {
+            "color": "#F75454",
+            "image": "https://assets.orbiterdev.one/images/tokens/avax.svg"
+        },
+        "AUSD": {
+            "color": "#F754AC",
+            "image": "https://assets.orbiterdev.one/images/tokens/ausd.svg"
+        },
+        "MIMATIC": {
+            "color": "#F7547B",
+            "image": "https://assets.orbiterdev.one/images/tokens/mai.svg"
+        },
+        "kBTC": {
+            "color": "#6B54F7",
+            "image": "https://assets.orbiterdev.one/images/tokens/kbtc.svg"
+        },
+        "MOVR": {
+            "color": "#53CBC8",
+            "image": "https://assets.orbiterdev.one/images/tokens/movr.svg"
+        }
+    }
 }
