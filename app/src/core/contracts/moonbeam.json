@@ -49,5 +49,63 @@
         "oMAI": "",
         "oAUSD": ""
     },
-    "defaultMarket": ""
+    "defaultMarket": "",
+    "settings": {
+        "WBTC": {
+            "color": "#FB8D28",
+            "image": "https://assets.orbiterdev.one/images/tokens/WBTC.svg"
+        },
+        "ETH": {
+            "color": "#939DC2",
+            "image": "https://assets.orbiterdev.one/images/tokens/ETH.svg"
+        },
+        "BNB": {
+            "color": "#FBC028",
+            "image": "https://assets.orbiterdev.one/images/tokens/BNB.svg"
+        },
+        "BUSD": {
+            "color": "#F7B654",
+            "image": "https://assets.orbiterdev.one/images/tokens/BUSD.svg"
+        },
+        "USDC": {
+            "color": "#5493F7",
+            "image": "https://assets.orbiterdev.one/images/tokens/USDC.svg"
+        },
+        "USDT": {
+            "color": "#53CBA0",
+            "image": "https://assets.orbiterdev.one/images/tokens/USDT.svg"
+        },
+        "LINK": {
+            "color": "#5464F7",
+            "image": "https://assets.orbiterdev.one/images/tokens/LINK.svg"
+        },
+        "FRAX": {
+            "color": "#0A1018",
+            "image": "https://assets.orbiterdev.one/images/tokens/frax.svg"
+        },
+        "xcKSM": {
+            "color": "#8854F7",
+            "image": "https://assets.orbiterdev.one/images/tokens/xcKSM.svg"
+        },
+        "DAI": {
+            "color": "#F78F54",
+            "image": "https://assets.orbiterdev.one/images/tokens/DAI.svg"
+        },
+        "FTM": {
+            "color": "#54BCF7",
+            "image": "https://assets.orbiterdev.one/images/tokens/FTM.svg"
+        },
+        "AVAX": {
+            "color": "#F75454",
+            "image": "https://assets.orbiterdev.one/images/tokens/avax.svg"
+        },
+        "MOVR": {
+            "color": "#53CBC8",
+            "image": "https://assets.orbiterdev.one/images/tokens/movr.svg"
+        },
+        "GLMR": {
+            "color": "",
+            "image": ""
+        }
+    }
 }
