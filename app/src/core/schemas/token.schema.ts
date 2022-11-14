@@ -13,6 +13,9 @@ export class Token {
   name: string;
 
   @Prop()
+  fullName: string;
+
+  @Prop()
   symbol: string;
 
   @Prop()
