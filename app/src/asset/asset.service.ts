@@ -59,6 +59,9 @@ export class AssetService implements OnModuleInit {
       image: ['moonriver', 'moonbase'].includes(NODE_TYPE)
         ? SETTINGS.MOVR.image
         : SETTINGS.GLMR.image,
+      fullName: ['moonriver', 'moonbase'].includes(NODE_TYPE)
+        ? SETTINGS.MOVR.fullName
+        : SETTINGS.GLMR.fullName,
     };
     if (underlying) {
       this.erc20OrbierCore.setToken(underlying);
@@ -67,6 +70,7 @@ export class AssetService implements OnModuleInit {
       tokenData.tokenDecimal = +(await this.erc20OrbierCore.decimals());
       tokenData.color = SETTINGS[tokenData.symbol].color;
       tokenData.image = SETTINGS[tokenData.symbol].image;
+      tokenData.fullName = SETTINGS[tokenData.symbol].fullName;
     }
     const collateralFactorMantissa =
       await this.controllerOrbiterCore.collateralFactorMantissa(oToken);

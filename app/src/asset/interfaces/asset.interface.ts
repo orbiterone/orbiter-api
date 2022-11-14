@@ -8,6 +8,9 @@ export class AssetInfoResponse {
   name: string;
 
   @ApiProperty()
+  fullName: string;
+
+  @ApiProperty()
   symbol: string;
 
   @ApiProperty()
