@@ -157,3 +157,17 @@ export class AssetCompositionByAccountResponse {
   @ApiProperty({ type: [SupplyBorrowInfoCompositionByAssetAccount] })
   borrowed: SupplyBorrowInfoCompositionByAssetAccount[];
 }
+
+export class AssetBalanceByAccountResponse {
+  @ApiProperty()
+  image: string;
+
+  @ApiProperty()
+  symbol: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  walletBalance: string;
+}

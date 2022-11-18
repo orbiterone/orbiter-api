@@ -13,6 +13,7 @@ import { ApiKeyGuard } from '@app/core/guard/apikey';
 import { AssetService } from './asset.service';
 import { ApiDataResponse } from '@app/core/interface/response';
 import {
+  AssetBalanceByAccountResponse,
   AssetByAccountResponse,
   AssetCompositionByAccountResponse,
   AssetInfoResponse,
@@ -27,6 +28,7 @@ import { User } from '@app/core/schemas/user.schema';
   AssetInfoResponse,
   AssetByAccountResponse,
   AssetCompositionByAccountResponse,
+  AssetBalanceByAccountResponse,
 )
 export class AssetController {
   constructor(private readonly assetService: AssetService) {}
@@ -63,5 +65,17 @@ export class AssetController {
       .json(
         jsend.success(await this.assetService.assetsCompositionByAccount(user)),
       );
+  }
+
+  @Get(':account/balance')
+  @ApiDataResponse(AssetBalanceByAccountResponse, 'array')
+  @ApiParam({ name: 'account', type: 'string' })
+  async assetsBalances(
+    @Response() res: any,
+    @Param('account', UserByAddressPipe) user: User | null,
+  ) {
+    return res
+      .status(HttpStatus.OK)
+      .json(jsend.success(await this.assetService.assetsListForFaucet(user)));
   }
 }
