@@ -393,21 +393,25 @@ export class AssetService implements OnModuleInit {
 
   async assetsListForFaucet(user: User | null) {
     const assets = await this.assetRepository.find({
-      select: 'oTokenAddress image symbol fullName tokenDecimal',
+      select: 'tokenAddress image symbol fullName tokenDecimal',
+      options: {
+        oTokenAddress: { $ne: DEFAULT_TOKEN },
+      },
     });
     const assetList = [];
     for (const asset of assets) {
       let balance = '0';
       if (user) {
-        const redisKey = asset.oTokenAddress.toString();
+        const redisKey = asset.tokenAddress.toString() + user.address;
         const redisBalanceInfo = await this.redisClient.get(redisKey);
 
         if (redisBalanceInfo) {
           balance = redisBalanceInfo;
         } else {
-          this.oTokenCore.setToken(asset.oTokenAddress);
           balance = new BigNumber(
-            await this.erc20OrbierCore.balanceOf(user.address),
+            await this.erc20OrbierCore
+              .setToken(asset.tokenAddress)
+              .balanceOf(user.address),
           )
             .div(Math.pow(10, asset.tokenDecimal))
             .toString();
@@ -415,9 +419,11 @@ export class AssetService implements OnModuleInit {
         }
       }
       assetList.push({
-        image: asset.image,
-        symbol: asset.symbol,
-        name: asset.fullName,
+        token: {
+          image: asset.image,
+          symbol: asset.symbol,
+          name: asset.fullName,
+        },
         walletBalance: balance,
       });
     }

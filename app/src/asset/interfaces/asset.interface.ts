@@ -158,7 +158,7 @@ export class AssetCompositionByAccountResponse {
   borrowed: SupplyBorrowInfoCompositionByAssetAccount[];
 }
 
-export class AssetBalanceByAccountResponse {
+class TokenInfoData {
   @ApiProperty()
   image: string;
 
@@ -167,6 +167,11 @@ export class AssetBalanceByAccountResponse {
 
   @ApiProperty()
   name: string;
+}
+
+export class AssetBalanceByAccountResponse {
+  @ApiProperty({ type: TokenInfoData })
+  token: TokenInfoData;
 
   @ApiProperty()
   walletBalance: string;
