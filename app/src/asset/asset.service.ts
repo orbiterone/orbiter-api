@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
+import { InjectRedisClient, RedisClient } from '@webeleon/nestjs-redis';
 
 import { Web3Service } from '@app/core/web3/web3.service';
 import { AssetRepository } from './asset.repository';
@@ -31,6 +32,7 @@ export class AssetService implements OnModuleInit {
     public readonly controllerOrbiterCore: ControllerOrbiterCore,
     public readonly oracleOrbiterCore: OracleOrbiterCore,
     public readonly userRepository: UserRepository,
+    @InjectRedisClient() private readonly redisClient: RedisClient,
   ) {
     (async () => {
       this.oracleOrbiterCore.setToken(
@@ -387,5 +389,44 @@ export class AssetService implements OnModuleInit {
     };
 
     return { supplied, borrowed };
+  }
+
+  async assetsListForFaucet(user: User | null) {
+    const assets = await this.assetRepository.find({
+      select: 'tokenAddress image symbol fullName tokenDecimal',
+      options: {
+        oTokenAddress: { $ne: DEFAULT_TOKEN },
+      },
+    });
+    const assetList = [];
+    for (const asset of assets) {
+      let balance = '0';
+      if (user) {
+        const redisKey = asset.tokenAddress.toString() + user.address;
+        const redisBalanceInfo = await this.redisClient.get(redisKey);
+
+        if (redisBalanceInfo) {
+          balance = redisBalanceInfo;
+        } else {
+          balance = new BigNumber(
+            await this.erc20OrbierCore
+              .setToken(asset.tokenAddress)
+              .balanceOf(user.address),
+          )
+            .div(Math.pow(10, asset.tokenDecimal))
+            .toString();
+          this.redisClient.setEx(redisKey, 600, balance);
+        }
+      }
+      assetList.push({
+        token: {
+          image: asset.image,
+          symbol: asset.symbol,
+          name: asset.fullName,
+        },
+        walletBalance: balance,
+      });
+    }
+    return assetList;
   }
 }
