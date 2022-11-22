@@ -18,7 +18,8 @@
         "FTM": "0xaD12daB5959f30b9fF3c2d6709f53C335dC39908",
         "ORBIT": "",
         "MAI": "0xFb2019DfD635a03cfFF624D210AEe6AF2B00fC2C",
-        "xcAUSD": "0xFfFffFFfa1B026a00FbAA67c86D5d1d5BF8D8228"
+        "xcAUSD": "0xFfFffFFfa1B026a00FbAA67c86D5d1d5BF8D8228",
+        "xcKBTC": "0xFFFfFfFfF6E528AD57184579beeE00c5d5e646F0"
     },
     "markets": {
         "oBNB": "",
@@ -36,7 +37,8 @@
         "oUSDT": "",
         "oDAI": "",
         "oMAI": "",
-        "oAUSD": ""
+        "oAUSD": "",
+        "oxcKBTC": ""
     },
     "supportMarkets": {
         "oBNB": "",
@@ -53,7 +55,8 @@
         "oUSDT": "",
         "oDAI": "",
         "oMAI": "",
-        "oAUSD": ""
+        "oAUSD": "",
+        "oxcKBTC": ""
     },
     "defaultMarket": "",
     "settings": {
@@ -121,6 +124,21 @@
             "color": "#53CBC8",
             "image": "https://assets.orbiterdev.one/images/tokens/movr.svg",
             "fullName" : "Moonriver"
+        },
+        "xcAUSD": {
+            "color": "#F754AC",
+            "image": "https://assets.orbiterdev.one/images/tokens/ausd.svg",
+            "fullName" : "Acalla Dollar"
+        },
+        "MAI": {
+            "color": "#F7547B",
+            "image": "https://assets.orbiterdev.one/images/tokens/mai.svg",
+            "fullName" : "MAI Stablecoin"
+        },
+        "xcKBTC": {
+            "color": "#FB8D28",
+            "image": "https://assets.orbiterdev.one/images/tokens/kbtc.svg",
+            "fullName" : "Kintsugi WBTC"
         },
         "GLMR": {
             "color": "",

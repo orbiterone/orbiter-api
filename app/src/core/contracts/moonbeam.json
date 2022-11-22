@@ -116,6 +116,21 @@
             "image": "https://assets.orbiterdev.one/images/tokens/movr.svg",
             "fullName" : "Moonriver"
         },
+        "xcAUSD": {
+            "color": "#F754AC",
+            "image": "https://assets.orbiterdev.one/images/tokens/ausd.svg",
+            "fullName" : "Acalla Dollar"
+        },
+        "MAI": {
+            "color": "#F7547B",
+            "image": "https://assets.orbiterdev.one/images/tokens/mai.svg",
+            "fullName" : "MAI Stablecoin"
+        },
+        "xcKBTC": {
+            "color": "#FB8D28",
+            "image": "https://assets.orbiterdev.one/images/tokens/kbtc.svg",
+            "fullName" : "Kintsugi WBTC"
+        },
         "GLMR": {
             "color": "",
             "image": "",

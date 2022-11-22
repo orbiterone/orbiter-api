@@ -159,6 +159,7 @@ export class AssetService implements OnModuleInit {
       for (const oToken of supportMarkets) {
         if (oToken == '') continue;
         await this.updateAssetInfo(oToken);
+        await this.wait(2000);
       }
     }
   }
@@ -428,5 +429,9 @@ export class AssetService implements OnModuleInit {
       });
     }
     return assetList;
+  }
+
+  async wait(ms: number): Promise<any> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

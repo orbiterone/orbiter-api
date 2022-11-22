@@ -16,7 +16,10 @@
         "USDC": "0xCDd33698AaBF17Ee5A3aA696dAde2Be8BbE7fbE0",
         "FTM": "0x4Dcef85aCFf5E116e7A79555bC6f7D33948E1Dc3",
         "xcKSM": "0xD2DcC22168441D359814707B30cCE823a166649f",
-        "ORBIT": "0x734EbdbB1258e91Db663a9D5740cc62326ada02a"
+        "ORBIT": "0x734EbdbB1258e91Db663a9D5740cc62326ada02a",
+        "xcAUSD": "0x542Eb7714e27ECB055AFbD1dD32E5AfD208bE441",
+        "MAI": "0x78eDcD40C4a743af1c09CD6B9b7aD05352c135Dd",
+        "xcKBTC": "0xD7C44d4d683945062E0b8305bD173E4BaaA56dB9"
     },
     "markets": {
         "oBNB": "0x6994B3Fd646800aa25F56140B7C1C9126adc0DA6",
@@ -32,7 +35,10 @@
         "oAVAX": "0x848cdE873a6acB588cDDC02269898872ba817BD4",
         "oORBIT": "0x78D40455EA920aF1c41E58AADC876c571aDf6Af1",
         "oUSDT": "0xD805415d0690F53a889786E72076d2404607eDdF",
-        "oDAI": "0x12F8ef5F6f6A61B6A9864969CfddA54845fA5A57"
+        "oDAI": "0x12F8ef5F6f6A61B6A9864969CfddA54845fA5A57",
+        "oxcAUSD": "0x550ed6CC8B58088050F85a8129E92243DD22d643",
+        "oMAI": "0x51BD69D9C1093E4535899fa423fFEFF5026E3B8a",
+        "oxcKBTC": "0x29542f06326AC7CEfa883012cC1921d800280569"
     },
     "supportMarkets": {
         "oBNB": "0x6994B3Fd646800aa25F56140B7C1C9126adc0DA6",
@@ -47,7 +53,10 @@
         "oKSM": "0x7C22d440C809B1aBD21Bc4519cAE405150d2Da57",
         "oAVAX": "0x848cdE873a6acB588cDDC02269898872ba817BD4",
         "oUSDT": "0xD805415d0690F53a889786E72076d2404607eDdF",
-        "oDAI": "0x12F8ef5F6f6A61B6A9864969CfddA54845fA5A57"
+        "oDAI": "0x12F8ef5F6f6A61B6A9864969CfddA54845fA5A57",
+        "oxcAUSD": "0x550ed6CC8B58088050F85a8129E92243DD22d643",
+        "oMAI": "0x51BD69D9C1093E4535899fa423fFEFF5026E3B8a",
+        "oxcKBTC": "0x29542f06326AC7CEfa883012cC1921d800280569"
     },
     "defaultMarket": "0xF358689114D350aE54429853A8e770E4FB86ad01",
     "settings": {
@@ -115,6 +124,21 @@
             "color": "#53CBC8",
             "image": "https://assets.orbiterdev.one/images/tokens/movr.svg",
             "fullName" : "Moonriver"
+        },
+        "xcAUSD": {
+            "color": "#F754AC",
+            "image": "https://assets.orbiterdev.one/images/tokens/ausd.svg",
+            "fullName" : "Acalla Dollar"
+        },
+        "MAI": {
+            "color": "#F7547B",
+            "image": "https://assets.orbiterdev.one/images/tokens/mai.svg",
+            "fullName" : "MAI Stablecoin"
+        },
+        "xcKBTC": {
+            "color": "#FB8D28",
+            "image": "https://assets.orbiterdev.one/images/tokens/kbtc.svg",
+            "fullName" : "Kintsugi WBTC"
         },
         "GLMR": {
             "color": "",
