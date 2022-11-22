@@ -397,6 +397,7 @@ export class AssetService implements OnModuleInit {
       options: {
         oTokenAddress: { $ne: DEFAULT_TOKEN },
       },
+      sort: { name: 1 },
     });
     const assetList = [];
     for (const asset of assets) {
