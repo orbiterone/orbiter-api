@@ -208,7 +208,7 @@ export class AssetService implements OnModuleInit {
                   tokenDecimal: '$token.tokenDecimal',
                 },
                 collateral: '$collateral',
-                value: { $toString: '$totalSupply' },
+                value: '$totalSupply',
               },
             },
             borrowed: {
@@ -222,7 +222,7 @@ export class AssetService implements OnModuleInit {
                   tokenDecimal: '$token.tokenDecimal',
                 },
                 collateral: '$collateral',
-                value: { $toString: '$totalBorrow' },
+                value: '$totalBorrow',
               },
             },
           },
