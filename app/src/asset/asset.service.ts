@@ -249,6 +249,14 @@ export class AssetService implements OnModuleInit {
       ])
     ).pop() || { supplied: [], borrowed: [] };
 
+    for (let i = 0; i < supplied.length; i++) {
+      supplied[i].value = new Decimal(supplied[i].value.toString()).toString();
+    }
+
+    for (let i = 0; i < borrowed.length; i++) {
+      borrowed[i].value = new Decimal(borrowed[i].value.toString()).toString();
+    }
+
     return { supplied, borrowed };
   }
 
