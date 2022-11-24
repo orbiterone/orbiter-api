@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Timeout } from '@nestjs/schedule';
-import BigNumber from 'bignumber.js';
+import { Decimal } from 'decimal.js';
 
 import { NODE_TYPE } from '../constant';
 import { Decimal128 } from '../schemas/user.schema';
 import { EventService } from './event.service';
 import { TOKEN_EVENT } from './interfaces/event.interface';
+
+Decimal.set({ toExpNeg: -30, toExpPos: 30 });
 
 @Injectable()
 export class TokenEvent extends EventService {
@@ -48,8 +50,8 @@ export class TokenEvent extends EventService {
                     data: {
                       user: owner,
                       amount: Decimal128(
-                        new BigNumber(value)
-                          .dividedBy(Math.pow(10, checkToken.tokenDecimal))
+                        new Decimal(value)
+                          .div(Math.pow(10, checkToken.tokenDecimal))
                           .toString(),
                       ),
                     },

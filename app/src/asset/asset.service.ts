@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import Web3 from 'web3';
-import BigNumber from 'bignumber.js';
+import { Decimal } from 'decimal.js';
 import { InjectRedisClient, RedisClient } from '@webeleon/nestjs-redis';
 
 import { Web3Service } from '@app/core/web3/web3.service';
@@ -21,6 +21,8 @@ import { UserRepository } from '@app/user/user.repository';
 const web3 = new Web3();
 
 const { NODE_TYPE } = process.env;
+
+Decimal.set({ toExpNeg: -30, toExpPos: 30 });
 
 @Injectable()
 export class AssetService implements OnModuleInit {
@@ -77,19 +79,19 @@ export class AssetService implements OnModuleInit {
     const collateralFactorMantissa =
       await this.controllerOrbiterCore.collateralFactorMantissa(oToken);
 
-    const exchangeRate = new BigNumber(
+    const exchangeRate = new Decimal(
       await this.oTokenCore.exchangeRateCurrent(),
     ).div(Math.pow(10, 18 + tokenData.tokenDecimal - 8));
 
     const oTokenDecimal = +(await this.oTokenCore.decimals());
 
-    const totalSupply = new BigNumber(await this.oTokenCore.totalSupply())
+    const totalSupply = new Decimal(await this.oTokenCore.totalSupply())
       .div(Math.pow(10, oTokenDecimal))
-      .multipliedBy(exchangeRate);
-    const totalBorrow = new BigNumber(await this.oTokenCore.totalBorrows()).div(
+      .mul(exchangeRate);
+    const totalBorrow = new Decimal(await this.oTokenCore.totalBorrows()).div(
       Math.pow(10, tokenData.tokenDecimal),
     );
-    const totalReserves = new BigNumber(
+    const totalReserves = new Decimal(
       await this.oTokenCore.totalReserves(),
     ).div(Math.pow(10, tokenData.tokenDecimal));
     const lastPrice = web3.utils.fromWei(
@@ -100,15 +102,15 @@ export class AssetService implements OnModuleInit {
     const supplyApy = await this.oTokenCore.supplyApy();
     const borrowApy = await this.oTokenCore.borrowApy();
 
-    let liquidity = new BigNumber(0);
+    let liquidity = new Decimal(0);
     if (!underlying) {
-      liquidity = new BigNumber(
+      liquidity = new Decimal(
         `${client.utils.fromWei(await client.eth.getBalance(oToken), 'ether')}`,
       );
     } else {
-      liquidity = new BigNumber(
-        await this.erc20OrbierCore.balanceOf(oToken),
-      ).div(Math.pow(10, tokenData.tokenDecimal));
+      liquidity = new Decimal(await this.erc20OrbierCore.balanceOf(oToken)).div(
+        Math.pow(10, tokenData.tokenDecimal),
+      );
     }
 
     return {
@@ -410,7 +412,7 @@ export class AssetService implements OnModuleInit {
         if (redisBalanceInfo) {
           balance = redisBalanceInfo;
         } else {
-          balance = new BigNumber(
+          balance = new Decimal(
             await this.erc20OrbierCore
               .setToken(asset.tokenAddress)
               .balanceOf(user.address),

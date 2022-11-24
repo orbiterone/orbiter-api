@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import Web3 from 'web3';
+import moment from 'moment';
+import { Decimal } from 'decimal.js';
 
 import { Decimal128 } from '@app/core/schemas/user.schema';
 import { AssetService } from './asset.service';
-import BigNumber from 'bignumber.js';
 import { NODE_TYPE } from '@app/core/constant';
-import moment from 'moment';
 
 const web3 = new Web3();
+
+Decimal.set({ toExpNeg: -30, toExpPos: 30 });
 
 @Injectable()
 export class AssetCron extends AssetService {
@@ -61,12 +63,12 @@ export class AssetCron extends AssetService {
         async (user) => {
           const assets = await this.assetRepository.find({});
           for (const asset of assets) {
-            const totalSupply = new BigNumber(
+            const totalSupply = new Decimal(
               await this.oTokenCore
                 .setToken(asset.oTokenAddress)
                 .balanceOfUnderlying(user.address),
             ).div(Math.pow(10, asset.tokenDecimal));
-            const totalBorrow = new BigNumber(
+            const totalBorrow = new Decimal(
               await this.oTokenCore
                 .setToken(asset.oTokenAddress)
                 .borrowBalanceCurrent(user.address),

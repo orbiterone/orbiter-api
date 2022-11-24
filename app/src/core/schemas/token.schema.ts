@@ -1,9 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import BigNumber from 'bignumber.js';
+import { Decimal } from 'decimal.js';
 import { Document, Types } from 'mongoose';
 import { decimalObj } from './user.schema';
 
 export type TokenDocument = Token & Document;
+
+Decimal.set({ toExpNeg: -30, toExpPos: 30 });
 
 @Schema({ timestamps: true })
 export class Token {
@@ -120,9 +122,9 @@ export const TokenSchema = SchemaFactory.createForClass(Token).set('toJSON', {
     ret.countSuppliers = ret.suppliers ? ret.suppliers.length : 0;
     ret.countBorrowers = ret.borrowers ? ret.borrowers.length : 0;
     ret.utilization = ret.totalSupply
-      ? new BigNumber(ret.totalBorrow.toString() || 0)
-          .dividedBy(ret.totalSupply.toString())
-          .multipliedBy(100)
+      ? new Decimal(ret.totalBorrow.toString() || 0)
+          .div(ret.totalSupply.toString())
+          .mul(100)
           .toNumber()
       : 0;
     delete ret.__v;
