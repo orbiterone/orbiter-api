@@ -5,6 +5,7 @@ import Web3 from 'web3';
 import { UserRepository } from './user.repository';
 import { ControllerOrbiterCore } from '@app/core/orbiter/controller.orbiter';
 import { UserBalanceResponse } from '@app/user/interfaces/user.interface';
+import { Decimal128 } from '@app/core/schemas/user.schema';
 
 const web3 = new Web3();
 
@@ -22,9 +23,13 @@ export class UserService {
   async getUserAccountBalance(user: User | null): Promise<UserBalanceResponse> {
     let availableToBorrow;
     if (user) {
-      availableToBorrow = web3.utils.fromWei(
-        `${await this.controllerOrbiterCore.getAccountLiquidity(user.address)}`,
-        'ether',
+      availableToBorrow = Decimal128(
+        web3.utils.fromWei(
+          `${await this.controllerOrbiterCore.getAccountLiquidity(
+            user.address,
+          )}`,
+          'ether',
+        ),
       );
     }
 
@@ -67,32 +72,43 @@ export class UserService {
               totalBorrowed: {
                 $round: [{ $sum: 'totalBorrowUSD' }, 2],
               },
-              availableToBorrow,
+              availableToBorrow: availableToBorrow
+                ? availableToBorrow.toString()
+                : '0',
               positionHealth: {
-                coefficient: {
-                  $round: [
-                    {
-                      $divide: [availableToBorrow, { $sum: 'totalBorrowUSD' }],
-                    },
-                    2,
-                  ],
-                },
-                percentage: {
-                  $round: [
-                    {
-                      $multiply: [
-                        {
-                          $divide: [
-                            { $sum: 'totalBorrowUSD' },
-                            availableToBorrow,
-                          ],
-                        },
-                        100,
-                      ],
-                    },
-                    0,
-                  ],
-                },
+                coefficient:
+                  availableToBorrow != 0
+                    ? {
+                        $round: [
+                          {
+                            $divide: [
+                              availableToBorrow,
+                              { $sum: 'totalBorrowUSD' },
+                            ],
+                          },
+                          2,
+                        ],
+                      }
+                    : '0',
+                percentage:
+                  availableToBorrow != 0
+                    ? {
+                        $round: [
+                          {
+                            $multiply: [
+                              {
+                                $divide: [
+                                  { $sum: 'totalBorrowUSD' },
+                                  availableToBorrow,
+                                ],
+                              },
+                              100,
+                            ],
+                          },
+                          0,
+                        ],
+                      }
+                    : '0',
               },
             },
           },
