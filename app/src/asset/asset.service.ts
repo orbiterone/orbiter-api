@@ -412,9 +412,7 @@ export class AssetService implements OnModuleInit {
     for (const asset of assets) {
       let balance = '0';
       if (user) {
-        if (
-          asset.tokenAddress.toLocaleLowerCase() != DEFAULT_TOKEN.toLowerCase()
-        ) {
+        if (asset.tokenAddress.toLowerCase() != DEFAULT_TOKEN.toLowerCase()) {
           balance = new Decimal(
             await this.erc20OrbierCore
               .setToken(asset.tokenAddress)
