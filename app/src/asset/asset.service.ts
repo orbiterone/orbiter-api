@@ -412,13 +412,23 @@ export class AssetService implements OnModuleInit {
     for (const asset of assets) {
       let balance = '0';
       if (user) {
-        balance = new Decimal(
-          await this.erc20OrbierCore
-            .setToken(asset.tokenAddress)
-            .balanceOf(user.address),
-        )
-          .div(Math.pow(10, asset.tokenDecimal))
-          .toString();
+        if (
+          asset.tokenAddress.toLocaleLowerCase() != DEFAULT_TOKEN.toLowerCase()
+        ) {
+          balance = new Decimal(
+            await this.erc20OrbierCore
+              .setToken(asset.tokenAddress)
+              .balanceOf(user.address),
+          )
+            .div(Math.pow(10, asset.tokenDecimal))
+            .toString();
+        } else {
+          balance = new Decimal(
+            await this.web3Service.getClient().eth.getBalance(user.address),
+          )
+            .div(Math.pow(10, asset.tokenDecimal))
+            .toString();
+        }
       }
       assetList.push({
         token: {
