@@ -405,9 +405,7 @@ export class AssetService implements OnModuleInit {
   async assetsListForFaucet(user: User | null) {
     const assets = await this.assetRepository.find({
       select: 'tokenAddress image symbol fullName tokenDecimal',
-      options: {
-        oTokenAddress: { $ne: DEFAULT_TOKEN },
-      },
+      options: {},
       sort: { name: 1 },
     });
     const assetList = [];
