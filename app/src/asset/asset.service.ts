@@ -414,21 +414,13 @@ export class AssetService implements OnModuleInit {
     for (const asset of assets) {
       let balance = '0';
       if (user) {
-        const redisKey = asset.tokenAddress.toString() + user.address;
-        const redisBalanceInfo = await this.redisClient.get(redisKey);
-
-        if (redisBalanceInfo) {
-          balance = redisBalanceInfo;
-        } else {
-          balance = new Decimal(
-            await this.erc20OrbierCore
-              .setToken(asset.tokenAddress)
-              .balanceOf(user.address),
-          )
-            .div(Math.pow(10, asset.tokenDecimal))
-            .toString();
-          this.redisClient.setEx(redisKey, 600, balance);
-        }
+        balance = new Decimal(
+          await this.erc20OrbierCore
+            .setToken(asset.tokenAddress)
+            .balanceOf(user.address),
+        )
+          .div(Math.pow(10, asset.tokenDecimal))
+          .toString();
       }
       assetList.push({
         token: {
