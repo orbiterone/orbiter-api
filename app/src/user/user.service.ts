@@ -55,58 +55,62 @@ export class UserService {
             },
           },
           {
-            $addFields: {
+            $group: {
+              _id: null,
               totalSupplyUSD: {
-                $multiply: ['$totalSupply', '$token.lastPrice'],
+                $sum: {
+                  $multiply: ['$totalSupply', '$token.lastPrice'],
+                },
               },
               totalBorrowUSD: {
-                $multiply: ['$totalBorrow', '$token.lastPrice'],
+                $sum: {
+                  $multiply: ['$totalBorrow', '$token.lastPrice'],
+                },
               },
             },
           },
           {
             $project: {
-              totalSupplied: {
-                $round: [{ $sum: 'totalSupplyUSD' }, 2],
-              },
-              totalBorrowed: {
-                $round: [{ $sum: 'totalBorrowUSD' }, 2],
-              },
+              _id: 0,
+              totalSupplied: { $toString: '$totalSupplyUSD' },
+              totalBorrowed: { $toString: '$totalBorrowUSD' },
               availableToBorrow: availableToBorrow
                 ? availableToBorrow.toString()
                 : '0',
               positionHealth: {
-                coefficient:
-                  availableToBorrow != 0
-                    ? {
-                        $round: [
-                          {
-                            $divide: [
-                              availableToBorrow,
-                              { $sum: 'totalBorrowUSD' },
-                            ],
-                          },
-                          2,
+                coefficient: {
+                  $cond: [
+                    { $eq: ['$totalBorrowUSD', 0] },
+                    '0',
+                    {
+                      $toString: {
+                        $divide: [
+                          availableToBorrow,
+                          { $toInt: '$totalBorrowUSD' },
                         ],
-                      }
-                    : '0',
+                      },
+                    },
+                  ],
+                },
                 percentage:
                   availableToBorrow != 0
                     ? {
-                        $round: [
-                          {
-                            $multiply: [
-                              {
-                                $divide: [
-                                  { $sum: 'totalBorrowUSD' },
-                                  availableToBorrow,
-                                ],
-                              },
-                              100,
-                            ],
-                          },
-                          0,
-                        ],
+                        $toString: {
+                          $round: [
+                            {
+                              $multiply: [
+                                {
+                                  $divide: [
+                                    { $toInt: '$totalBorrowUSD' },
+                                    availableToBorrow,
+                                  ],
+                                },
+                                100,
+                              ],
+                            },
+                            0,
+                          ],
+                        },
                       }
                     : '0',
               },
