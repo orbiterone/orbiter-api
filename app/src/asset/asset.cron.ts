@@ -136,7 +136,21 @@ export class AssetCron extends AssetService {
 
     for (const asset of assets) {
       try {
-        const price = await this.exchangeService.getPrice(asset.symbol);
+        let symbol = asset.symbol;
+        switch (symbol) {
+          case 'xcKSM':
+            symbol = 'KSM';
+            break;
+          case 'xcAUSD':
+            symbol = 'AUSD';
+            break;
+          case 'xcKBTC':
+            symbol = 'BTC';
+            break;
+        }
+        if (symbol == 'MAI' || symbol == 'AUSD') continue;
+
+        const price = await this.exchangeService.getPrice(symbol, 'USDT', 1);
         const parameter: any = {
           from: owner.address,
           to: this.oracleOrbiterCore.getToken(),
