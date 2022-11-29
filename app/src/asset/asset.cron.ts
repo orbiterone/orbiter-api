@@ -148,7 +148,7 @@ export class AssetCron extends AssetService {
             symbol = 'BTC';
             break;
         }
-        if (symbol == 'MAI' || symbol == 'AUSD') continue;
+        if (symbol == 'MAI' || symbol == 'AUSD' || symbol == 'FRAX') continue;
 
         const price = await this.exchangeService.getPrice(symbol, 'USDT', 1);
         const parameter: any = {
