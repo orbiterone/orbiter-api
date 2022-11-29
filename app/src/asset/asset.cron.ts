@@ -45,7 +45,7 @@ export class AssetCron extends AssetService {
     const assets = await this.assetRepository.find({});
     for (const asset of assets) {
       await this.updateAssetInfo(asset.oTokenAddress);
-      await this.wait(2000);
+      await this.wait(5000);
     }
   }
 

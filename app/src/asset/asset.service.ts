@@ -161,7 +161,7 @@ export class AssetService implements OnModuleInit {
       for (const oToken of supportMarkets) {
         if (oToken == '') continue;
         await this.updateAssetInfo(oToken);
-        await this.wait(2000);
+        await this.wait(5000);
       }
     }
   }
