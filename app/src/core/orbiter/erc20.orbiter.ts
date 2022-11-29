@@ -6,43 +6,32 @@ import { erc20Abi } from '@app/core/abi/contracts.json';
 
 @Injectable()
 export class Erc20OrbiterCore {
-  private erc20Token: string;
-
   constructor(private readonly web3Service: Web3Service) {}
 
-  setToken(erc20Token: string): this {
-    this.erc20Token = erc20Token;
-
-    return this;
-  }
-
-  contract(websocket = false): Contract {
-    if (!this.erc20Token) throw new Error('Need set erc20Token address');
+  contract(erc20Token: string, websocket = false): Contract {
+    if (!erc20Token) throw new Error('Need set erc20Token address');
 
     switch (websocket) {
       case true:
-        return this.web3Service.getContractByWebsocket(
-          this.erc20Token,
-          erc20Abi,
-        );
+        return this.web3Service.getContractByWebsocket(erc20Token, erc20Abi);
       case false:
-        return this.web3Service.getContract(this.erc20Token, erc20Abi);
+        return this.web3Service.getContract(erc20Token, erc20Abi);
     }
   }
 
-  async name(): Promise<string> {
-    return await this.contract().methods.name().call();
+  async name(erc20Token: string): Promise<string> {
+    return await this.contract(erc20Token).methods.name().call();
   }
 
-  async symbol(): Promise<string> {
-    return await this.contract().methods.symbol().call();
+  async symbol(erc20Token: string): Promise<string> {
+    return await this.contract(erc20Token).methods.symbol().call();
   }
 
-  async decimals(): Promise<string> {
-    return await this.contract().methods.decimals().call();
+  async decimals(erc20Token: string): Promise<string> {
+    return await this.contract(erc20Token).methods.decimals().call();
   }
 
-  async balanceOf(address: string): Promise<string> {
-    return await this.contract().methods.balanceOf(address).call();
+  async balanceOf(erc20Token: string, address: string): Promise<string> {
+    return await this.contract(erc20Token).methods.balanceOf(address).call();
   }
 }

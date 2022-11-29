@@ -16,7 +16,7 @@ export class MarketEvent extends EventService {
     const { supportMarkets: markets } = this.contracts;
 
     for (const token of Object.values(markets)) {
-      const contract = this.oTokenCore.setToken(token).contract(true);
+      const contract = this.oTokenCore.contract(token, true);
       contract.events
         .allEvents()
         .on('connected', function (subscriptionId) {
@@ -89,7 +89,7 @@ export class MarketEvent extends EventService {
         await checkToken.save();
       }
       const totalSupply = new Decimal(
-        await this.oTokenCore.setToken(token).balanceOfUnderlying(minter),
+        await this.oTokenCore.balanceOfUnderlying(token, minter),
       ).div(Math.pow(10, checkToken.tokenDecimal));
       await this.userService.userRepository
         .getUserTokenModel()
@@ -153,7 +153,7 @@ export class MarketEvent extends EventService {
         await checkToken.save();
       }
       const totalBorrow = new Decimal(
-        await this.oTokenCore.setToken(token).borrowBalanceCurrent(borrower),
+        await this.oTokenCore.borrowBalanceCurrent(token, borrower),
       ).div(Math.pow(10, checkToken.tokenDecimal));
       await this.userService.userRepository
         .getUserTokenModel()
@@ -289,7 +289,7 @@ export class MarketEvent extends EventService {
       .findOne({ oTokenAddress: { $regex: token, $options: 'i' } });
     if (checkToken) {
       const totalSupply = new Decimal(
-        await this.oTokenCore.setToken(token).balanceOfUnderlying(redeemer),
+        await this.oTokenCore.balanceOfUnderlying(token, redeemer),
       ).div(Math.pow(10, checkToken.tokenDecimal));
       if (totalSupply.eq(0) && checkToken.suppliers.includes(redeemer)) {
         checkToken.suppliers = checkToken.suppliers.filter(

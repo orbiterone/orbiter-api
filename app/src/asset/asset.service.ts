@@ -45,11 +45,10 @@ export class AssetService implements OnModuleInit {
 
   private async getAssetInfoFromBlockchain(oToken: string) {
     const client = this.web3Service.getClient();
-    this.oTokenCore.setToken(oToken);
 
     let underlying: string = null;
     if (oToken.toLowerCase() !== DEFAULT_TOKEN.toLowerCase()) {
-      underlying = await this.oTokenCore.underlying();
+      underlying = await this.oTokenCore.underlying(oToken);
     }
     const tokenData = {
       name: ['moonriver', 'moonbase'].includes(NODE_TYPE)
@@ -68,10 +67,11 @@ export class AssetService implements OnModuleInit {
         : SETTINGS.GLMR.fullName,
     };
     if (underlying) {
-      this.erc20OrbierCore.setToken(underlying);
-      tokenData.name = await this.erc20OrbierCore.name();
-      tokenData.symbol = await this.erc20OrbierCore.symbol();
-      tokenData.tokenDecimal = +(await this.erc20OrbierCore.decimals());
+      tokenData.name = await this.erc20OrbierCore.name(underlying);
+      tokenData.symbol = await this.erc20OrbierCore.symbol(underlying);
+      tokenData.tokenDecimal = +(await this.erc20OrbierCore.decimals(
+        underlying,
+      ));
       tokenData.color = SETTINGS[tokenData.symbol].color;
       tokenData.image = SETTINGS[tokenData.symbol].image;
       tokenData.fullName = SETTINGS[tokenData.symbol].fullName;
@@ -80,27 +80,27 @@ export class AssetService implements OnModuleInit {
       await this.controllerOrbiterCore.collateralFactorMantissa(oToken);
 
     const exchangeRate = new Decimal(
-      await this.oTokenCore.exchangeRateCurrent(),
+      await this.oTokenCore.exchangeRateCurrent(oToken),
     ).div(Math.pow(10, 18 + tokenData.tokenDecimal - 8));
 
-    const oTokenDecimal = +(await this.oTokenCore.decimals());
+    const oTokenDecimal = +(await this.oTokenCore.decimals(oToken));
 
-    const totalSupply = new Decimal(await this.oTokenCore.totalSupply())
+    const totalSupply = new Decimal(await this.oTokenCore.totalSupply(oToken))
       .div(Math.pow(10, oTokenDecimal))
       .mul(exchangeRate);
-    const totalBorrow = new Decimal(await this.oTokenCore.totalBorrows()).div(
-      Math.pow(10, tokenData.tokenDecimal),
-    );
+    const totalBorrow = new Decimal(
+      await this.oTokenCore.totalBorrows(oToken),
+    ).div(Math.pow(10, tokenData.tokenDecimal));
     const totalReserves = new Decimal(
-      await this.oTokenCore.totalReserves(),
+      await this.oTokenCore.totalReserves(oToken),
     ).div(Math.pow(10, tokenData.tokenDecimal));
     const lastPrice = web3.utils.fromWei(
       `${await this.oracleOrbiterCore.getUnderlyingPrice(oToken)}`,
       'ether',
     );
 
-    const supplyApy = await this.oTokenCore.supplyApy();
-    const borrowApy = await this.oTokenCore.borrowApy();
+    const supplyApy = await this.oTokenCore.supplyApy(oToken);
+    const borrowApy = await this.oTokenCore.borrowApy(oToken);
 
     let liquidity = new Decimal(0);
     if (!underlying) {
@@ -108,9 +108,9 @@ export class AssetService implements OnModuleInit {
         `${client.utils.fromWei(await client.eth.getBalance(oToken), 'ether')}`,
       );
     } else {
-      liquidity = new Decimal(await this.erc20OrbierCore.balanceOf(oToken)).div(
-        Math.pow(10, tokenData.tokenDecimal),
-      );
+      liquidity = new Decimal(
+        await this.erc20OrbierCore.balanceOf(underlying, oToken),
+      ).div(Math.pow(10, tokenData.tokenDecimal));
     }
 
     return {
@@ -123,7 +123,7 @@ export class AssetService implements OnModuleInit {
         +web3.utils.fromWei(`${collateralFactorMantissa}`, 'ether') * 100,
       reserveFactor:
         +web3.utils.fromWei(
-          `${await this.oTokenCore.reserveFactorMantissa()}`,
+          `${await this.oTokenCore.reserveFactorMantissa(oToken)}`,
           'ether',
         ) * 100,
       totalSupply: Decimal128(totalSupply.toString()),
@@ -420,9 +420,10 @@ export class AssetService implements OnModuleInit {
             .toString();
         } else {
           balance = new Decimal(
-            await this.erc20OrbierCore
-              .setToken(asset.tokenAddress)
-              .balanceOf(user.address),
+            await this.erc20OrbierCore.balanceOf(
+              asset.tokenAddress,
+              user.address,
+            ),
           )
             .div(Math.pow(10, asset.tokenDecimal))
             .toString();
