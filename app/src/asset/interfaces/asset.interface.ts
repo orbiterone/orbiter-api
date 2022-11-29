@@ -167,6 +167,12 @@ class TokenInfoData {
 
   @ApiProperty()
   name: string;
+
+  @ApiProperty()
+  tokenDecimal: number;
+
+  @ApiProperty()
+  tokenAddress: string;
 }
 
 export class AssetBalanceByAccountResponse {

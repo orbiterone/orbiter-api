@@ -18,6 +18,9 @@ export class UserBalanceResponse {
   @ApiProperty()
   availableToBorrow: string;
 
+  @ApiProperty()
+  totalCollateral: string;
+
   @ApiProperty({ type: PositionHealth })
   positionHealth: PositionHealth;
 }
