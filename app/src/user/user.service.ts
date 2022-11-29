@@ -115,7 +115,7 @@ export class UserService {
               availableToBorrow: availableToBorrow
                 ? availableToBorrow.toString()
                 : '0',
-              totalCollateral: collateral.totalCollateral
+              totalCollateral: collateral?.totalCollateral
                 ? collateral.totalCollateral.toString()
                 : '0',
               positionHealth: {
