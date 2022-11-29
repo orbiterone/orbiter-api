@@ -16,7 +16,7 @@ export class TokenEvent extends EventService {
     const { tokens } = this.contracts;
 
     for (const token of Object.values(tokens)) {
-      const contract = this.erc20OrbierCore.setToken(token).contract(true);
+      const contract = this.erc20OrbierCore.contract(token, true);
       contract.events
         .allEvents()
         .on('connected', function (subscriptionId) {
