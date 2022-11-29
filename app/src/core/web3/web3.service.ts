@@ -113,4 +113,40 @@ export class Web3Service {
 
     return this.contractsWebsocket[typeNetwork][contractAddress];
   }
+
+  async createTx(
+    parameter: Record<string, any>,
+    ownerKey: string,
+  ): Promise<string> {
+    const web3 = this.getClient();
+    return new Promise(async (resolve, reject) => {
+      try {
+        const nonce = await web3.eth.getTransactionCount(
+          parameter.from,
+          'pending',
+        );
+
+        const gasLimit = await web3.eth.estimateGas(parameter);
+        parameter.gasLimit = web3.utils.toHex(gasLimit);
+        const gasPrice = +(await web3.eth.getGasPrice());
+        parameter.gasPrice = web3.utils.toHex(gasPrice);
+        parameter.value = '0x0';
+        parameter.nonce = nonce;
+
+        const signedTx = await web3.eth.accounts.signTransaction(
+          parameter,
+          ownerKey.replace('0x', ''),
+        );
+
+        await web3.eth
+          .sendSignedTransaction(signedTx.rawTransaction)
+          .once('transactionHash', (hash) => {
+            return resolve(hash);
+          })
+          .on('error', (err) => reject(err));
+      } catch (err) {
+        return reject(err);
+      }
+    });
+  }
 }

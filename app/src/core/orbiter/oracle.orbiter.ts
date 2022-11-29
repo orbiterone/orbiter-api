@@ -14,7 +14,11 @@ export class OracleOrbiterCore {
     this.oracle = oracle;
   }
 
-  private contract(): Contract {
+  getToken(): string {
+    return this.oracle;
+  }
+
+  contract(): Contract {
     if (!this.oracle) throw new Error('Need set oracle address');
 
     return this.web3Service.getContract(this.oracle, priceFeedAbi);

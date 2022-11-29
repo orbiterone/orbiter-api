@@ -17,6 +17,7 @@ import {
   AssetCompositionByAccountResponse,
 } from './interfaces/asset.interface';
 import { UserRepository } from '@app/user/user.repository';
+import { ExchangeService } from '@app/core/exchange/exchange.service';
 
 const web3 = new Web3();
 
@@ -28,6 +29,7 @@ Decimal.set({ toExpNeg: -30, toExpPos: 30 });
 export class AssetService implements OnModuleInit {
   constructor(
     public readonly web3Service: Web3Service,
+    public readonly exchangeService: ExchangeService,
     public readonly assetRepository: AssetRepository,
     public readonly oTokenCore: OTokenOrbiterCore,
     public readonly erc20OrbierCore: Erc20OrbiterCore,
