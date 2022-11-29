@@ -434,6 +434,8 @@ export class AssetService implements OnModuleInit {
           image: asset.image,
           symbol: asset.symbol,
           name: asset.fullName,
+          tokenDecimal: asset.tokenDecimal,
+          tokenAddress: asset.tokenAddress,
         },
         walletBalance: balance,
       });

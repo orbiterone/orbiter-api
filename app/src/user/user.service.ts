@@ -33,6 +33,44 @@ export class UserService {
       );
     }
 
+    const collateral = (
+      await this.userRepository.getAggregateValueUserToken([
+        {
+          $match: {
+            user: user ? user._id : null,
+          },
+        },
+        {
+          $lookup: {
+            from: 'tokens',
+            localField: 'token',
+            foreignField: '_id',
+            as: 'token',
+          },
+        },
+        {
+          $unwind: {
+            path: '$token',
+          },
+        },
+        {
+          $match: {
+            collateral: true,
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalCollateral: {
+              $sum: {
+                $multiply: ['$token.collateralFactor', '$token.lastPrice'],
+              },
+            },
+          },
+        },
+      ])
+    ).pop();
+
     return (
       (
         await this.userRepository.getAggregateValueUserToken([
@@ -76,6 +114,9 @@ export class UserService {
               totalBorrowed: { $toString: '$totalBorrowUSD' },
               availableToBorrow: availableToBorrow
                 ? availableToBorrow.toString()
+                : '0',
+              totalCollateral: collateral?.totalCollateral
+                ? collateral.totalCollateral.toString()
                 : '0',
               positionHealth: {
                 coefficient: {
