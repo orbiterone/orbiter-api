@@ -12,71 +12,63 @@ import { cErcAbi, cEthAbi } from '@app/core/abi/contracts.json';
 
 @Injectable()
 export class OTokenOrbiterCore {
-  private oToken: string;
-
   constructor(private readonly web3Service: Web3Service) {}
 
-  setToken(oToken: string): this {
-    this.oToken = oToken;
-
-    return this;
-  }
-
-  contract(websocket = false): Contract {
-    if (!this.oToken) throw new Error('Need set oToken address');
+  contract(oToken: string, websocket = false): Contract {
+    if (!oToken) throw new Error('Need set oToken address');
 
     switch (websocket) {
       case true:
         return this.web3Service.getContractByWebsocket(
-          this.oToken,
-          this.oToken.toLowerCase() === DEFAULT_TOKEN.toLowerCase()
+          oToken,
+          oToken.toLowerCase() === DEFAULT_TOKEN.toLowerCase()
             ? cEthAbi
             : cErcAbi,
         );
       case false:
         return this.web3Service.getContract(
-          this.oToken,
-          this.oToken.toLowerCase() === DEFAULT_TOKEN.toLowerCase()
+          oToken,
+          oToken.toLowerCase() === DEFAULT_TOKEN.toLowerCase()
             ? cEthAbi
             : cErcAbi,
         );
     }
   }
 
-  async underlying(): Promise<string> {
-    return await this.contract().methods.underlying().call();
+  async underlying(oToken: string): Promise<string> {
+    return await this.contract(oToken).methods.underlying().call();
   }
 
-  async totalSupply(): Promise<string> {
-    return await this.contract().methods.totalSupply().call();
+  async totalSupply(oToken: string): Promise<string> {
+    return await this.contract(oToken).methods.totalSupply().call();
   }
 
-  async totalBorrows(): Promise<string> {
-    return await this.contract().methods.totalBorrows().call();
+  async totalBorrows(oToken: string): Promise<string> {
+    return await this.contract(oToken).methods.totalBorrows().call();
   }
 
-  async totalReserves(): Promise<string> {
-    return await this.contract().methods.totalReserves().call();
+  async totalReserves(oToken: string): Promise<string> {
+    return await this.contract(oToken).methods.totalReserves().call();
   }
 
-  async decimals(): Promise<string> {
-    return await this.contract().methods.decimals().call();
+  async decimals(oToken: string): Promise<string> {
+    return await this.contract(oToken).methods.decimals().call();
   }
 
-  async reserveFactorMantissa(): Promise<string> {
-    return await this.contract().methods.reserveFactorMantissa().call();
+  async reserveFactorMantissa(oToken: string): Promise<string> {
+    return await this.contract(oToken).methods.reserveFactorMantissa().call();
   }
 
-  async exchangeRateCurrent(): Promise<string> {
-    return await this.contract().methods.exchangeRateCurrent().call();
+  async exchangeRateCurrent(oToken: string): Promise<string> {
+    return await this.contract(oToken).methods.exchangeRateCurrent().call();
   }
 
-  async supplyRatePerBlock(): Promise<string> {
-    return await this.contract().methods.supplyRatePerBlock().call();
+  async supplyRatePerBlock(oToken: string): Promise<string> {
+    return await this.contract(oToken).methods.supplyRatePerBlock().call();
   }
 
-  async borrowRatePerBlock(): Promise<string> {
-    return await this.contract().methods.borrowRatePerBlock().call();
+  async borrowRatePerBlock(oToken: string): Promise<string> {
+    return await this.contract(oToken).methods.borrowRatePerBlock().call();
   }
 
   private calculateApy(rate: number): number {
@@ -85,23 +77,27 @@ export class OTokenOrbiterCore {
     );
   }
 
-  async supplyApy(): Promise<number> {
-    return this.calculateApy(+(await this.supplyRatePerBlock()));
+  async supplyApy(oToken: string): Promise<number> {
+    return this.calculateApy(+(await this.supplyRatePerBlock(oToken)));
   }
 
-  async borrowApy(): Promise<number> {
-    return this.calculateApy(+(await this.borrowRatePerBlock()));
+  async borrowApy(oToken: string): Promise<number> {
+    return this.calculateApy(+(await this.borrowRatePerBlock(oToken)));
   }
 
-  async balanceOf(account: string) {
-    return await this.contract().methods.balanceOf(account).call();
+  async balanceOf(oToken: string, account: string) {
+    return await this.contract(oToken).methods.balanceOf(account).call();
   }
 
-  async balanceOfUnderlying(account: string) {
-    return await this.contract().methods.balanceOfUnderlying(account).call();
+  async balanceOfUnderlying(oToken: string, account: string) {
+    return await this.contract(oToken)
+      .methods.balanceOfUnderlying(account)
+      .call();
   }
 
-  async borrowBalanceCurrent(account: string) {
-    return await this.contract().methods.borrowBalanceCurrent(account).call();
+  async borrowBalanceCurrent(oToken: string, account: string) {
+    return await this.contract(oToken)
+      .methods.borrowBalanceCurrent(account)
+      .call();
   }
 }

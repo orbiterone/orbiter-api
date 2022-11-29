@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression, Timeout } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import Web3 from 'web3';
 import moment from 'moment';
 import { Decimal } from 'decimal.js';
@@ -64,14 +64,16 @@ export class AssetCron extends AssetService {
           const assets = await this.assetRepository.find({});
           for (const asset of assets) {
             const totalSupply = new Decimal(
-              await this.oTokenCore
-                .setToken(asset.oTokenAddress)
-                .balanceOfUnderlying(user.address),
+              await this.oTokenCore.balanceOfUnderlying(
+                asset.oTokenAddress,
+                user.address,
+              ),
             ).div(Math.pow(10, asset.tokenDecimal));
             const totalBorrow = new Decimal(
-              await this.oTokenCore
-                .setToken(asset.oTokenAddress)
-                .borrowBalanceCurrent(user.address),
+              await this.oTokenCore.borrowBalanceCurrent(
+                asset.oTokenAddress,
+                user.address,
+              ),
             ).div(Math.pow(10, asset.tokenDecimal));
             if (totalSupply.eq(0) && totalBorrow.eq(0)) continue;
             const objUpdateAsset = { $push: {} };
