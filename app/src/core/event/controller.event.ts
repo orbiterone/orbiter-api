@@ -74,6 +74,7 @@ export class ControllerEvent extends EventService {
                 event: event.event,
                 status: true,
                 typeNetwork: NODE_TYPE,
+                txHash,
                 data: {
                   oToken,
                   user: account,
