@@ -1,7 +1,13 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  OnModuleInit,
+} from '@nestjs/common';
 import Web3 from 'web3';
 import { Decimal } from 'decimal.js';
 import { InjectRedisClient, RedisClient } from '@webeleon/nestjs-redis';
+import { isEthereumAddress } from 'class-validator';
 
 import { Web3Service } from '@app/core/web3/web3.service';
 import { AssetRepository } from './asset.repository';
@@ -404,7 +410,12 @@ export class AssetService implements OnModuleInit {
     return { supplied, borrowed };
   }
 
-  async assetsListForFaucet(user: User | null) {
+  async assetsListForFaucet(user: User | null, userAddress: string) {
+    if (!isEthereumAddress(userAddress))
+      throw new HttpException(
+        'Address is not correct.',
+        HttpStatus.BAD_REQUEST,
+      );
     const assets = await this.assetRepository.find({
       select: 'tokenAddress image symbol fullName tokenDecimal oTokenAddress',
       options: {},
@@ -413,10 +424,12 @@ export class AssetService implements OnModuleInit {
     const assetList = [];
     for (const asset of assets) {
       let balance = '0';
-      if (user) {
+      if (user || userAddress) {
         if (asset.oTokenAddress.toLowerCase() == DEFAULT_TOKEN.toLowerCase()) {
           balance = new Decimal(
-            await this.web3Service.getClient().eth.getBalance(user.address),
+            await this.web3Service
+              .getClient()
+              .eth.getBalance(user?.address || userAddress),
           )
             .div(Math.pow(10, asset.tokenDecimal))
             .toString();
@@ -424,7 +437,7 @@ export class AssetService implements OnModuleInit {
           balance = new Decimal(
             await this.erc20OrbierCore.balanceOf(
               asset.tokenAddress,
-              user.address,
+              user?.address || userAddress,
             ),
           )
             .div(Math.pow(10, asset.tokenDecimal))

@@ -73,9 +73,14 @@ export class AssetController {
   async assetsBalances(
     @Response() res: any,
     @Param('account', UserByAddressPipe) user: User | null,
+    @Param('account') userAddress: string,
   ) {
     return res
       .status(HttpStatus.OK)
-      .json(jsend.success(await this.assetService.assetsListForFaucet(user)));
+      .json(
+        jsend.success(
+          await this.assetService.assetsListForFaucet(user, userAddress),
+        ),
+      );
   }
 }
