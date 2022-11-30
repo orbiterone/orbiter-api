@@ -37,15 +37,13 @@ export class TokenEvent extends EventService {
               const transaction = await this.web3Service
                 .getClient()
                 .eth.getTransaction(txHash);
-              if (
-                transaction.to &&
-                transaction.to.toLowerCase() !== spender.toLowerCase()
-              ) {
-                return;
-              }
+
               const checkToken = await this.assetService.assetRepository
                 .getTokenModel()
-                .findOne({ oTokenAddress: { $regex: spender, $options: 'i' } });
+                .findOne({
+                  tokenAddress: { $regex: transaction.to, $options: 'i' },
+                  oTokenAddress: { $regex: spender, $options: 'i' },
+                });
 
               if (checkToken) {
                 await this.transactionService.transactionRepository.transactionCreate(
