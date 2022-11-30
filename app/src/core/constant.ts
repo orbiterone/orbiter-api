@@ -20,7 +20,7 @@ import {
   settings as MoonbeamSettings,
 } from '@app/core/contracts/moonbeam.json';
 
-const { NODE_TYPE } = process.env;
+const { NODE_TYPE, PRICE_FEED_OWNER_KEY } = process.env;
 
 const ethMantissa = 1e18;
 const blocksPerDay = 7200; // 15 seconds per block
@@ -71,4 +71,5 @@ export {
   TOKENS,
   NODE_TYPE,
   SETTINGS,
+  PRICE_FEED_OWNER_KEY,
 };

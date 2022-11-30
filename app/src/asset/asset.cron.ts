@@ -6,7 +6,7 @@ import { Decimal } from 'decimal.js';
 
 import { Decimal128 } from '@app/core/schemas/user.schema';
 import { AssetService } from './asset.service';
-import { NODE_TYPE } from '@app/core/constant';
+import { NODE_TYPE, PRICE_FEED_OWNER_KEY } from '@app/core/constant';
 
 const web3 = new Web3();
 
@@ -120,5 +120,50 @@ export class AssetCron extends AssetService {
         },
         { parallel: 5 },
       );
+  }
+
+  @Cron(CronExpression.EVERY_HOUR)
+  async updatePriceFeed() {
+    console.log(`Job updatePriceFeed start - ${new Date()}`);
+    if (NODE_TYPE != 'moonbase') return;
+    const assets = await this.assetRepository.find({});
+    const oracleContract = this.oracleOrbiterCore.contract();
+
+    const owner = this.web3Service
+      .getClient()
+      .eth.accounts.privateKeyToAccount(PRICE_FEED_OWNER_KEY);
+
+    for (const asset of assets) {
+      try {
+        let symbol = asset.symbol;
+        switch (symbol) {
+          case 'xcKSM':
+            symbol = 'KSM';
+            break;
+          case 'xcAUSD':
+            symbol = 'AUSD';
+            break;
+          case 'xcKBTC':
+            symbol = 'BTC';
+            break;
+        }
+        if (symbol == 'MAI' || symbol == 'AUSD' || symbol == 'FRAX') continue;
+
+        const price = await this.exchangeService.getPrice(symbol, 'USDT', 1);
+        const parameter: any = {
+          from: owner.address,
+          to: this.oracleOrbiterCore.getToken(),
+          data: oracleContract.methods
+            .setUnderlyingPrice(
+              asset.oTokenAddress,
+              web3.utils.toWei(`${price}`, 'ether'),
+            )
+            .encodeABI(),
+        };
+        await this.web3Service.createTx(parameter, PRICE_FEED_OWNER_KEY);
+      } catch (err) {
+        console.log(err.message);
+      }
+    }
   }
 }
