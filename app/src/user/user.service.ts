@@ -119,7 +119,7 @@ export class UserService {
               positionHealth: {
                 coefficient: {
                   $cond: [
-                    { $eq: ['$totalBorrowUSD', 0] },
+                    { $eq: [{ $round: ['$totalBorrowUSD', 3] }, 0] },
                     '100',
                     {
                       $toString: {
