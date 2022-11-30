@@ -69,7 +69,7 @@ export class UserService {
           },
         },
       ])
-    ).pop();
+    ).pop() || { totalCollateral: Decimal128('0') };
 
     return (
       (
@@ -115,26 +115,24 @@ export class UserService {
               availableToBorrow: availableToBorrow
                 ? availableToBorrow.toString()
                 : '0',
-              totalCollateral: collateral?.totalCollateral
-                ? collateral.totalCollateral.toString()
-                : '0',
+              totalCollateral: collateral.totalCollateral.toString(),
               positionHealth: {
                 coefficient: {
                   $cond: [
                     { $eq: ['$totalBorrowUSD', 0] },
-                    '0',
+                    '100',
                     {
                       $toString: {
                         $divide: [
-                          availableToBorrow,
-                          { $toInt: '$totalBorrowUSD' },
+                          collateral.totalCollateral,
+                          '$totalBorrowUSD',
                         ],
                       },
                     },
                   ],
                 },
                 percentage:
-                  availableToBorrow != 0
+                  collateral.totalCollateral != 0
                     ? {
                         $toString: {
                           $round: [
@@ -143,13 +141,13 @@ export class UserService {
                                 {
                                   $divide: [
                                     { $toInt: '$totalBorrowUSD' },
-                                    availableToBorrow,
+                                    collateral.totalCollateral,
                                   ],
                                 },
                                 100,
                               ],
                             },
-                            0,
+                            2,
                           ],
                         },
                       }
