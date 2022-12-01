@@ -63,7 +63,17 @@ export class UserService {
             _id: null,
             totalCollateral: {
               $sum: {
-                $multiply: ['$token.collateralFactor', '$token.lastPrice'],
+                $multiply: [
+                  {
+                    $multiply: [
+                      '$totalSupply',
+                      {
+                        $divide: ['$token.collateralFactor', 100],
+                      },
+                    ],
+                  },
+                  '$token.lastPrice',
+                ],
               },
             },
           },
@@ -122,12 +132,28 @@ export class UserService {
                     { $eq: [{ $round: ['$totalBorrowUSD', 3] }, 0] },
                     '100',
                     {
-                      $toString: {
-                        $divide: [
-                          collateral.totalCollateral,
-                          '$totalBorrowUSD',
-                        ],
-                      },
+                      $cond: [
+                        {
+                          $gte: [
+                            {
+                              $divide: [
+                                collateral.totalCollateral,
+                                '$totalBorrowUSD',
+                              ],
+                            },
+                            100,
+                          ],
+                        },
+                        '100',
+                        {
+                          $toString: {
+                            $divide: [
+                              collateral.totalCollateral,
+                              '$totalBorrowUSD',
+                            ],
+                          },
+                        },
+                      ],
                     },
                   ],
                 },
