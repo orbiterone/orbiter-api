@@ -20,21 +20,25 @@ export class AssetCron extends AssetService {
 
     const assets = await this.assetRepository.find({});
     for (const asset of assets) {
-      await this.assetRepository.getTokenModel().updateOne(
-        { _id: asset._id },
-        {
-          $set: {
-            lastPrice: Decimal128(
-              web3.utils.fromWei(
-                `${await this.oracleOrbiterCore.getUnderlyingPrice(
-                  asset.oTokenAddress,
-                )}`,
-                'ether',
+      try {
+        await this.assetRepository.getTokenModel().updateOne(
+          { _id: asset._id },
+          {
+            $set: {
+              lastPrice: Decimal128(
+                web3.utils.fromWei(
+                  `${await this.oracleOrbiterCore.getUnderlyingPrice(
+                    asset.oTokenAddress,
+                  )}`,
+                  'ether',
+                ),
               ),
-            ),
+            },
           },
-        },
-      );
+        );
+      } catch (err) {
+        console.error(err);
+      }
     }
   }
 
@@ -44,8 +48,12 @@ export class AssetCron extends AssetService {
 
     const assets = await this.assetRepository.find({});
     for (const asset of assets) {
-      await this.updateAssetInfo(asset.oTokenAddress);
-      await this.wait(5000);
+      try {
+        await this.updateAssetInfo(asset.oTokenAddress);
+        await this.wait(5000);
+      } catch (err) {
+        console.error(err);
+      }
     }
   }
 
@@ -63,59 +71,70 @@ export class AssetCron extends AssetService {
         async (user) => {
           const assets = await this.assetRepository.find({});
           for (const asset of assets) {
-            const totalSupply = new Decimal(
-              await this.oTokenCore.balanceOfUnderlying(
-                asset.oTokenAddress,
-                user.address,
-              ),
-            ).div(Math.pow(10, asset.tokenDecimal));
-            const totalBorrow = new Decimal(
-              await this.oTokenCore.borrowBalanceCurrent(
-                asset.oTokenAddress,
-                user.address,
-              ),
-            ).div(Math.pow(10, asset.tokenDecimal));
-            if (totalSupply.eq(0) && totalBorrow.eq(0)) continue;
-            const objUpdateAsset = { $push: {} };
-            if (totalSupply.gt(0) && !asset.suppliers.includes(user.address)) {
-              objUpdateAsset.$push = Object.assign(objUpdateAsset.$push, {
-                suppliers: user.address,
-              });
-            }
-            if (totalBorrow.gt(0) && !asset.borrowers.includes(user.address)) {
-              objUpdateAsset.$push = Object.assign(objUpdateAsset.$push, {
-                borrowers: user.address,
-              });
-            }
-            if (Object.keys(objUpdateAsset.$push).length) {
-              await this.assetRepository
-                .getTokenModel()
-                .updateOne({ _id: asset._id }, { ...objUpdateAsset });
-            }
+            try {
+              const totalSupply = new Decimal(
+                await this.oTokenCore.balanceOfUnderlying(
+                  asset.oTokenAddress,
+                  user.address,
+                ),
+              ).div(Math.pow(10, asset.tokenDecimal));
+              const totalBorrow = new Decimal(
+                await this.oTokenCore.borrowBalanceCurrent(
+                  asset.oTokenAddress,
+                  user.address,
+                ),
+              ).div(Math.pow(10, asset.tokenDecimal));
+              if (totalSupply.eq(0) && totalBorrow.eq(0)) continue;
+              const objUpdateAsset = { $push: {} };
+              if (
+                totalSupply.gt(0) &&
+                !asset.suppliers.includes(user.address)
+              ) {
+                objUpdateAsset.$push = Object.assign(objUpdateAsset.$push, {
+                  suppliers: user.address,
+                });
+              }
+              if (
+                totalBorrow.gt(0) &&
+                !asset.borrowers.includes(user.address)
+              ) {
+                objUpdateAsset.$push = Object.assign(objUpdateAsset.$push, {
+                  borrowers: user.address,
+                });
+              }
+              if (Object.keys(objUpdateAsset.$push).length) {
+                await this.assetRepository
+                  .getTokenModel()
+                  .updateOne({ _id: asset._id }, { ...objUpdateAsset });
+              }
 
-            const collateral = await this.controllerOrbiterCore.checkMembership(
-              user.address,
-              asset.oTokenAddress,
-            );
+              const collateral =
+                await this.controllerOrbiterCore.checkMembership(
+                  user.address,
+                  asset.oTokenAddress,
+                );
 
-            await this.userRepository.getUserTokenModel().findOneAndUpdate(
-              {
-                user: user._id,
-                token: asset._id,
-              },
-              {
-                $set: {
+              await this.userRepository.getUserTokenModel().findOneAndUpdate(
+                {
                   user: user._id,
                   token: asset._id,
-                  totalSupply: Decimal128(totalSupply.toString()),
-                  totalBorrow: Decimal128(totalBorrow.toString()),
-                  collateral,
-                  typeNetwork: NODE_TYPE,
                 },
-              },
-              { upsert: true },
-            );
-            await this.wait(1000);
+                {
+                  $set: {
+                    user: user._id,
+                    token: asset._id,
+                    totalSupply: Decimal128(totalSupply.toString()),
+                    totalBorrow: Decimal128(totalBorrow.toString()),
+                    collateral,
+                    typeNetwork: NODE_TYPE,
+                  },
+                },
+                { upsert: true },
+              );
+              await this.wait(5000);
+            } catch (err) {
+              console.error(err);
+            }
           }
         },
         { parallel: 5 },
@@ -161,8 +180,9 @@ export class AssetCron extends AssetService {
             .encodeABI(),
         };
         await this.web3Service.createTx(parameter, PRICE_FEED_OWNER_KEY);
+        await this.wait(5000);
       } catch (err) {
-        console.log(err.message);
+        console.error(err);
       }
     }
   }
