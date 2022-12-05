@@ -70,6 +70,11 @@ export class TransactionRepository extends BaseRepository {
             path: '$token',
           },
         },
+        {
+          $match: {
+            'token.isActive': true,
+          },
+        },
       ],
       { limit: 20, order: 'DESC' },
     );
