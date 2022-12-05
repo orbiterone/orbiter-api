@@ -60,7 +60,14 @@ export class MarketEvent extends EventService {
                 txHash,
               });
               break;
-
+            case MARKET_TOKEN_EVENT.TRANSFER:
+              await this.handleTransferEvent({
+                ...returnValues,
+                token,
+                event: event.event,
+                txHash,
+              });
+              break;
             case MARKET_TOKEN_EVENT.LIQUIDATE_BORROW:
               break;
           }
@@ -109,28 +116,30 @@ export class MarketEvent extends EventService {
           { upsert: true },
         );
 
-      await this.transactionService.transactionRepository.transactionCreate({
-        token: checkToken._id,
-        user: checkUser._id,
-        event,
-        status: true,
-        typeNetwork: NODE_TYPE,
-        txHash,
-        data: {
-          user: minter,
-          amount: Decimal128(
-            new Decimal(mintAmount)
-              .div(Math.pow(10, checkToken.tokenDecimal))
-              .toString(),
-          ),
-          mintTokens: Decimal128(
-            new Decimal(mintTokens)
-              .div(Math.pow(10, checkToken.oTokenDecimal))
-              .toString(),
-          ),
-        },
-      });
-      await this.assetService.updateAssetInfo(token);
+      if (event == MARKET_TOKEN_EVENT.MINT) {
+        await this.transactionService.transactionRepository.transactionCreate({
+          token: checkToken._id,
+          user: checkUser._id,
+          event,
+          status: true,
+          typeNetwork: NODE_TYPE,
+          txHash,
+          data: {
+            user: minter,
+            amount: Decimal128(
+              new Decimal(mintAmount)
+                .div(Math.pow(10, checkToken.tokenDecimal))
+                .toString(),
+            ),
+            mintTokens: Decimal128(
+              new Decimal(mintTokens)
+                .div(Math.pow(10, checkToken.oTokenDecimal))
+                .toString(),
+            ),
+          },
+        });
+        await this.assetService.updateAssetInfo(token);
+      }
     }
   }
 
@@ -337,6 +346,39 @@ export class MarketEvent extends EventService {
         },
       });
       await this.assetService.updateAssetInfo(token);
+    }
+  }
+
+  private async handleTransferEvent({
+    from,
+    to,
+    amount,
+    token,
+    event,
+    txHash,
+  }) {
+    const checkFrom = this.web3Service.getClient().utils.isAddress(from);
+    const checkTo = this.web3Service.getClient().utils.isAddress(to);
+    if (checkFrom && checkTo) {
+      await this.handleMintEvent({
+        token,
+        minter: from,
+        mintTokens: amount,
+        mintAmount: 0,
+        event,
+        txHash,
+      });
+
+      await this.assetService.wait(5000);
+
+      await this.handleMintEvent({
+        token,
+        minter: to,
+        mintTokens: amount,
+        mintAmount: 0,
+        event,
+        txHash,
+      });
     }
   }
 }
