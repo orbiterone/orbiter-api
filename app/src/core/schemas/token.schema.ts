@@ -83,6 +83,9 @@ export class Token {
   @Prop({ type: [String] })
   borrowers: string[];
 
+  @Prop()
+  isActive: boolean;
+
   countSuppliers: number;
   countBorrowers: number;
   utilization: number;
