@@ -56,6 +56,7 @@ export class UserService {
         {
           $match: {
             collateral: true,
+            'token.isActive': true,
           },
         },
         {
@@ -100,6 +101,11 @@ export class UserService {
           {
             $unwind: {
               path: '$token',
+            },
+          },
+          {
+            $match: {
+              'token.isActive': true,
             },
           },
           {
