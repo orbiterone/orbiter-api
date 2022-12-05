@@ -121,6 +121,19 @@ export class UserService {
                   $multiply: ['$totalBorrow', '$token.lastPrice'],
                 },
               },
+              assurance: {
+                $sum: {
+                  $multiply: [
+                    {
+                      $divide: [
+                        { $multiply: ['$totalBorrow', '$token.lastPrice'] },
+                        '$token.collateralFactor',
+                      ],
+                    },
+                    100,
+                  ],
+                },
+              },
             },
           },
           {
@@ -128,6 +141,7 @@ export class UserService {
               _id: 0,
               totalSupplied: { $toString: '$totalSupplyUSD' },
               totalBorrowed: { $toString: '$totalBorrowUSD' },
+              assurance: { $toString: '$assurance' },
               availableToBorrow: availableToBorrow
                 ? availableToBorrow.toString()
                 : '0',
@@ -191,6 +205,7 @@ export class UserService {
       ).pop() || {
         totalSupplied: '0',
         totalBorrowed: '0',
+        assurance: '0',
         availableToBorrow: '0',
         positionHealth: { coefficient: '0', percentage: '0' },
       }

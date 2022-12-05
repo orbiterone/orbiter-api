@@ -16,6 +16,9 @@ export class UserBalanceResponse {
   totalBorrowed: string;
 
   @ApiProperty()
+  assurance: string;
+
+  @ApiProperty()
   availableToBorrow: string;
 
   @ApiProperty()
