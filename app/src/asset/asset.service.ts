@@ -366,14 +366,9 @@ export class AssetService implements OnModuleInit {
                   token: '$$item.token',
                   percent: {
                     $toString: {
-                      $round: [
-                        {
-                          $divide: [
-                            { $multiply: ['$$item.usd', 100] },
-                            '$totalSupplyUSD',
-                          ],
-                        },
-                        2,
+                      $divide: [
+                        { $multiply: ['$$item.usd', 100] },
+                        '$totalSupplyUSD',
                       ],
                     },
                   },
@@ -388,14 +383,9 @@ export class AssetService implements OnModuleInit {
                   token: '$$item.token',
                   percent: {
                     $toString: {
-                      $round: [
-                        {
-                          $divide: [
-                            { $multiply: ['$$item.usd', 100] },
-                            '$totalBorrowUSD',
-                          ],
-                        },
-                        2,
+                      $divide: [
+                        { $multiply: ['$$item.usd', 100] },
+                        '$totalBorrowUSD',
                       ],
                     },
                   },
