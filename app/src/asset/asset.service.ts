@@ -219,7 +219,7 @@ export class AssetService implements OnModuleInit {
                   tokenDecimal: '$token.tokenDecimal',
                 },
                 collateral: '$collateral',
-                value: '$totalSupply',
+                value: { $toString: '$totalSupply' },
               },
             },
             borrowed: {
@@ -233,7 +233,7 @@ export class AssetService implements OnModuleInit {
                   tokenDecimal: '$token.tokenDecimal',
                 },
                 collateral: '$collateral',
-                value: '$totalBorrow',
+                value: { $toString: '$totalBorrow' },
               },
             },
           },
@@ -245,14 +245,14 @@ export class AssetService implements OnModuleInit {
               $filter: {
                 input: '$supplied',
                 as: 'item',
-                cond: { $gt: ['$$item.value', 0] },
+                cond: { $gt: [{ $toDouble: '$$item.value' }, 0] },
               },
             },
             borrowed: {
               $filter: {
                 input: '$borrowed',
                 as: 'item',
-                cond: { $gt: ['$$item.value', 0] },
+                cond: { $gt: [{ $toDouble: '$$item.value' }, 0] },
               },
             },
           },
