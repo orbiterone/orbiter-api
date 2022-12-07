@@ -10,7 +10,7 @@ import { NODE_TYPE, PRICE_FEED_OWNER_KEY } from '@app/core/constant';
 
 const web3 = new Web3();
 
-Decimal.set({ toExpNeg: -30, toExpPos: 30 });
+Decimal.set({ toExpNeg: -100, toExpPos: 100 });
 
 @Injectable()
 export class AssetCron extends AssetService {
@@ -26,12 +26,13 @@ export class AssetCron extends AssetService {
           {
             $set: {
               lastPrice: Decimal128(
-                web3.utils.fromWei(
+                new Decimal(
                   `${await this.oracleOrbiterCore.getUnderlyingPrice(
                     asset.oTokenAddress,
                   )}`,
-                  'ether',
-                ),
+                )
+                  .div(Math.pow(10, 36 - asset.tokenDecimal))
+                  .toString(),
               ),
             },
           },
@@ -175,7 +176,9 @@ export class AssetCron extends AssetService {
           data: oracleContract.methods
             .setUnderlyingPrice(
               asset.oTokenAddress,
-              web3.utils.toWei(`${price}`, 'ether'),
+              new Decimal(`${price}`)
+                .mul(new Decimal(10 * Math.pow(10, 36 - asset.tokenDecimal)))
+                .toString(),
             )
             .encodeABI(),
         };
