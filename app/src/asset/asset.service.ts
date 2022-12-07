@@ -5,7 +5,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import Web3 from 'web3';
-import { Decimal } from 'decimal.js';
+import { BigNumber } from 'bignumber.js';
 import { InjectRedisClient, RedisClient } from '@webeleon/nestjs-redis';
 import { isEthereumAddress } from 'class-validator';
 
@@ -29,7 +29,7 @@ const web3 = new Web3();
 
 const { NODE_TYPE } = process.env;
 
-Decimal.set({ toExpNeg: -30, toExpPos: 30 });
+BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
 
 @Injectable()
 export class AssetService implements OnModuleInit {
@@ -87,38 +87,39 @@ export class AssetService implements OnModuleInit {
     const collateralFactorMantissa =
       await this.controllerOrbiterCore.collateralFactorMantissa(oToken);
 
-    const exchangeRate = new Decimal(
+    const exchangeRate = new BigNumber(
       await this.oTokenCore.exchangeRateCurrent(oToken),
-    ).div(Math.pow(10, 18 + tokenData.tokenDecimal - 8));
+    ).div(new BigNumber(10).pow(18 + tokenData.tokenDecimal - 8));
 
     const oTokenDecimal = +(await this.oTokenCore.decimals(oToken));
 
-    const totalSupply = new Decimal(await this.oTokenCore.totalSupply(oToken))
-      .div(Math.pow(10, oTokenDecimal))
-      .mul(exchangeRate);
-    const totalBorrow = new Decimal(
+    const totalSupply = new BigNumber(await this.oTokenCore.totalSupply(oToken))
+      .div(new BigNumber(10).pow(oTokenDecimal))
+      .multipliedBy(exchangeRate);
+    const totalBorrow = new BigNumber(
       await this.oTokenCore.totalBorrows(oToken),
-    ).div(Math.pow(10, tokenData.tokenDecimal));
-    const totalReserves = new Decimal(
+    ).div(new BigNumber(10).pow(tokenData.tokenDecimal));
+    const totalReserves = new BigNumber(
       await this.oTokenCore.totalReserves(oToken),
-    ).div(Math.pow(10, tokenData.tokenDecimal));
-    const lastPrice = web3.utils.fromWei(
+    ).div(new BigNumber(10).pow(tokenData.tokenDecimal));
+    const lastPrice = new BigNumber(
       `${await this.oracleOrbiterCore.getUnderlyingPrice(oToken)}`,
-      'ether',
-    );
+    )
+      .div(new BigNumber(10).pow(36 - tokenData.tokenDecimal))
+      .toString();
 
     const supplyApy = await this.oTokenCore.supplyApy(oToken);
     const borrowApy = await this.oTokenCore.borrowApy(oToken);
 
-    let liquidity = new Decimal(0);
+    let liquidity = new BigNumber(0);
     if (!underlying) {
-      liquidity = new Decimal(
+      liquidity = new BigNumber(
         `${client.utils.fromWei(await client.eth.getBalance(oToken), 'ether')}`,
       );
     } else {
-      liquidity = new Decimal(
+      liquidity = new BigNumber(
         await this.erc20OrbierCore.balanceOf(underlying, oToken),
-      ).div(Math.pow(10, tokenData.tokenDecimal));
+      ).div(new BigNumber(10).pow(tokenData.tokenDecimal));
     }
 
     return {
@@ -258,14 +259,6 @@ export class AssetService implements OnModuleInit {
         },
       ])
     ).pop() || { supplied: [], borrowed: [] };
-
-    for (let i = 0; i < supplied.length; i++) {
-      supplied[i].value = new Decimal(supplied[i].value.toString()).toString();
-    }
-
-    for (let i = 0; i < borrowed.length; i++) {
-      borrowed[i].value = new Decimal(borrowed[i].value.toString()).toString();
-    }
 
     return { supplied, borrowed };
   }
@@ -419,21 +412,21 @@ export class AssetService implements OnModuleInit {
       let balance = '0';
       if (user || userAddress) {
         if (asset.oTokenAddress.toLowerCase() == DEFAULT_TOKEN.toLowerCase()) {
-          balance = new Decimal(
+          balance = new BigNumber(
             await this.web3Service
               .getClient()
               .eth.getBalance(user?.address || userAddress),
           )
-            .div(Math.pow(10, asset.tokenDecimal))
+            .div(new BigNumber(10).pow(asset.tokenDecimal))
             .toString();
         } else {
-          balance = new Decimal(
+          balance = new BigNumber(
             await this.erc20OrbierCore.balanceOf(
               asset.tokenAddress,
               user?.address || userAddress,
             ),
           )
-            .div(Math.pow(10, asset.tokenDecimal))
+            .div(new BigNumber(10).pow(asset.tokenDecimal))
             .toString();
         }
       }

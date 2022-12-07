@@ -1,16 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import Web3 from 'web3';
 import moment from 'moment';
-import { Decimal } from 'decimal.js';
+import { BigNumber } from 'bignumber.js';
 
 import { Decimal128 } from '@app/core/schemas/user.schema';
 import { AssetService } from './asset.service';
 import { NODE_TYPE, PRICE_FEED_OWNER_KEY } from '@app/core/constant';
 
-const web3 = new Web3();
-
-Decimal.set({ toExpNeg: -100, toExpPos: 100 });
+BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
 
 @Injectable()
 export class AssetCron extends AssetService {
@@ -26,12 +23,12 @@ export class AssetCron extends AssetService {
           {
             $set: {
               lastPrice: Decimal128(
-                new Decimal(
+                new BigNumber(
                   `${await this.oracleOrbiterCore.getUnderlyingPrice(
                     asset.oTokenAddress,
                   )}`,
                 )
-                  .div(Math.pow(10, 36 - asset.tokenDecimal))
+                  .div(new BigNumber(10).pow(36 - asset.tokenDecimal))
                   .toString(),
               ),
             },
@@ -73,18 +70,18 @@ export class AssetCron extends AssetService {
           const assets = await this.assetRepository.find({});
           for (const asset of assets) {
             try {
-              const totalSupply = new Decimal(
+              const totalSupply = new BigNumber(
                 await this.oTokenCore.balanceOfUnderlying(
                   asset.oTokenAddress,
                   user.address,
                 ),
-              ).div(Math.pow(10, asset.tokenDecimal));
-              const totalBorrow = new Decimal(
+              ).div(new BigNumber(10).pow(asset.tokenDecimal));
+              const totalBorrow = new BigNumber(
                 await this.oTokenCore.borrowBalanceCurrent(
                   asset.oTokenAddress,
                   user.address,
                 ),
-              ).div(Math.pow(10, asset.tokenDecimal));
+              ).div(new BigNumber(10).pow(asset.tokenDecimal));
               if (totalSupply.eq(0) && totalBorrow.eq(0)) continue;
               const objUpdateAsset = { $push: {} };
               if (
@@ -176,8 +173,8 @@ export class AssetCron extends AssetService {
           data: oracleContract.methods
             .setUnderlyingPrice(
               asset.oTokenAddress,
-              new Decimal(`${price}`)
-                .mul(new Decimal(10 * Math.pow(10, 36 - asset.tokenDecimal)))
+              new BigNumber(`${price}`)
+                .multipliedBy(new BigNumber(10).pow(36 - asset.tokenDecimal))
                 .toString(),
             )
             .encodeABI(),

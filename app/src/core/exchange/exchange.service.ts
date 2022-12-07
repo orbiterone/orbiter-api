@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CpayExchangeSDK } from 'cpay-exchange-node-api-sdk';
-import { Decimal } from 'decimal.js';
 
 const { COINPRICE_KEY, REDIS_URI } = process.env;
-
-Decimal.set({ toExpNeg: -30, toExpPos: 30 });
 
 @Injectable()
 export class ExchangeService {
