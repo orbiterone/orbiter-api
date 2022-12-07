@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Timeout } from '@nestjs/schedule';
-import { Decimal } from 'decimal.js';
+import { BigNumber } from 'bignumber.js';
+
 import { NODE_TYPE } from '../constant';
 import { Decimal128 } from '../schemas/user.schema';
-
 import { EventService } from './event.service';
 import { MARKET_TOKEN_EVENT } from './interfaces/event.interface';
 
-Decimal.set({ toExpNeg: -30, toExpPos: 30 });
+BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
 
 @Injectable()
 export class MarketEvent extends EventService {
@@ -95,9 +95,9 @@ export class MarketEvent extends EventService {
         checkToken.suppliers.push(minter);
         await checkToken.save();
       }
-      const totalSupply = new Decimal(
+      const totalSupply = new BigNumber(
         await this.oTokenCore.balanceOfUnderlying(token, minter),
-      ).div(Math.pow(10, checkToken.tokenDecimal));
+      ).div(new BigNumber(10).pow(checkToken.tokenDecimal));
       await this.userService.userRepository
         .getUserTokenModel()
         .findOneAndUpdate(
@@ -127,13 +127,13 @@ export class MarketEvent extends EventService {
           data: {
             user: minter,
             amount: Decimal128(
-              new Decimal(mintAmount)
-                .div(Math.pow(10, checkToken.tokenDecimal))
+              new BigNumber(mintAmount)
+                .div(new BigNumber(10).pow(checkToken.tokenDecimal))
                 .toString(),
             ),
             mintTokens: Decimal128(
-              new Decimal(mintTokens)
-                .div(Math.pow(10, checkToken.oTokenDecimal))
+              new BigNumber(mintTokens)
+                .div(new BigNumber(10).pow(checkToken.oTokenDecimal))
                 .toString(),
             ),
           },
@@ -161,9 +161,9 @@ export class MarketEvent extends EventService {
         checkToken.borrowers.push(borrower);
         await checkToken.save();
       }
-      const totalBorrow = new Decimal(
+      const totalBorrow = new BigNumber(
         await this.oTokenCore.borrowBalanceCurrent(token, borrower),
-      ).div(Math.pow(10, checkToken.tokenDecimal));
+      ).div(new BigNumber(10).pow(checkToken.tokenDecimal));
       await this.userService.userRepository
         .getUserTokenModel()
         .findOneAndUpdate(
@@ -192,18 +192,18 @@ export class MarketEvent extends EventService {
         data: {
           user: borrower,
           amount: Decimal128(
-            new Decimal(borrowAmount)
-              .div(Math.pow(10, checkToken.tokenDecimal))
+            new BigNumber(borrowAmount)
+              .div(new BigNumber(10).pow(checkToken.tokenDecimal))
               .toString(),
           ),
           accountBorrows: Decimal128(
-            new Decimal(accountBorrows)
-              .div(Math.pow(10, checkToken.tokenDecimal))
+            new BigNumber(accountBorrows)
+              .div(new BigNumber(10).pow(checkToken.tokenDecimal))
               .toString(),
           ),
           totalBorrows: Decimal128(
-            new Decimal(totalBorrows)
-              .div(Math.pow(10, checkToken.tokenDecimal))
+            new BigNumber(totalBorrows)
+              .div(new BigNumber(10).pow(checkToken.tokenDecimal))
               .toString(),
           ),
         },
@@ -233,8 +233,8 @@ export class MarketEvent extends EventService {
         );
         await checkToken.save();
       }
-      const totalBorrow = new Decimal(accountBorrows).div(
-        Math.pow(10, checkToken.tokenDecimal),
+      const totalBorrow = new BigNumber(accountBorrows).div(
+        new BigNumber(10).pow(checkToken.tokenDecimal),
       );
       await this.userService.userRepository
         .getUserTokenModel()
@@ -264,18 +264,18 @@ export class MarketEvent extends EventService {
         data: {
           user: payer,
           amount: Decimal128(
-            new Decimal(repayAmount)
-              .div(Math.pow(10, checkToken.tokenDecimal))
+            new BigNumber(repayAmount)
+              .div(new BigNumber(10).pow(checkToken.tokenDecimal))
               .toString(),
           ),
           accountBorrows: Decimal128(
-            new Decimal(accountBorrows)
-              .div(Math.pow(10, checkToken.tokenDecimal))
+            new BigNumber(accountBorrows)
+              .div(new BigNumber(10).pow(checkToken.tokenDecimal))
               .toString(),
           ),
           totalBorrows: Decimal128(
-            new Decimal(totalBorrows)
-              .div(Math.pow(10, checkToken.tokenDecimal))
+            new BigNumber(totalBorrows)
+              .div(new BigNumber(10).pow(checkToken.tokenDecimal))
               .toString(),
           ),
         },
@@ -297,9 +297,9 @@ export class MarketEvent extends EventService {
       .getTokenModel()
       .findOne({ oTokenAddress: { $regex: token, $options: 'i' } });
     if (checkToken) {
-      const totalSupply = new Decimal(
+      const totalSupply = new BigNumber(
         await this.oTokenCore.balanceOfUnderlying(token, redeemer),
-      ).div(Math.pow(10, checkToken.tokenDecimal));
+      ).div(new BigNumber(10).pow(checkToken.tokenDecimal));
       if (totalSupply.eq(0) && checkToken.suppliers.includes(redeemer)) {
         checkToken.suppliers = checkToken.suppliers.filter(
           (el) => el.toLowerCase() != redeemer.toLowerCase(),
@@ -334,13 +334,13 @@ export class MarketEvent extends EventService {
         data: {
           user: redeemer,
           amount: Decimal128(
-            new Decimal(redeemAmount)
-              .div(Math.pow(10, checkToken.tokenDecimal))
+            new BigNumber(redeemAmount)
+              .div(new BigNumber(10).pow(checkToken.tokenDecimal))
               .toString(),
           ),
           redeemTokens: Decimal128(
-            new Decimal(redeemTokens)
-              .div(Math.pow(10, checkToken.oTokenDecimal))
+            new BigNumber(redeemTokens)
+              .div(new BigNumber(10).pow(checkToken.oTokenDecimal))
               .toString(),
           ),
         },
