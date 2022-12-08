@@ -221,9 +221,13 @@ export class AssetService implements OnModuleInit {
                 collateral: '$collateral',
                 value: {
                   $toString: {
-                    $multiply: ['$totalSupply', '$token.exchangeRate'],
+                    $trunc: [
+                      { $multiply: ['$totalSupply', '$token.exchangeRate'] },
+                      '$token.tokenDecimal',
+                    ],
                   },
                 },
+                valueOToken: { $toString: '$totalSupply' },
               },
             },
             borrowed: {
