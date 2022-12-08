@@ -40,6 +40,33 @@ export class AssetCron extends AssetService {
     }
   }
 
+  @Cron(CronExpression.EVERY_MINUTE)
+  async updateExchangeRateByAssets() {
+    console.log(`Job updateExchangeRateByAssets start - ${new Date()}`);
+
+    const assets = await this.assetRepository.find({});
+    for (const asset of assets) {
+      try {
+        const exchangeRate = new BigNumber(
+          await this.oTokenCore.exchangeRateCurrent(asset.oTokenAddress),
+        ).div(new BigNumber(10).pow(18 + asset.tokenDecimal - 8));
+
+        await this.assetRepository.getTokenModel().updateOne(
+          { _id: asset._id },
+          {
+            $set: {
+              exchangeRate: Decimal128(exchangeRate.toString()),
+            },
+          },
+        );
+
+        await this.wait(1000);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
   @Cron(CronExpression.EVERY_30_MINUTES)
   async updateAssetInfoFromBlockain() {
     console.log(`Job updateAssetInfoFromBlockain start - ${new Date()}`);
@@ -71,11 +98,11 @@ export class AssetCron extends AssetService {
           for (const asset of assets) {
             try {
               const totalSupply = new BigNumber(
-                await this.oTokenCore.balanceOfUnderlying(
+                await this.oTokenCore.balanceOf(
                   asset.oTokenAddress,
                   user.address,
                 ),
-              ).div(new BigNumber(10).pow(asset.tokenDecimal));
+              ).div(new BigNumber(10).pow(asset.oTokenDecimal));
               const totalBorrow = new BigNumber(
                 await this.oTokenCore.borrowBalanceCurrent(
                   asset.oTokenAddress,

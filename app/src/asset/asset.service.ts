@@ -219,7 +219,11 @@ export class AssetService implements OnModuleInit {
                   tokenDecimal: '$token.tokenDecimal',
                 },
                 collateral: '$collateral',
-                value: { $toString: '$totalSupply' },
+                value: {
+                  $toString: {
+                    $multiply: ['$totalSupply', '$token.exchangeRate'],
+                  },
+                },
               },
             },
             borrowed: {
@@ -293,7 +297,12 @@ export class AssetService implements OnModuleInit {
             _id: null,
             totalSupplyUSD: {
               $sum: {
-                $multiply: ['$totalSupply', '$token.lastPrice'],
+                $multiply: [
+                  {
+                    $multiply: ['$totalSupply', '$token.exchangeRate'],
+                  },
+                  '$token.lastPrice',
+                ],
               },
             },
             totalBorrowUSD: {
@@ -310,7 +319,14 @@ export class AssetService implements OnModuleInit {
                   image: '$token.image',
                   color: '$token.color',
                 },
-                usd: { $multiply: ['$totalSupply', '$token.lastPrice'] },
+                usd: {
+                  $multiply: [
+                    {
+                      $multiply: ['$totalSupply', '$token.exchangeRate'],
+                    },
+                    '$token.lastPrice',
+                  ],
+                },
               },
             },
             borrowed: {
