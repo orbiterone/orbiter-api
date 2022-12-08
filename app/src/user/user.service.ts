@@ -67,7 +67,9 @@ export class UserService {
                 $multiply: [
                   {
                     $multiply: [
-                      '$totalSupply',
+                      {
+                        $multiply: ['$totalSupply', '$token.exchangeRate'],
+                      },
                       {
                         $divide: ['$token.collateralFactor', 100],
                       },
@@ -113,7 +115,12 @@ export class UserService {
               _id: null,
               totalSupplyUSD: {
                 $sum: {
-                  $multiply: ['$totalSupply', '$token.lastPrice'],
+                  $multiply: [
+                    {
+                      $multiply: ['$totalSupply', '$token.exchangeRate'],
+                    },
+                    '$token.lastPrice',
+                  ],
                 },
               },
               totalBorrowUSD: {

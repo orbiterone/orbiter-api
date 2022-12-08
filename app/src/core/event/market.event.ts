@@ -96,8 +96,8 @@ export class MarketEvent extends EventService {
         await checkToken.save();
       }
       const totalSupply = new BigNumber(
-        await this.oTokenCore.balanceOfUnderlying(token, minter),
-      ).div(new BigNumber(10).pow(checkToken.tokenDecimal));
+        await this.oTokenCore.balanceOf(token, minter),
+      ).div(new BigNumber(10).pow(checkToken.oTokenDecimal));
       await this.userService.userRepository
         .getUserTokenModel()
         .findOneAndUpdate(
@@ -298,8 +298,8 @@ export class MarketEvent extends EventService {
       .findOne({ oTokenAddress: { $regex: token, $options: 'i' } });
     if (checkToken) {
       const totalSupply = new BigNumber(
-        await this.oTokenCore.balanceOfUnderlying(token, redeemer),
-      ).div(new BigNumber(10).pow(checkToken.tokenDecimal));
+        await this.oTokenCore.balanceOf(token, redeemer),
+      ).div(new BigNumber(10).pow(checkToken.oTokenDecimal));
       if (totalSupply.eq(0) && checkToken.suppliers.includes(redeemer)) {
         checkToken.suppliers = checkToken.suppliers.filter(
           (el) => el.toLowerCase() != redeemer.toLowerCase(),
