@@ -68,7 +68,12 @@ export class UserService {
                   {
                     $multiply: [
                       {
-                        $multiply: ['$totalSupply', '$token.exchangeRate'],
+                        $trunc: [
+                          {
+                            $multiply: ['$totalSupply', '$token.exchangeRate'],
+                          },
+                          '$token.tokenDecimal',
+                        ],
                       },
                       {
                         $divide: ['$token.collateralFactor', 100],
@@ -117,7 +122,10 @@ export class UserService {
                 $sum: {
                   $multiply: [
                     {
-                      $multiply: ['$totalSupply', '$token.exchangeRate'],
+                      $trunc: [
+                        { $multiply: ['$totalSupply', '$token.exchangeRate'] },
+                        '$token.tokenDecimal',
+                      ],
                     },
                     '$token.lastPrice',
                   ],
