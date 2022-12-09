@@ -23,6 +23,7 @@ import {
   AssetByAccountResponse,
   AssetCompositionByAccountResponse,
   AssetEstimateMaxWithdrawalResponse,
+  SupplyBorrowInfoByAssetAccount,
 } from './interfaces/asset.interface';
 import { UserRepository } from '@app/user/user.repository';
 import { ExchangeService } from '@app/core/exchange/exchange.service';
@@ -238,7 +239,27 @@ export class AssetService implements OnModuleInit {
           });
         }
 
-        return { supplied, borrowed };
+        const comprareFn = (
+          infoA: SupplyBorrowInfoByAssetAccount,
+          infoB: SupplyBorrowInfoByAssetAccount,
+        ) => {
+          const nameA = infoA.token.name.toUpperCase(); // ignore upper and lowercase
+          const nameB = infoB.token.name.toUpperCase(); // ignore upper and lowercase
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+
+          // names must be equal
+          return 0;
+        };
+
+        return {
+          supplied: supplied.sort(comprareFn),
+          borrowed: borrowed.sort(comprareFn),
+        };
       } else {
         return { supplied: [], borrowed: [] };
       }
