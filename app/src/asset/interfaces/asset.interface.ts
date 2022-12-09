@@ -182,3 +182,8 @@ export class AssetBalanceByAccountResponse {
   @ApiProperty()
   walletBalance: string;
 }
+
+export class AssetEstimateMaxWithdrawalResponse {
+  @ApiProperty()
+  max: string;
+}

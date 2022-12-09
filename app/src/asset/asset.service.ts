@@ -22,6 +22,7 @@ import {
   AssetBalanceByAccountResponse,
   AssetByAccountResponse,
   AssetCompositionByAccountResponse,
+  AssetEstimateMaxWithdrawalResponse,
 } from './interfaces/asset.interface';
 import { UserRepository } from '@app/user/user.repository';
 import { ExchangeService } from '@app/core/exchange/exchange.service';
@@ -477,18 +478,42 @@ export class AssetService implements OnModuleInit {
     return { supplied, borrowed };
   }
 
-  async estimateMaxWithdrawal(user: User | null, token: Token) {
+  async estimateMaxWithdrawal(
+    user: User | null,
+    token: Token,
+  ): Promise<AssetEstimateMaxWithdrawalResponse> {
+    let max = '0';
     if (user) {
       const marketInfoByAccount =
         await this.readerOrbiterCore.marketInfoByAccount(user.address);
 
       const availableToWithdraw = web3.utils.fromWei(
-        `${marketInfoByAccount.totalSupply}`,
+        `${marketInfoByAccount.availableToWithdraw}`,
         'ether',
       );
+      let tokenSupplyUSD = '0';
+
+      const filterSupply = marketInfoByAccount.supplied.filter(
+        (el) =>
+          el.oToken.toLowerCase() == token.oTokenAddress.toLowerCase() &&
+          +el.totalSupply > 0,
+      );
+      if (filterSupply.length) {
+        tokenSupplyUSD = new BigNumber(filterSupply[0].totalSupply)
+          .div(token.tokenDecimal)
+          .multipliedBy(token.lastPrice.toString())
+          .toString();
+      }
+
+      const minUSD = BigNumber.min(availableToWithdraw, tokenSupplyUSD);
+
+      max = minUSD
+        .div(token.lastPrice.toString())
+        .decimalPlaces(token.tokenDecimal)
+        .toString();
     }
 
-    return { max: '0' };
+    return { max };
   }
 
   async assetsListForFaucet(
