@@ -33,6 +33,13 @@ const COMPTROLLER =
     ? MoonriverContracts.Comptroller
     : MoonbeamContracts.Comptroller;
 
+const READER =
+  NODE_TYPE == 'moonbase'
+    ? MoonbaseContracts.Reader
+    : NODE_TYPE == 'moonriver'
+    ? MoonriverContracts.Reader
+    : MoonbeamContracts.Reader;
+
 const DEFAULT_TOKEN =
   NODE_TYPE == 'moonbase'
     ? MoonbaseDefaultMarket
@@ -66,6 +73,7 @@ export {
   blocksPerDay,
   daysPerYear,
   COMPTROLLER,
+  READER,
   DEFAULT_TOKEN,
   SUPPORT_MARKET,
   TOKENS,

@@ -1,7 +1,8 @@
 {
     "contracts": {
         "PriceOracle": "",
-        "Comptroller": ""
+        "Comptroller": "",
+        "Reader": ""
     },
     "tokens": {
         "ETH": "0xfA9343C3897324496A05fC75abeD6bAC29f8A40f",
