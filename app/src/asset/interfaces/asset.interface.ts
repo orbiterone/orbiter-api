@@ -123,7 +123,7 @@ class AssetCompositionInfo {
   color: string;
 }
 
-class SupplyBorrowInfoByAssetAccount {
+export class SupplyBorrowInfoByAssetAccount {
   @ApiProperty({ type: AssetInfo })
   token: AssetInfo;
 
@@ -181,4 +181,9 @@ export class AssetBalanceByAccountResponse {
 
   @ApiProperty()
   walletBalance: string;
+}
+
+export class AssetEstimateMaxWithdrawalResponse {
+  @ApiProperty()
+  max: string;
 }

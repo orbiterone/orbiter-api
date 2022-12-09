@@ -16,6 +16,7 @@ import {
   AssetBalanceByAccountResponse,
   AssetByAccountResponse,
   AssetCompositionByAccountResponse,
+  AssetEstimateMaxWithdrawalResponse,
   AssetInfoResponse,
 } from './interfaces/asset.interface';
 import { UserByAddressPipe } from '@app/core/pipes/user-by-address.pipe';
@@ -31,6 +32,7 @@ import { Token } from '@app/core/schemas/token.schema';
   AssetByAccountResponse,
   AssetCompositionByAccountResponse,
   AssetBalanceByAccountResponse,
+  AssetEstimateMaxWithdrawalResponse,
 )
 export class AssetController {
   constructor(private readonly assetService: AssetService) {}
@@ -87,7 +89,7 @@ export class AssetController {
   }
 
   @Get(':account/estimateMaxWithdrawal/:tokenId')
-  @ApiDataResponse(AssetBalanceByAccountResponse, 'array')
+  @ApiDataResponse(AssetEstimateMaxWithdrawalResponse)
   @ApiParam({ name: 'account', type: 'string' })
   @ApiParam({ name: 'tokenId', type: 'string' })
   async estimateMaxWithdrawal(
