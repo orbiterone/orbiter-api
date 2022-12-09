@@ -509,7 +509,7 @@ export class AssetService implements OnModuleInit {
         await this.readerOrbiterCore.marketInfoByAccount(user.address);
 
       const availableToWithdraw = web3.utils.fromWei(
-        `${marketInfoByAccount.availableToWithdraw}`,
+        `${marketInfoByAccount.availableToBorrow}`,
         'ether',
       );
       let tokenSupplyUSD = '0';
