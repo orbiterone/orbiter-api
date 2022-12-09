@@ -509,7 +509,7 @@ export class AssetService implements OnModuleInit {
         await this.readerOrbiterCore.marketInfoByAccount(user.address);
 
       const availableToWithdraw = web3.utils.fromWei(
-        `${marketInfoByAccount.availableToWithdraw}`,
+        `${marketInfoByAccount.availableToBorrow}`,
         'ether',
       );
       let tokenSupplyUSD = '0';
@@ -521,7 +521,7 @@ export class AssetService implements OnModuleInit {
       );
       if (filterSupply.length) {
         tokenSupplyUSD = new BigNumber(filterSupply[0].totalSupply)
-          .div(token.tokenDecimal)
+          .div(Math.pow(10, token.tokenDecimal))
           .multipliedBy(token.lastPrice.toString())
           .toString();
       }
