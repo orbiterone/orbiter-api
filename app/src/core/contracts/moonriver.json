@@ -1,7 +1,8 @@
 {
     "contracts": {
         "PriceOracle": "",
-        "Comptroller": ""
+        "Comptroller": "",
+        "Reader": ""
     },
     "tokens": {
         "FRAX": "0x1A93B23281CC1CDE4C4741353F3064709A16197d",

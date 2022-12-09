@@ -19,11 +19,13 @@ import { Erc20OrbiterCore } from '@app/core/orbiter/erc20.orbiter';
 import { ControllerOrbiterCore } from '@app/core/orbiter/controller.orbiter';
 import { OracleOrbiterCore } from '@app/core/orbiter/oracle.orbiter';
 import {
+  AssetBalanceByAccountResponse,
   AssetByAccountResponse,
   AssetCompositionByAccountResponse,
 } from './interfaces/asset.interface';
 import { UserRepository } from '@app/user/user.repository';
 import { ExchangeService } from '@app/core/exchange/exchange.service';
+import { ReaderOrbiterCore } from '@app/core/orbiter/reader.orbiter';
 
 const web3 = new Web3();
 
@@ -39,6 +41,7 @@ export class AssetService implements OnModuleInit {
     public readonly assetRepository: AssetRepository,
     public readonly oTokenCore: OTokenOrbiterCore,
     public readonly erc20OrbierCore: Erc20OrbiterCore,
+    public readonly readerOrbiterCore: ReaderOrbiterCore,
     public readonly controllerOrbiterCore: ControllerOrbiterCore,
     public readonly oracleOrbiterCore: OracleOrbiterCore,
     public readonly userRepository: UserRepository,
@@ -183,92 +186,150 @@ export class AssetService implements OnModuleInit {
   }
 
   async assetsByAccount(user: User | null): Promise<AssetByAccountResponse> {
-    const { supplied = [], borrowed = [] } = (
-      await this.assetRepository.getAggregateValueUserToken([
-        {
-          $match: {
-            user: user ? user._id : null,
-          },
-        },
-        {
-          $lookup: {
-            from: 'tokens',
-            localField: 'token',
-            foreignField: '_id',
-            as: 'token',
-          },
-        },
-        {
-          $unwind: {
-            path: '$token',
-          },
-        },
-        { $match: { 'token.isActive': true } },
-        { $sort: { 'token.name': 1 } },
-        {
-          $group: {
-            _id: null,
-            supplied: {
-              $push: {
-                token: {
-                  _id: '$token._id',
-                  name: '$token.name',
-                  symbol: '$token.symbol',
-                  image: '$token.image',
-                  apy: { $toString: '$token.supplyRate' },
-                  tokenDecimal: '$token.tokenDecimal',
-                },
-                collateral: '$collateral',
-                value: {
-                  $toString: {
-                    $trunc: [
-                      { $multiply: ['$totalSupply', '$token.exchangeRate'] },
-                      '$token.tokenDecimal',
-                    ],
-                  },
-                },
-                valueOToken: { $toString: '$totalSupply' },
-              },
+    try {
+      if (user) {
+        const supplied = [];
+        const borrowed = [];
+        const assetList = await this.assetsList();
+        const marketInfoByAccount =
+          await this.readerOrbiterCore.marketInfoByAccount(user.address);
+        for (const s of marketInfoByAccount.supplied.filter(
+          (el) => +el.totalSupply > 0,
+        )) {
+          const asset = assetList.filter(
+            (el) => el.oTokenAddress.toLowerCase() == s.oToken.toLowerCase(),
+          )[0];
+          supplied.push({
+            token: {
+              _id: asset._id,
+              name: asset.name,
+              symbol: asset.symbol,
+              image: asset.image,
+              apy: asset.supplyRate.toString(),
+              tokenDecimal: asset.tokenDecimal,
             },
-            borrowed: {
-              $push: {
-                token: {
-                  _id: '$token._id',
-                  name: '$token.name',
-                  symbol: '$token.symbol',
-                  image: '$token.image',
-                  apy: { $toString: '$token.borrowRate' },
-                  tokenDecimal: '$token.tokenDecimal',
-                },
-                collateral: '$collateral',
-                value: { $toString: '$totalBorrow' },
-              },
-            },
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            supplied: {
-              $filter: {
-                input: '$supplied',
-                as: 'item',
-                cond: { $gt: [{ $toDouble: '$$item.value' }, 0] },
-              },
-            },
-            borrowed: {
-              $filter: {
-                input: '$borrowed',
-                as: 'item',
-                cond: { $gt: [{ $toDouble: '$$item.value' }, 0] },
-              },
-            },
-          },
-        },
-      ])
-    ).pop() || { supplied: [], borrowed: [] };
+            collateral: s.collateral,
+            value: new BigNumber(s.totalSupply)
+              .div(Math.pow(10, asset.tokenDecimal))
+              .toString(),
+          });
+        }
 
-    return { supplied, borrowed };
+        for (const b of marketInfoByAccount.borrowed.filter(
+          (el) => +el.totalBorrow > 0,
+        )) {
+          const asset = assetList.filter(
+            (el) => el.oTokenAddress.toLowerCase() == b.oToken.toLowerCase(),
+          )[0];
+          borrowed.push({
+            token: {
+              _id: asset._id,
+              name: asset.name,
+              symbol: asset.symbol,
+              image: asset.image,
+              apy: asset.borrowRate.toString(),
+              tokenDecimal: asset.tokenDecimal,
+            },
+            collateral: null,
+            value: new BigNumber(b.totalBorrow)
+              .div(Math.pow(10, asset.tokenDecimal))
+              .toString(),
+          });
+        }
+
+        return { supplied, borrowed };
+      } else {
+        return { supplied: [], borrowed: [] };
+      }
+    } catch (err) {
+      console.log(err.message);
+      const { supplied = [], borrowed = [] } = (
+        await this.assetRepository.getAggregateValueUserToken([
+          {
+            $match: {
+              user: user ? user._id : null,
+            },
+          },
+          {
+            $lookup: {
+              from: 'tokens',
+              localField: 'token',
+              foreignField: '_id',
+              as: 'token',
+            },
+          },
+          {
+            $unwind: {
+              path: '$token',
+            },
+          },
+          { $match: { 'token.isActive': true } },
+          { $sort: { 'token.name': 1 } },
+          {
+            $group: {
+              _id: null,
+              supplied: {
+                $push: {
+                  token: {
+                    _id: '$token._id',
+                    name: '$token.name',
+                    symbol: '$token.symbol',
+                    image: '$token.image',
+                    apy: { $toString: '$token.supplyRate' },
+                    tokenDecimal: '$token.tokenDecimal',
+                  },
+                  collateral: '$collateral',
+                  value: {
+                    $toString: {
+                      $trunc: [
+                        { $multiply: ['$totalSupply', '$token.exchangeRate'] },
+                        '$token.tokenDecimal',
+                      ],
+                    },
+                  },
+                  valueOToken: { $toString: '$totalSupply' },
+                },
+              },
+              borrowed: {
+                $push: {
+                  token: {
+                    _id: '$token._id',
+                    name: '$token.name',
+                    symbol: '$token.symbol',
+                    image: '$token.image',
+                    apy: { $toString: '$token.borrowRate' },
+                    tokenDecimal: '$token.tokenDecimal',
+                  },
+                  collateral: '$collateral',
+                  value: { $toString: '$totalBorrow' },
+                },
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              supplied: {
+                $filter: {
+                  input: '$supplied',
+                  as: 'item',
+                  cond: { $gt: [{ $toDouble: '$$item.value' }, 0] },
+                },
+              },
+              borrowed: {
+                $filter: {
+                  input: '$borrowed',
+                  as: 'item',
+                  cond: { $gt: [{ $toDouble: '$$item.value' }, 0] },
+                },
+              },
+            },
+          },
+        ])
+      ).pop() || { supplied: [], borrowed: [] };
+
+      return { supplied, borrowed };
+    }
   }
 
   async assetsCompositionByAccount(
@@ -416,7 +477,24 @@ export class AssetService implements OnModuleInit {
     return { supplied, borrowed };
   }
 
-  async assetsListForFaucet(user: User | null, userAddress: string) {
+  async estimateMaxWithdrawal(user: User | null, token: Token) {
+    if (user) {
+      const marketInfoByAccount =
+        await this.readerOrbiterCore.marketInfoByAccount(user.address);
+
+      const availableToWithdraw = web3.utils.fromWei(
+        `${marketInfoByAccount.totalSupply}`,
+        'ether',
+      );
+    }
+
+    return { max: '0' };
+  }
+
+  async assetsListForFaucet(
+    user: User | null,
+    userAddress: string,
+  ): Promise<AssetBalanceByAccountResponse[]> {
     if (!isEthereumAddress(userAddress))
       throw new HttpException(
         'Address is not correct.',

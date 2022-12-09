@@ -20,6 +20,8 @@ import {
 } from './interfaces/asset.interface';
 import { UserByAddressPipe } from '@app/core/pipes/user-by-address.pipe';
 import { User } from '@app/core/schemas/user.schema';
+import { TokenByIdPipe } from '@app/core/pipes/token-by-id.pipe';
+import { Token } from '@app/core/schemas/token.schema';
 
 @Controller('assets')
 @UseGuards(ApiKeyGuard)
@@ -80,6 +82,24 @@ export class AssetController {
       .json(
         jsend.success(
           await this.assetService.assetsListForFaucet(user, userAddress),
+        ),
+      );
+  }
+
+  @Get(':account/estimateMaxWithdrawal/:tokenId')
+  @ApiDataResponse(AssetBalanceByAccountResponse, 'array')
+  @ApiParam({ name: 'account', type: 'string' })
+  @ApiParam({ name: 'tokenId', type: 'string' })
+  async estimateMaxWithdrawal(
+    @Response() res: any,
+    @Param('account', UserByAddressPipe) user: User | null,
+    @Param('tokenId', TokenByIdPipe) token: Token,
+  ) {
+    return res
+      .status(HttpStatus.OK)
+      .json(
+        jsend.success(
+          await this.assetService.estimateMaxWithdrawal(user, token),
         ),
       );
   }
