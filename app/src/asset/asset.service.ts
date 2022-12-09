@@ -521,7 +521,7 @@ export class AssetService implements OnModuleInit {
       );
       if (filterSupply.length) {
         tokenSupplyUSD = new BigNumber(filterSupply[0].totalSupply)
-          .div(token.tokenDecimal)
+          .div(Math.pow(10, token.tokenDecimal))
           .multipliedBy(token.lastPrice.toString())
           .toString();
       }
