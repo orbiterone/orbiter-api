@@ -7,6 +7,8 @@ export type TransactionDocument = Transaction & Document;
 
 @Schema({ timestamps: true })
 export class Transaction {
+  _id: Types.ObjectId;
+
   @Prop({ type: Types.ObjectId, ref: 'Token' })
   token: Token | Types.ObjectId | string;
 
@@ -14,13 +16,34 @@ export class Transaction {
   user: User | Types.ObjectId | string;
 
   @Prop()
+  txHash: string;
+
+  @Prop()
   event: string;
 
   @Prop()
   status: boolean;
 
-  @Prop(decimalObj)
-  amount: Types.Decimal128;
+  @Prop({ type: Types.Map })
+  data: Record<string, any>;
+
+  @Prop()
+  typeNetwork: string;
 }
 
-export const TransactionSchema = SchemaFactory.createForClass(Transaction);
+export const TransactionSchema = SchemaFactory.createForClass(Transaction).set(
+  'toJSON',
+  {
+    getters: true,
+    transform: (doc, ret) => {
+      console.log(ret);
+      if (ret.data && ret.data.amount) {
+        ret.data.amount = ret.data.amount.toString();
+      }
+
+      delete ret.__v;
+
+      return ret;
+    },
+  },
+);

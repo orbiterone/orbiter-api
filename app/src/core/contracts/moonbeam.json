@@ -1,0 +1,141 @@
+{
+    "contracts": {
+        "PriceOracle": "",
+        "Comptroller": "",
+        "Reader": ""
+    },
+    "tokens": {
+        "ETH": "0xfA9343C3897324496A05fC75abeD6bAC29f8A40f",
+        "BNB": "0xc9BAA8cfdDe8E328787E29b4B078abf2DaDc2055",
+        "ATOM": "",
+        "WBTC": "0x922D641a426DcFFaeF11680e5358F34d97d112E1",
+        "xcDOT": "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080",
+        "LINK": "",
+        "FRAX": "",
+        "USDC": "",
+        "USDT": "",
+        "BUSD": "",
+        "MAI": "",
+        "xcAUSD": "",
+        "ORBIT": ""
+    },
+    "markets": {
+        "oGLMR": "",
+        "oETH": "",
+        "oBNB": "",
+        "oATOM": "",
+        "oWBTC": "",
+        "oDOT": "",
+        "oLINK": "",
+        "oFRAX": "",
+        "oUSDC": "",
+        "oUSDT": "",
+        "oBUSD": "",
+        "oMAI": "",
+        "oAUSD": "",
+        "oORBIT": ""
+    },
+    "supportMarkets": {
+        "oGLMR": "",
+        "oETH": "",
+        "oBNB": "",
+        "oATOM": "",
+        "oWBTC": "",
+        "oDOT": "",
+        "oLINK": "",
+        "oFRAX": "",
+        "oUSDC": "",
+        "oUSDT": "",
+        "oBUSD": "",
+        "oMAI": "",
+        "oAUSD": ""
+    },
+    "defaultMarket": "",
+    "settings": {
+        "WBTC": {
+            "color": "#FB8D28",
+            "image": "https://assets.orbiterdev.one/images/tokens/WBTC.svg",
+            "fullName" : "Wrapped Bitcoin"
+        },
+        "ETH": {
+            "color": "#939DC2",
+            "image": "https://assets.orbiterdev.one/images/tokens/ETH.svg",
+            "fullName" : "Ethereum"
+        },
+        "BNB": {
+            "color": "#FBC028",
+            "image": "https://assets.orbiterdev.one/images/tokens/BNB.svg",
+            "fullName" : "BNB"
+        },
+        "BUSD": {
+            "color": "#F7B654",
+            "image": "https://assets.orbiterdev.one/images/tokens/BUSD.svg",
+            "fullName" : "Binance USD"
+        },
+        "USDC": {
+            "color": "#5493F7",
+            "image": "https://assets.orbiterdev.one/images/tokens/USDC.svg",
+            "fullName" : "USD Coin"
+        },
+        "USDT": {
+            "color": "#53CBA0",
+            "image": "https://assets.orbiterdev.one/images/tokens/USDT.svg",
+            "fullName" : "Tether"
+        },
+        "LINK": {
+            "color": "#5464F7",
+            "image": "https://assets.orbiterdev.one/images/tokens/LINK.svg",
+            "fullName" : "Chainlink"
+        },
+        "FRAX": {
+            "color": "#0A1018",
+            "image": "https://assets.orbiterdev.one/images/tokens/frax.svg",
+            "fullName" : "Frax"
+        },
+        "xcKSM": {
+            "color": "#8854F7",
+            "image": "https://assets.orbiterdev.one/images/tokens/xcKSM.svg",
+            "fullName" : "xcKSM"
+        },
+        "DAI": {
+            "color": "#F78F54",
+            "image": "https://assets.orbiterdev.one/images/tokens/DAI.svg",
+            "fullName" : "Dai"
+        },
+        "FTM": {
+            "color": "#54BCF7",
+            "image": "https://assets.orbiterdev.one/images/tokens/FTM.svg",
+            "fullName" : "Fantom"
+        },
+        "AVAX": {
+            "color": "#F75454",
+            "image": "https://assets.orbiterdev.one/images/tokens/avax.svg",
+            "fullName" : "Avalanche"
+        },
+        "MOVR": {
+            "color": "#53CBC8",
+            "image": "https://assets.orbiterdev.one/images/tokens/movr.svg",
+            "fullName" : "Moonriver"
+        },
+        "xcAUSD": {
+            "color": "#F754AC",
+            "image": "https://assets.orbiterdev.one/images/tokens/ausd.svg",
+            "fullName" : "Acalla Dollar"
+        },
+        "MAI": {
+            "color": "#F7547B",
+            "image": "https://assets.orbiterdev.one/images/tokens/mai.svg",
+            "fullName" : "MAI Stablecoin"
+        },
+        "xcKBTC": {
+            "color": "#FB8D28",
+            "image": "https://assets.orbiterdev.one/images/tokens/kbtc.svg",
+            "fullName" : "Kintsugi WBTC"
+        },
+        "GLMR": {
+            "color": "",
+            "image": "",
+            "fullName" : ""
+        }
+    }
+}

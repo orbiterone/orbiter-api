@@ -11,7 +11,7 @@ cd orbiter-api
 
 ```
 cp docker/app/.env.dist docker/app/.env
-cp docker/nginx/nginx.conf.dist docker/nginx/nginx.conf.dist
+cp docker/nginx/nginx.conf.dist docker/nginx/nginx.conf
 
 cp docker-compose.yml.dist docker-compose.yml
 cp init-mongo.js.dist init-mongo.js
