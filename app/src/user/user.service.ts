@@ -319,7 +319,7 @@ export class UserService {
       },
       {
         $group: {
-          _id: '$user.address',
+          _id: '$user',
           totalCollateral: {
             $sum: {
               $cond: [
@@ -374,9 +374,22 @@ export class UserService {
         },
       },
       {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      {
+        $unwind: {
+          path: '$user',
+        },
+      },
+      {
         $project: {
           _id: 0,
-          address: '$_id',
+          address: '$user.address',
           totalSupplyUSD: 1,
           totalBorrowUSD: 1,
           health: {
@@ -409,6 +422,9 @@ export class UserService {
         $match: {
           health: {
             $lte: 2,
+          },
+          totalBorrowUSD: {
+            $gt: 0,
           },
         },
       },
