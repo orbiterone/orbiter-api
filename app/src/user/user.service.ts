@@ -66,10 +66,8 @@ export class UserService {
 
         if (+totalCollateral > 0) {
           percentage = +new BigNumber(
-            new BigNumber(Math.floor(+totalBorrowed)).div(totalCollateral),
-          )
-            .multipliedBy(100)
-            .toFixed(2);
+            new BigNumber(totalBorrowed).div(totalCollateral),
+          ).multipliedBy(100);
         }
 
         return {
@@ -259,19 +257,14 @@ export class UserService {
                     collateral.totalCollateral != 0
                       ? {
                           $toString: {
-                            $round: [
+                            $multiply: [
                               {
-                                $multiply: [
-                                  {
-                                    $divide: [
-                                      { $toInt: '$totalBorrowUSD' },
-                                      collateral.totalCollateral,
-                                    ],
-                                  },
-                                  100,
+                                $divide: [
+                                  '$totalBorrowUSD',
+                                  collateral.totalCollateral,
                                 ],
                               },
-                              2,
+                              100,
                             ],
                           },
                         }
@@ -376,7 +369,7 @@ export class UserService {
       {
         $lookup: {
           from: 'users',
-          localField: 'user',
+          localField: '_id',
           foreignField: '_id',
           as: 'user',
         },
@@ -408,9 +401,7 @@ export class UserService {
                   },
                   '100',
                   {
-                    $toString: {
-                      $divide: ['$totalCollateral', '$totalBorrowUSD'],
-                    },
+                    $divide: ['$totalCollateral', '$totalBorrowUSD'],
                   },
                 ],
               },
@@ -421,10 +412,10 @@ export class UserService {
       {
         $match: {
           health: {
-            $lte: 2,
+            $lte: Decimal128('2'),
           },
           totalBorrowUSD: {
-            $gt: 0,
+            $gt: Decimal128('0'),
           },
         },
       },
