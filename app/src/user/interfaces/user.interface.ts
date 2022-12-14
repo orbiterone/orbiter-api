@@ -24,3 +24,17 @@ export class UserBalanceResponse {
   @ApiProperty({ type: PositionHealth })
   positionHealth: PositionHealth;
 }
+
+export class UsersAccountsResponse {
+  @ApiProperty()
+  address: string;
+
+  @ApiProperty()
+  totalSupplyUSD: string;
+
+  @ApiProperty()
+  totalBorrowUSD: string;
+
+  @ApiProperty()
+  health: string;
+}
