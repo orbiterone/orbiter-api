@@ -439,14 +439,14 @@ export class AssetService implements OnModuleInit {
               $filter: {
                 input: '$supplied',
                 as: 'item',
-                cond: { $gt: ['$$item.usd', 0] },
+                cond: { $gt: ['$$item.usd', 0.0001] },
               },
             },
             borrowed: {
               $filter: {
                 input: '$borrowed',
                 as: 'item',
-                cond: { $gt: ['$$item.usd', 0] },
+                cond: { $gt: ['$$item.usd', 0.0001] },
               },
             },
           },
