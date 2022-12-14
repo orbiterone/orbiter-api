@@ -4,10 +4,15 @@ import Web3 from 'web3';
 
 import { UserRepository } from './user.repository';
 import { ControllerOrbiterCore } from '@app/core/orbiter/controller.orbiter';
-import { UserBalanceResponse } from '@app/user/interfaces/user.interface';
+import {
+  UserBalanceResponse,
+  UsersAccountsResponse,
+} from '@app/user/interfaces/user.interface';
 import { Decimal128 } from '@app/core/schemas/user.schema';
 import { ReaderOrbiterCore } from '@app/core/orbiter/reader.orbiter';
 import BigNumber from 'bignumber.js';
+import { UserAccountDto } from './interfaces/user.dto';
+import { PaginatedDto } from '@app/core/interface/response';
 
 const web3 = new Web3();
 
@@ -208,19 +213,6 @@ export class UserService {
                     $multiply: ['$totalBorrow', '$token.lastPrice'],
                   },
                 },
-                assurance: {
-                  $sum: {
-                    $multiply: [
-                      {
-                        $divide: [
-                          { $multiply: ['$totalBorrow', '$token.lastPrice'] },
-                          '$token.collateralFactor',
-                        ],
-                      },
-                      100,
-                    ],
-                  },
-                },
               },
             },
             {
@@ -297,5 +289,162 @@ export class UserService {
         }
       );
     }
+  }
+
+  async getUsersAccounts(
+    query: UserAccountDto,
+  ): Promise<PaginatedDto<UsersAccountsResponse>> {
+    const perPage = 10;
+    const pageItem = +query.page || 1;
+    const skip = (pageItem - 1) * perPage;
+
+    return await this.userRepository.getAggregateValueUserToken([
+      {
+        $lookup: {
+          from: 'tokens',
+          localField: 'token',
+          foreignField: '_id',
+          as: 'token',
+        },
+      },
+      {
+        $unwind: {
+          path: '$token',
+        },
+      },
+      {
+        $match: {
+          'token.isActive': true,
+        },
+      },
+      {
+        $group: {
+          _id: '$user.address',
+          totalCollateral: {
+            $sum: {
+              $cond: [
+                { $eq: ['$collateral', true] },
+                {
+                  $multiply: [
+                    {
+                      $multiply: [
+                        {
+                          $trunc: [
+                            {
+                              $multiply: [
+                                '$totalSupply',
+                                '$token.exchangeRate',
+                              ],
+                            },
+                            '$token.tokenDecimal',
+                          ],
+                        },
+                        {
+                          $divide: ['$token.collateralFactor', 100],
+                        },
+                      ],
+                    },
+                    '$token.lastPrice',
+                  ],
+                },
+                0,
+              ],
+            },
+          },
+          totalSupplyUSD: {
+            $sum: {
+              $multiply: [
+                {
+                  $trunc: [
+                    {
+                      $multiply: ['$totalSupply', '$token.exchangeRate'],
+                    },
+                    '$token.tokenDecimal',
+                  ],
+                },
+                '$token.lastPrice',
+              ],
+            },
+          },
+          totalBorrowUSD: {
+            $sum: {
+              $multiply: ['$totalBorrow', '$token.lastPrice'],
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          address: '$_id',
+          totalSupplyUSD: 1,
+          totalBorrowUSD: 1,
+          health: {
+            $cond: [
+              { $eq: [{ $round: ['$totalBorrowUSD', 3] }, 0] },
+              '100',
+              {
+                $cond: [
+                  {
+                    $gte: [
+                      {
+                        $divide: ['$totalCollateral', '$totalBorrowUSD'],
+                      },
+                      100,
+                    ],
+                  },
+                  '100',
+                  {
+                    $toString: {
+                      $divide: ['$totalCollateral', '$totalBorrowUSD'],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        $match: {
+          health: {
+            $lte: 2,
+          },
+        },
+      },
+      {
+        $facet: {
+          total: [
+            {
+              $count: 'count',
+            },
+          ],
+          items: [
+            { $skip: skip },
+            { $limit: perPage },
+            {
+              $project: {
+                _id: 0,
+                address: 1,
+                totalSupplyUSD: { $toString: '$totalSupplyUSD' },
+                totalBorrowUSD: { $toString: '$totalBorrowUSD' },
+                health: { $toString: '$health' },
+              },
+            },
+          ],
+        },
+      },
+      { $unwind: '$total' },
+      {
+        $project: {
+          page: pageItem.toString(),
+          pages: {
+            $ceil: { $divide: ['$total.count', perPage] },
+          },
+          countItem: '$total.count',
+          entities: '$items',
+        },
+      },
+    ]);
   }
 }
