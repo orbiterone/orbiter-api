@@ -439,14 +439,14 @@ export class AssetService implements OnModuleInit {
               $filter: {
                 input: '$supplied',
                 as: 'item',
-                cond: { $gt: ['$$item.usd', 0] },
+                cond: { $gt: ['$$item.usd', Decimal128('0.1')] },
               },
             },
             borrowed: {
               $filter: {
                 input: '$borrowed',
                 as: 'item',
-                cond: { $gt: ['$$item.usd', 0] },
+                cond: { $gt: ['$$item.usd', Decimal128('0.1')] },
               },
             },
           },
@@ -462,9 +462,14 @@ export class AssetService implements OnModuleInit {
                   token: '$$item.token',
                   percent: {
                     $toString: {
-                      $divide: [
-                        { $multiply: ['$$item.usd', 100] },
-                        '$totalSupplyUSD',
+                      $round: [
+                        {
+                          $divide: [
+                            { $multiply: ['$$item.usd', 100] },
+                            '$totalSupplyUSD',
+                          ],
+                        },
+                        6,
                       ],
                     },
                   },
@@ -479,9 +484,14 @@ export class AssetService implements OnModuleInit {
                   token: '$$item.token',
                   percent: {
                     $toString: {
-                      $divide: [
-                        { $multiply: ['$$item.usd', 100] },
-                        '$totalBorrowUSD',
+                      $round: [
+                        {
+                          $divide: [
+                            { $multiply: ['$$item.usd', 100] },
+                            '$totalBorrowUSD',
+                          ],
+                        },
+                        6,
                       ],
                     },
                   },
