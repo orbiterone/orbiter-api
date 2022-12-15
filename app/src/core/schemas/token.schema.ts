@@ -100,28 +100,30 @@ export const TokenSchema = SchemaFactory.createForClass(Token).set('toJSON', {
   getters: true,
   transform: (doc, ret) => {
     if (ret.exchangeRate) {
-      ret.exchangeRate = ret.exchangeRate.toString();
+      ret.exchangeRate = new BigNumber(ret.exchangeRate.toString()).toString();
     }
     if (ret.supplyRate) {
-      ret.supplyRate = ret.supplyRate.toString();
+      ret.supplyRate = new BigNumber(ret.supplyRate.toString()).toString();
     }
     if (ret.borrowRate) {
-      ret.borrowRate = ret.borrowRate.toString();
+      ret.borrowRate = new BigNumber(ret.borrowRate.toString()).toString();
     }
     if (ret.totalSupply) {
-      ret.totalSupply = ret.totalSupply.toString();
+      ret.totalSupply = new BigNumber(ret.totalSupply.toString()).toString();
     }
     if (ret.totalBorrow) {
-      ret.totalBorrow = ret.totalBorrow.toString();
+      ret.totalBorrow = new BigNumber(ret.totalBorrow.toString()).toString();
     }
     if (ret.totalReserves) {
-      ret.totalReserves = ret.totalReserves.toString();
+      ret.totalReserves = new BigNumber(
+        ret.totalReserves.toString(),
+      ).toString();
     }
     if (ret.lastPrice) {
       ret.lastPrice = ret.lastPrice.toString();
     }
     if (ret.liquidity) {
-      ret.liquidity = ret.liquidity.toString();
+      ret.liquidity = new BigNumber(ret.liquidity.toString()).toString();
     }
     ret.countSuppliers = ret.suppliers ? ret.suppliers.length : 0;
     ret.countBorrowers = ret.borrowers ? ret.borrowers.length : 0;
