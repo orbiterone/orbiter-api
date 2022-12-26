@@ -104,6 +104,12 @@ class AssetInfo {
 
   @ApiProperty()
   tokenDecimal: number;
+
+  @ApiProperty()
+  oTokenAddress: string;
+
+  @ApiProperty()
+  tokenAddress: string;
 }
 
 class AssetCompositionInfo {

@@ -209,6 +209,8 @@ export class AssetService implements OnModuleInit {
               image: asset.image,
               apy: asset.supplyRate.toString(),
               tokenDecimal: asset.tokenDecimal,
+              oTokenAddress: asset.oTokenAddress,
+              tokenAddress: asset.tokenAddress,
             },
             collateral: s.collateral,
             value: new BigNumber(s.totalSupply)
@@ -231,6 +233,8 @@ export class AssetService implements OnModuleInit {
               image: asset.image,
               apy: asset.borrowRate.toString(),
               tokenDecimal: asset.tokenDecimal,
+              oTokenAddress: asset.oTokenAddress,
+              tokenAddress: asset.tokenAddress,
             },
             collateral: null,
             value: new BigNumber(b.totalBorrow)
@@ -299,6 +303,8 @@ export class AssetService implements OnModuleInit {
                     image: '$token.image',
                     apy: { $toString: '$token.supplyRate' },
                     tokenDecimal: '$token.tokenDecimal',
+                    oTokenAddress: '$token.oTokenAddress',
+                    tokenAddress: '$token.tokenAddress',
                   },
                   collateral: '$collateral',
                   value: {
@@ -321,6 +327,8 @@ export class AssetService implements OnModuleInit {
                     image: '$token.image',
                     apy: { $toString: '$token.borrowRate' },
                     tokenDecimal: '$token.tokenDecimal',
+                    oTokenAddress: '$token.oTokenAddress',
+                    tokenAddress: '$token.tokenAddress',
                   },
                   collateral: '$collateral',
                   value: { $toString: '$totalBorrow' },
