@@ -182,6 +182,7 @@ export class AssetCron extends AssetService {
         let symbol = asset.symbol;
         switch (symbol) {
           case 'xcKSM':
+          case 'wstKSM':
             symbol = 'KSM';
             break;
           case 'xcAUSD':
