@@ -186,6 +186,12 @@ export class AssetBalanceByAccountResponse {
   token: TokenInfoData;
 
   @ApiProperty()
+  borrowRate: string;
+
+  @ApiProperty()
+  supplyRate: string;
+
+  @ApiProperty()
   walletBalance: string;
 }
 
