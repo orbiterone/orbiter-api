@@ -359,7 +359,7 @@ export class MarketEvent extends EventService {
   }) {
     const checkFrom = this.web3Service.getClient().utils.isAddress(from);
     const checkTo = this.web3Service.getClient().utils.isAddress(to);
-    if (checkFrom && checkTo) {
+    if (checkFrom && checkTo && from.toLowerCase() != token.toLowerCase()) {
       await this.handleMintEvent({
         token,
         minter: from,
