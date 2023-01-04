@@ -20,7 +20,8 @@
         "ORBIT": "",
         "MAI": "0xFb2019DfD635a03cfFF624D210AEe6AF2B00fC2C",
         "xcAUSD": "0xFfFffFFfa1B026a00FbAA67c86D5d1d5BF8D8228",
-        "xcKBTC": "0xFFFfFfFfF6E528AD57184579beeE00c5d5e646F0"
+        "xcKBTC": "0xFFFfFfFfF6E528AD57184579beeE00c5d5e646F0",
+        "wstKSM": "0x3bfd113ad0329a7994a681236323fb16E16790e3"
     },
     "markets": {
         "oBNB": "",
@@ -39,7 +40,8 @@
         "oDAI": "",
         "oMAI": "",
         "oAUSD": "",
-        "oxcKBTC": ""
+        "oxcKBTC": "",
+        "owstKSM": ""
     },
     "supportMarkets": {
         "oBNB": "",
@@ -57,7 +59,8 @@
         "oDAI": "",
         "oMAI": "",
         "oAUSD": "",
-        "oxcKBTC": ""
+        "oxcKBTC": "",
+        "owstKSM": ""
     },
     "defaultMarket": "",
     "settings": {
@@ -105,6 +108,11 @@
             "color": "#8854F7",
             "image": "https://assets.orbiter.one/images/tokens/xcKSM.svg",
             "fullName" : "xcKSM"
+        },
+        "wstKSM": {
+            "color": "#8854F7",
+            "image": "https://assets.orbiter.one/images/tokens/xcKSM.svg",
+            "fullName" : "wstKSM"
         },
         "DAI": {
             "color": "#F78F54",
