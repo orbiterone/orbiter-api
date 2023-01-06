@@ -166,8 +166,8 @@ export class AssetCompositionByAccountResponse {
 }
 
 export class AssetBalanceByAccountResponse {
-  @ApiProperty({ type: Token })
-  token: Token;
+  @ApiProperty({ type: AssetInfoResponse })
+  token: AssetInfoResponse;
 
   @ApiProperty()
   walletBalance: string;
