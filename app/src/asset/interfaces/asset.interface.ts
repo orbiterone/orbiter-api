@@ -1,3 +1,4 @@
+import { Token } from '@app/core/schemas/token.schema';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AssetInfoResponse {
@@ -164,32 +165,9 @@ export class AssetCompositionByAccountResponse {
   borrowed: SupplyBorrowInfoCompositionByAssetAccount[];
 }
 
-class TokenInfoData {
-  @ApiProperty()
-  image: string;
-
-  @ApiProperty()
-  symbol: string;
-
-  @ApiProperty()
-  name: string;
-
-  @ApiProperty()
-  tokenDecimal: number;
-
-  @ApiProperty()
-  tokenAddress: string;
-}
-
 export class AssetBalanceByAccountResponse {
-  @ApiProperty({ type: TokenInfoData })
-  token: TokenInfoData;
-
-  @ApiProperty()
-  borrowRate: string;
-
-  @ApiProperty()
-  supplyRate: string;
+  @ApiProperty({ type: Token })
+  token: Token;
 
   @ApiProperty()
   walletBalance: string;
