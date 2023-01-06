@@ -602,15 +602,7 @@ export class AssetService implements OnModuleInit {
         }
       }
       assetList.push({
-        token: {
-          image: asset.image,
-          symbol: asset.symbol,
-          name: asset.fullName,
-          tokenDecimal: asset.tokenDecimal,
-          tokenAddress: asset.tokenAddress,
-        },
-        borrowRate: asset.borrowRate,
-        supplyRate: asset.supplyRate,
+        token: asset,
         walletBalance: balance,
       });
     }
