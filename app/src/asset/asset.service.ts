@@ -573,8 +573,6 @@ export class AssetService implements OnModuleInit {
         HttpStatus.BAD_REQUEST,
       );
     const assets = await this.assetRepository.find({
-      select:
-        'tokenAddress image symbol fullName tokenDecimal oTokenAddress borrowRate supplyRate',
       options: { isActive: true },
       sort: { name: 1 },
     });
