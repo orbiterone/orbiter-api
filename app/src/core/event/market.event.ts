@@ -164,6 +164,8 @@ export class MarketEvent extends EventService {
       const totalBorrow = new BigNumber(
         await this.oTokenCore.borrowBalanceCurrent(token, borrower),
       ).div(new BigNumber(10).pow(checkToken.tokenDecimal));
+      const checkEnteredAsset =
+        await this.controllerOrbiterCore.checkMembership(borrower, token);
       await this.userService.userRepository
         .getUserTokenModel()
         .findOneAndUpdate(
@@ -177,6 +179,7 @@ export class MarketEvent extends EventService {
               token: checkToken._id,
               totalBorrow: Decimal128(totalBorrow.toString()),
               typeNetwork: NODE_TYPE,
+              collateral: checkEnteredAsset,
             },
           },
           { upsert: true },
