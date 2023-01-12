@@ -64,7 +64,7 @@ export class ControllerEvent extends EventService {
                     collateral,
                   },
                 },
-                { upsert: true, new: true },
+                { new: true },
               );
 
             await this.transactionService.transactionRepository.transactionCreate(
