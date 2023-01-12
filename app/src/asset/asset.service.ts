@@ -552,7 +552,16 @@ export class AssetService implements OnModuleInit {
           .toString();
       }
 
-      const minUSD = BigNumber.min(availableToWithdraw, tokenSupplyUSD);
+      let minUSD = new BigNumber(0);
+      if (
+        filterSupply.length &&
+        !filterSupply[0].collateral &&
+        +availableToWithdraw == 0
+      ) {
+        minUSD = minUSD.plus(tokenSupplyUSD);
+      } else {
+        minUSD = BigNumber.min(availableToWithdraw, tokenSupplyUSD);
+      }
 
       max = minUSD
         .div(token.lastPrice.toString())
