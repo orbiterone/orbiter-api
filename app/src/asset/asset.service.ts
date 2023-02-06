@@ -213,10 +213,15 @@ export class AssetService implements OnModuleInit {
               tokenAddress: asset.tokenAddress,
               lastPrice: asset.lastPrice,
               exchangeRate: asset.exchangeRate,
+              collateralFactor: asset.collateralFactor,
             },
             collateral: s.collateral,
             value: new BigNumber(s.totalSupply)
               .div(Math.pow(10, asset.tokenDecimal))
+              .toString(),
+            valueCollateral: new BigNumber(s.totalSupply)
+              .div(Math.pow(10, asset.tokenDecimal))
+              .multipliedBy(asset.collateralFactor / 100)
               .toString(),
           });
         }
@@ -239,6 +244,7 @@ export class AssetService implements OnModuleInit {
               tokenAddress: asset.tokenAddress,
               lastPrice: asset.lastPrice,
               exchangeRate: asset.exchangeRate,
+              collateralFactor: asset.collateralFactor,
             },
             collateral: null,
             value: new BigNumber(b.totalBorrow)
@@ -311,6 +317,7 @@ export class AssetService implements OnModuleInit {
                     tokenAddress: '$token.tokenAddress',
                     lastPrice: '$token.lastPrice',
                     exchangeRate: '$token.exchangeRate',
+                    collateralFactor: '$token.collateralFactor',
                   },
                   collateral: '$collateral',
                   value: {
@@ -337,6 +344,7 @@ export class AssetService implements OnModuleInit {
                     tokenAddress: '$token.tokenAddress',
                     lastPrice: '$token.lastPrice',
                     exchangeRate: '$token.exchangeRate',
+                    collateralFactor: '$token.collateralFactor',
                   },
                   collateral: '$collateral',
                   value: { $toString: '$totalBorrow' },

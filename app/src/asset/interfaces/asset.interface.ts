@@ -111,6 +111,9 @@ class AssetInfo {
 
   @ApiProperty()
   tokenAddress: string;
+
+  @ApiProperty()
+  collateralFactor: number;
 }
 
 class AssetCompositionInfo {
@@ -141,9 +144,14 @@ export class SupplyBorrowInfoByAssetAccount {
   value: string;
 }
 
+export class SupplyInfoByAssetAccount extends SupplyBorrowInfoByAssetAccount {
+  @ApiProperty()
+  valueCollateral: string;
+}
+
 export class AssetByAccountResponse {
-  @ApiProperty({ type: [SupplyBorrowInfoByAssetAccount] })
-  supplied: SupplyBorrowInfoByAssetAccount[];
+  @ApiProperty({ type: [SupplyInfoByAssetAccount] })
+  supplied: SupplyInfoByAssetAccount[];
 
   @ApiProperty({ type: [SupplyBorrowInfoByAssetAccount] })
   borrowed: SupplyBorrowInfoByAssetAccount[];
