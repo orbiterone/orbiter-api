@@ -291,7 +291,7 @@ export class UserService {
     const pageItem = +query.page || 1;
     const skip = (pageItem - 1) * perPage;
 
-    return (
+    const result = (
       await this.userRepository.getAggregateValueUserToken([
         {
           $lookup: {
@@ -455,5 +455,20 @@ export class UserService {
         },
       ])
     ).pop();
+
+    if (result && result.entities && result.entities.length) {
+      for (const i in result.entities) {
+        const item = result.entities[i];
+        const user = new User();
+        user.address = item.address;
+        const actualInfo = await this.getUserAccountBalance(user);
+
+        result.entities[i].totalSupplyUSD = actualInfo.totalSupplied;
+        result.entities[i].totalBorrowUSD = actualInfo.totalBorrowed;
+        result.entities[i].health = actualInfo.positionHealth.coefficient;
+      }
+    }
+
+    return result;
   }
 }
