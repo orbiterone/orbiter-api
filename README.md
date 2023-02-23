@@ -1,13 +1,13 @@
-# Start API
+## Orbiter One Protocol - Start with API
 
-## CLONE REPO
+### CLONE REPO
 
 ```
 git clone git@github.com:oribiterone/orbiter-api.git
 cd orbiter-api
 ```
 
-## CREATE APP CONFIG FILES
+### CREATE APP CONFIG FILES
 
 ```
 cp docker/app/.env.dist docker/app/.env
@@ -17,7 +17,7 @@ cp docker-compose.yml.dist docker-compose.yml
 cp init-mongo.js.dist init-mongo.js
 ```
 
-## BUILD APPLICATION
+### BUILD APPLICATION
 
 ```
 docker-compose up -d --build
