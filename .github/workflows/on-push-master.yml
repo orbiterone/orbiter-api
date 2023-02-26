@@ -1,0 +1,63 @@
+name: MASTER Auto deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  lint:
+    name: Check coding standard
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node_version: ['18.x']
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node_version }}
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - run: npm run lint
+      - run: npm run prettier
+  build:
+    name: Build and deploy to remote host
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_MASTER }}
+          username: ${{ secrets.SSH_USERNAME_MASTER }}
+          key: ${{ secrets.SSH_KEY_MASTER }}
+          script_stop: true
+          script: |
+            cd "${{ secrets.SSH_APP_PATH_MASTER }}"
+            bash git-checkout-branch.sh "${{ github.ref_name }}"
+            git pull origin ${{ github.ref_name }}
+
+            export APP_PORT=${{ secrets.APP_PORT_MASTER }}
+            export MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD_MASTER }}
+            export MONGO_PORT=${{ secrets.MONGO_PORT_MASTER }}
+
+            rm -f .env
+            echo MONGO_URL="${{ secrets.MONGO_URL_MASTER }}" > .env
+            echo REDIS_URI="${{ secrets.REDIS_URI_MASTER }}" >> .env
+            echo WSS_NODE_MOONRIVER_HOST="${{ secrets.WSS_NODE_MOONRIVER_HOST_MASTER }}" >> .env
+            echo WSS_NODE_MOONBASE_HOST="${{ secrets.WSS_NODE_MOONBASE_HOST_MASTER }}" >> .env
+            echo WSS_NODE_MOONBEAM_HOST="${{ secrets.WSS_NODE_MOONBEAM_HOST_MASTER }}" >> .env
+            echo NODE_MOONRIVER_HOST="${{ secrets.NODE_MOONRIVER_HOST_MASTER }}" >> .env
+            echo NODE_MOONBASE_HOST="${{ secrets.NODE_MOONBASE_HOST_MASTER }}" >> .env
+            echo NODE_MOONBEAM_HOST="${{ secrets.NODE_MOONBEAM_HOST_MASTER }}" >> .env
+            echo NODE_TYPE="${{ secrets.NODE_TYPE_MASTER }}" >> .env
+            echo API_KEY="${{ secrets.API_KEY_MASTER }}" >> .env
+            echo COINPRICE_KEY="${{ secrets.COINPRICE_KEY_MASTER }}" >> .env
+            echo PRICE_FEED_OWNER_KEY="${{ secrets.PRICE_FEED_OWNER_KEY_MASTER }}" >> .env
+
+            export DOCKER_SCAN_SUGGEST=false
+            docker compose -f docker-stack.yml build --no-cache --compress
+            docker compose -f docker-stack.yml up -d
