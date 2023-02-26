@@ -1,9 +1,9 @@
-name: DEV Auto deploy
+name: MASTER Auto deploy
 
 on:
   push:
     branches:
-      - dev
+      - master
 
 jobs:
   lint:
