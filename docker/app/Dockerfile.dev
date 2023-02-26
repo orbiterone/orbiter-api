@@ -1,8 +1,0 @@
-FROM node:16.18.0 as build
-WORKDIR /var/www/orbiter/app
-COPY ./app/package*.json ./
-RUN npm install
-
-FROM node:16.18.0
-WORKDIR /var/www/orbiter/app
-COPY --from=build /var/www/orbiter/app ./
