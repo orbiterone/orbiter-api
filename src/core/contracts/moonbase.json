@@ -2,7 +2,7 @@
     "contracts": {
         "PriceOracle": "0x32fe93EAa774f2de4a8ACD8c332aD4FaD1Fc2844",
         "Comptroller": "0xEBD863ae97b74718a863fB159D60C20eAcf44462",
-        "Reader": "0x51Bf843B1245E7eee5472D3Cb7A7a595843ac29f"
+        "Reader": "0xc8E71b9122CCd300A546525A53b35bbE9f08b2eC"
     },
     "tokens": {
         "FRAX": "0x3b18F5E81906fc771B1e0886B7B7FD50Fc4849E7",
