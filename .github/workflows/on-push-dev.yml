@@ -60,4 +60,4 @@ jobs:
 
             export DOCKER_SCAN_SUGGEST=false
             docker compose -f docker-stack.yml build --no-cache --compress
-            # docker compose -f docker-stack.yml up -d
+            docker compose -f docker-stack.yml up -d
