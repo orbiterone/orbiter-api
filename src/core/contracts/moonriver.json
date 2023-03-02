@@ -129,6 +129,11 @@
             "color": "#1A1A1A",
             "image": "https://assets.orbiter.one/images/tokens/fxs.svg",
             "fullName" : "Frax Share"
+        },
+        "GLMR": {
+            "color": "",
+            "image": "",
+            "fullName" : ""
         }
     }
 }
