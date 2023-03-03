@@ -473,7 +473,7 @@ export class UserService {
         page: pageItem.toString(),
         pages: 0,
         countItem: 0
-      }
+      };
     }
 
     return result;
