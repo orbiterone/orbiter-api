@@ -472,7 +472,7 @@ export class UserService {
         entities: [],
         page: pageItem.toString(),
         pages: 0,
-        countItem: 0
+        countItem: 0,
       };
     }
 
