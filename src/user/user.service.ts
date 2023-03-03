@@ -467,6 +467,11 @@ export class UserService {
         result.entities[i].totalBorrowUSD = actualInfo.totalBorrowed;
         result.entities[i].health = actualInfo.positionHealth.coefficient;
       }
+    } else {
+      result.entities = [];
+      result.page = pageItem.toString();
+      result.pages = 0;
+      result.countItem = 0;
     }
 
     return result;
