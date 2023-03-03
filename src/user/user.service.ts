@@ -291,7 +291,7 @@ export class UserService {
     const pageItem = +query.page || 1;
     const skip = (pageItem - 1) * perPage;
 
-    const result = (
+    let result = (
       await this.userRepository.getAggregateValueUserToken([
         {
           $lookup: {
@@ -468,10 +468,12 @@ export class UserService {
         result.entities[i].health = actualInfo.positionHealth.coefficient;
       }
     } else {
-      result.entities = [];
-      result.page = pageItem.toString();
-      result.pages = 0;
-      result.countItem = 0;
+      result = {
+        entities: [],
+        page: pageItem.toString(),
+        pages: 0,
+        countItem: 0
+      }
     }
 
     return result;
