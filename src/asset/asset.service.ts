@@ -317,7 +317,14 @@ export class AssetService implements OnModuleInit {
               lastPrice: asset.lastPrice,
               exchangeRate: asset.exchangeRate,
               collateralFactor: asset.collateralFactor,
-              incentives: asset.incentives,
+              incentives: asset.incentives.map((el) => {
+                return {
+                  address: el.address,
+                  symbol: el.symbol,
+                  supplyApy: el.supplyApy.toString(),
+                  borrowApy: el.borrowApy.toString(),
+                };
+              }),
             },
             collateral: s.collateral,
             value: new BigNumber(s.totalSupply)
@@ -349,7 +356,14 @@ export class AssetService implements OnModuleInit {
               lastPrice: asset.lastPrice,
               exchangeRate: asset.exchangeRate,
               collateralFactor: asset.collateralFactor,
-              incentives: asset.incentives,
+              incentives: asset.incentives.map((el) => {
+                return {
+                  address: el.address,
+                  symbol: el.symbol,
+                  supplyApy: el.supplyApy.toString(),
+                  borrowApy: el.borrowApy.toString(),
+                };
+              }),
             },
             collateral: null,
             value: new BigNumber(b.totalBorrow)
@@ -423,6 +437,7 @@ export class AssetService implements OnModuleInit {
                     lastPrice: '$token.lastPrice',
                     exchangeRate: '$token.exchangeRate',
                     collateralFactor: '$token.collateralFactor',
+                    incentives: '$token.incentives',
                   },
                   collateral: '$collateral',
                   value: {
@@ -450,6 +465,7 @@ export class AssetService implements OnModuleInit {
                     lastPrice: '$token.lastPrice',
                     exchangeRate: '$token.exchangeRate',
                     collateralFactor: '$token.collateralFactor',
+                    incentives: '$token.incentives',
                   },
                   collateral: '$collateral',
                   value: { $toString: '$totalBorrow' },
