@@ -182,7 +182,7 @@ export class AssetService implements OnModuleInit {
           );
 
           if (supplySpeed.gt(0) || borrowSpeed.gt(0)) {
-            const incentiveSymbol = await this.erc20OrbierCore.name(
+            const incentiveSymbol = await this.erc20OrbierCore.symbol(
               incentiveAddress,
             );
             const incentiveDecimals = await this.erc20OrbierCore.decimals(
