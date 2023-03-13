@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { BigNumber } from 'bignumber.js';
 import { Document, Types } from 'mongoose';
 
@@ -84,6 +84,27 @@ export class Token {
   @Prop({ type: [String] })
   borrowers: string[];
 
+  @Prop(
+    raw([
+      {
+        symbol: {
+          type: String,
+        },
+        address: {
+          type: String,
+        },
+        supplyApy: decimalObj,
+        borrowApy: decimalObj,
+      },
+    ]),
+  )
+  incentives: {
+    symbol: string;
+    address: string;
+    supplyApy: Types.Decimal128;
+    borrowApy: Types.Decimal128;
+  }[];
+
   @Prop({ default: true })
   isActive: boolean;
 
@@ -124,6 +145,16 @@ export const TokenSchema = SchemaFactory.createForClass(Token).set('toJSON', {
     }
     if (ret.liquidity) {
       ret.liquidity = new BigNumber(ret.liquidity.toString()).toString();
+    }
+    if (ret.incentives && ret.incentives.length > 0) {
+      for (const i in ret.incentives) {
+        ret.incentives[i].supplyApy = new BigNumber(
+          ret.incentives[i].supplyApy.toString(),
+        ).toString();
+        ret.incentives[i].borrowApy = new BigNumber(
+          ret.incentives[i].borrowApy.toString(),
+        ).toString();
+      }
     }
     ret.countSuppliers = ret.suppliers ? ret.suppliers.length : 0;
     ret.countBorrowers = ret.borrowers ? ret.borrowers.length : 0;

@@ -3,6 +3,7 @@ import { CoreModule } from '../core.module';
 
 import { ControllerOrbiterCore } from './controller.orbiter';
 import { Erc20OrbiterCore } from './erc20.orbiter';
+import { IncentiveOrbiterCore } from './incentive.orbiter';
 import { OracleOrbiterCore } from './oracle.orbiter';
 import { OTokenOrbiterCore } from './oToken.orbiter';
 import { ReaderOrbiterCore } from './reader.orbiter';
@@ -15,6 +16,7 @@ import { ReaderOrbiterCore } from './reader.orbiter';
     ControllerOrbiterCore,
     OracleOrbiterCore,
     ReaderOrbiterCore,
+    IncentiveOrbiterCore,
   ],
   exports: [
     OTokenOrbiterCore,
@@ -22,6 +24,7 @@ import { ReaderOrbiterCore } from './reader.orbiter';
     ControllerOrbiterCore,
     OracleOrbiterCore,
     ReaderOrbiterCore,
+    IncentiveOrbiterCore,
   ],
 })
 export class OrbiterModule {}

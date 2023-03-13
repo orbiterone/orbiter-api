@@ -40,6 +40,13 @@ const READER =
     ? MoonriverContracts.Reader
     : MoonbeamContracts.Reader;
 
+const INCENTIVE =
+  NODE_TYPE == 'moonbase'
+    ? MoonbaseContracts.Incentive
+    : NODE_TYPE == 'moonriver'
+    ? MoonriverContracts.Incentive
+    : MoonbeamContracts.Incentive;
+
 const DEFAULT_TOKEN =
   NODE_TYPE == 'moonbase'
     ? MoonbaseDefaultMarket
@@ -74,6 +81,7 @@ export {
   daysPerYear,
   COMPTROLLER,
   READER,
+  INCENTIVE,
   DEFAULT_TOKEN,
   SUPPORT_MARKET,
   TOKENS,
