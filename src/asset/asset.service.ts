@@ -28,6 +28,7 @@ import {
 import { UserRepository } from '@app/user/user.repository';
 import { ExchangeService } from '@app/core/exchange/exchange.service';
 import { ReaderOrbiterCore } from '@app/core/orbiter/reader.orbiter';
+import { IncentiveOrbiterCore } from '@app/core/orbiter/incentive.orbiter';
 
 const web3 = new Web3();
 
@@ -44,6 +45,7 @@ export class AssetService implements OnModuleInit {
     public readonly oTokenCore: OTokenOrbiterCore,
     public readonly erc20OrbierCore: Erc20OrbiterCore,
     public readonly readerOrbiterCore: ReaderOrbiterCore,
+    public readonly incentiveOrbiterCore: IncentiveOrbiterCore,
     public readonly controllerOrbiterCore: ControllerOrbiterCore,
     public readonly oracleOrbiterCore: OracleOrbiterCore,
     public readonly userRepository: UserRepository,
@@ -127,7 +129,7 @@ export class AssetService implements OnModuleInit {
       ).div(new BigNumber(10).pow(tokenData.tokenDecimal));
     }
 
-    return {
+    const obj = {
       oTokenAddress: oToken,
       oTokenDecimal: oTokenDecimal,
       tokenAddress: underlying || '',
@@ -152,7 +154,108 @@ export class AssetService implements OnModuleInit {
       borrowPaused: await this.controllerOrbiterCore.borrowGuardianPaused(
         oToken,
       ),
+      incentives: [],
     };
+
+    try {
+      const supportIncentives =
+        await this.incentiveOrbiterCore.getAllSupportIncentives();
+
+      if (
+        supportIncentives &&
+        supportIncentives.length &&
+        (+obj.totalBorrow.toString() > 0 || +obj.totalSupply.toString() > 0)
+      ) {
+        const apxBlockSpeedInSeconds = 12;
+        for (const incentiveAddress of supportIncentives) {
+          let supplySpeed = new BigNumber(
+            await this.incentiveOrbiterCore.supplyRewardSpeeds(
+              incentiveAddress,
+              oToken,
+            ),
+          );
+          let borrowSpeed = new BigNumber(
+            await this.incentiveOrbiterCore.borrowRewardSpeeds(
+              incentiveAddress,
+              oToken,
+            ),
+          );
+
+          if (supplySpeed.gt(0) || borrowSpeed.gt(0)) {
+            const incentiveSymbol = await this.erc20OrbierCore.name(
+              incentiveAddress,
+            );
+            const incentiveDecimals = await this.erc20OrbierCore.decimals(
+              incentiveAddress,
+            );
+
+            borrowSpeed = borrowSpeed.div(Math.pow(10, +incentiveDecimals));
+            supplySpeed = supplySpeed.div(Math.pow(10, +incentiveDecimals));
+            let incentivePrice = 0;
+            if (incentiveSymbol == 'ORB') {
+              incentivePrice = 0.3;
+            } else {
+              incentivePrice = await this.exchangeService.getPrice(
+                incentiveSymbol,
+                'USDT',
+                1,
+              );
+            }
+
+            const borrowersPerDay = borrowSpeed.multipliedBy(
+              parseInt(((60 * 60 * 24) / apxBlockSpeedInSeconds).toString()),
+            );
+            const suppliersPerDay = supplySpeed.multipliedBy(
+              parseInt(((60 * 60 * 24) / apxBlockSpeedInSeconds).toString()),
+            );
+
+            const borrowApy =
+              +obj.totalBorrow.toString() > 0
+                ? new BigNumber(100).multipliedBy(
+                    Math.pow(
+                      1 +
+                        borrowersPerDay
+                          .multipliedBy(incentivePrice)
+                          .toNumber() /
+                          new BigNumber(obj.totalBorrow.toString())
+                            .multipliedBy(obj.lastPrice.toString())
+                            .toNumber(),
+                      365,
+                    ) - 1,
+                  )
+                : new BigNumber(0);
+
+            const supplyApy =
+              +obj.totalSupply.toString() > 0
+                ? new BigNumber(100).multipliedBy(
+                    Math.pow(
+                      1 +
+                        suppliersPerDay
+                          .multipliedBy(incentivePrice)
+                          .toNumber() /
+                          new BigNumber(obj.totalSupply.toString())
+                            .multipliedBy(obj.lastPrice.toString())
+                            .toNumber(),
+                      365,
+                    ) - 1,
+                  )
+                : new BigNumber(0);
+
+            obj.incentives.push({
+              symbol: incentiveSymbol,
+              address: incentiveAddress,
+              supplyApy: Decimal128(supplyApy.toString()),
+              borrowApy: Decimal128(borrowApy.toString()),
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.log(`Fetch incentives error. ${err.message}`);
+      delete obj.incentives;
+    }
+
+    return obj;
   }
 
   async updateAssetInfo(oToken: string) {
@@ -214,6 +317,7 @@ export class AssetService implements OnModuleInit {
               lastPrice: asset.lastPrice,
               exchangeRate: asset.exchangeRate,
               collateralFactor: asset.collateralFactor,
+              incentives: asset.incentives,
             },
             collateral: s.collateral,
             value: new BigNumber(s.totalSupply)
@@ -245,6 +349,7 @@ export class AssetService implements OnModuleInit {
               lastPrice: asset.lastPrice,
               exchangeRate: asset.exchangeRate,
               collateralFactor: asset.collateralFactor,
+              incentives: asset.incentives,
             },
             collateral: null,
             value: new BigNumber(b.totalBorrow)

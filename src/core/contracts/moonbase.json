@@ -2,6 +2,7 @@
     "contracts": {
         "PriceOracle": "0x32fe93EAa774f2de4a8ACD8c332aD4FaD1Fc2844",
         "Comptroller": "0x42913fBdF71966C600F056200182A85a096608d2",
+        "Incentive": "0xfcfDec03030006352Afb983Fd1Ae86c70EDE60B8",
         "Reader": "0xc8E71b9122CCd300A546525A53b35bbE9f08b2eC"
     },
     "tokens": {

@@ -1,5 +1,18 @@
-import { Token } from '@app/core/schemas/token.schema';
 import { ApiProperty } from '@nestjs/swagger';
+
+class AssetIncentive {
+  @ApiProperty()
+  address: string;
+
+  @ApiProperty()
+  symbol: string;
+
+  @ApiProperty()
+  supplyApy: string;
+
+  @ApiProperty()
+  borrowApy: string;
+}
 
 export class AssetInfoResponse {
   @ApiProperty()
@@ -85,6 +98,9 @@ export class AssetInfoResponse {
 
   @ApiProperty()
   updatedAt: Date;
+
+  @ApiProperty({ type: [AssetIncentive] })
+  incentives: AssetIncentive[];
 }
 
 class AssetInfo {
@@ -114,6 +130,9 @@ class AssetInfo {
 
   @ApiProperty()
   collateralFactor: number;
+
+  @ApiProperty({ type: [AssetIncentive] })
+  incentives: AssetIncentive[];
 }
 
 class AssetCompositionInfo {
