@@ -33,6 +33,13 @@ const COMPTROLLER =
     ? MoonriverContracts.Comptroller
     : MoonbeamContracts.Comptroller;
 
+const LOTTERY =
+  NODE_TYPE == 'moonbase'
+    ? MoonbaseContracts.Lottery
+    : NODE_TYPE == 'moonriver'
+    ? MoonriverContracts.Lottery
+    : MoonbeamContracts.Lottery;
+
 const READER =
   NODE_TYPE == 'moonbase'
     ? MoonbaseContracts.Reader
@@ -80,6 +87,7 @@ export {
   blocksPerDay,
   daysPerYear,
   COMPTROLLER,
+  LOTTERY,
   READER,
   INCENTIVE,
   DEFAULT_TOKEN,
