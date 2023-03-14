@@ -22,7 +22,8 @@
         "xcAUSD": "0xfAb721CF62B58D4C11E06dc217B2e199493dFEab",
         "MAI": "0xCb10810e1B83f81858994Ced3dE2EeC8328F161A",
         "xcKBTC": "0x4aDe7E5637618a9Ca55503026c4bAE5820Bf81d6",
-        "wstKSM": "0x1a6B75Bc537bAA6B29e9b543891abE9c96F6beD3"
+        "wstKSM": "0x1a6B75Bc537bAA6B29e9b543891abE9c96F6beD3",
+        "D2O": "0x607F26BC84035088e3AD308e6d9439Da507190dB"
     },
     "markets": {
         "oBNB": "0x1C8202523Ac0e2519D2111f29BA098edDF87C93E",
@@ -42,7 +43,8 @@
         "oMAI": "0x5490E753220012e97F56694c79b035A7A6Bec71C",
         "oxcKBTC": "0x445A2c8137a011Aa17474De0bEAeEeB19D399057",
         "oORBIT": "",
-        "owstKSM": "0xC861215F4039081eC6B3A1378d642a1aFB7A69E8"
+        "owstKSM": "0xC861215F4039081eC6B3A1378d642a1aFB7A69E8",
+        "od2O": "0xce678455982bf570a235afa46B0bfD1a7514D468"
     },
     "supportMarkets": {
         "oBNB": "0x1C8202523Ac0e2519D2111f29BA098edDF87C93E",
@@ -61,7 +63,8 @@
         "oxcAUSD": "0x107EBbbe56406D4C5dAb410719c7A0F309848f3E",
         "oMAI": "0x5490E753220012e97F56694c79b035A7A6Bec71C",
         "oxcKBTC": "0x445A2c8137a011Aa17474De0bEAeEeB19D399057",
-        "owstKSM": "0xC861215F4039081eC6B3A1378d642a1aFB7A69E8"
+        "owstKSM": "0xC861215F4039081eC6B3A1378d642a1aFB7A69E8",
+        "od2O": "0xce678455982bf570a235afa46B0bfD1a7514D468"
     },
     "defaultMarket": "0x972d1fa3e375a526204DCE1A395cC4061B8E35A2",
     "settings": {
@@ -149,6 +152,11 @@
             "color": "#FB8D28",
             "image": "https://assets.orbiter.one/images/tokens/kbtc.svg",
             "fullName" : "Kintsugi WBTC"
+        },
+        "D2O": {
+            "color": "#FB8D28",
+            "image": "https://assets.orbiter.one/images/tokens/d2o.svg",
+            "fullName" : "Deuterium"
         },
         "GLMR": {
             "color": "",
