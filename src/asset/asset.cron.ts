@@ -191,6 +191,8 @@ export class AssetCron extends AssetService {
           case 'xcKBTC':
             symbol = 'BTC';
             break;
+          case 'd2O':
+            symbol = 'USDC';
         }
         if (symbol == 'MAI' || symbol == 'AUSD' || symbol == 'FRAX') continue;
 
