@@ -44,3 +44,26 @@ export class CurrentLotteryResponse {
   @ApiProperty()
   finalNumber: string;
 }
+
+export class UserLotteryResponse {
+  @ApiProperty()
+  startTime: Date;
+
+  @ApiProperty()
+  endTime: Date;
+
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty()
+  finalNumber: string;
+
+  @ApiProperty()
+  countTickets: number;
+
+  @ApiProperty()
+  status: number;
+
+  @ApiProperty()
+  createdAt: Date;
+}

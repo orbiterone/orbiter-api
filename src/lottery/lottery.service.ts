@@ -6,10 +6,14 @@ import {
   distributionPrizePercent,
   PRICE_ORB,
 } from '@app/core/constant';
-import { CurrentLotteryResponse } from './interfaces/lottery.interface';
+import {
+  CurrentLotteryResponse,
+  UserLotteryResponse,
+} from './interfaces/lottery.interface';
 import { LotteryRepository } from './lottery.repository';
-import { BasePagination } from '@app/core/interface/response';
+import { BasePagination, PaginatedDto } from '@app/core/interface/response';
 import { LotteryDocument } from '@app/core/schemas/lottery.schema';
+import { User } from '@app/core/schemas/user.schema';
 
 @Injectable()
 export class LotteryService {
@@ -65,7 +69,9 @@ export class LotteryService {
     return await this.infoByLottery(currentLottery);
   }
 
-  async historyLottery(query: BasePagination) {
+  async historyLottery(
+    query: BasePagination,
+  ): Promise<PaginatedDto<CurrentLotteryResponse>> {
     const lotteries = await this.lotteryRepository.pagination(
       this.lotteryRepository.getLotteryModel(),
       {
@@ -80,7 +86,7 @@ export class LotteryService {
         finalNumber: 1,
         countWinningTickets: 1,
       },
-      { $match: { status: { $gt: 1 } } },
+      [{ $match: { status: { $gt: 1 } } }],
       query,
     );
 
@@ -92,6 +98,48 @@ export class LotteryService {
     }
 
     lotteries.entities = entities;
+
+    return lotteries;
+  }
+
+  async historyLotteryByAccount(
+    user: User | null,
+    query: BasePagination,
+  ): Promise<PaginatedDto<UserLotteryResponse>> {
+    const lotteries = await this.lotteryRepository.pagination(
+      this.lotteryRepository.getLotteryParticipantModel(),
+      {
+        id: '$lottery.lotteryId',
+        status: '$lottery.status',
+        startTime: '$lottery.startTime',
+        endTime: '$lottery.endTime',
+        countTickets: 1,
+        finalNumber: '$lottery.finalNumber',
+        createdAt: 1,
+      },
+      [
+        {
+          $lookup: {
+            from: 'lotterys',
+            localField: 'lottery',
+            foreignField: '_id',
+            as: 'lottery',
+          },
+        },
+        {
+          $unwind: {
+            path: '$lottery',
+          },
+        },
+        {
+          $match: {
+            'lottery.status': 3,
+            user: user ? user._id : null,
+          },
+        },
+      ],
+      query,
+    );
 
     return lotteries;
   }
