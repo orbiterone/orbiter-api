@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Timeout } from '@nestjs/schedule';
 import BigNumber from 'bignumber.js';
-import { Decimal128 } from '../schemas/user.schema';
 
+import { Decimal128 } from '../schemas/user.schema';
 import { EventService } from './event.service';
 import { LOTTERY_EVENT } from './interfaces/event.interface';
 
@@ -18,26 +18,56 @@ export class LotteryEvent extends EventService {
       })
       .on('data', async (event) => {
         const { returnValues, transactionHash: txHash } = event;
-        switch (event.event) {
-          case LOTTERY_EVENT.LOTTERY_OPEN:
-            await this.lotteryService.lotteryRepository.lotteryCreate({
-              lotteryId: returnValues.lotteryId,
-              status: 1,
-              startTime: new Date(returnValues.startTime * 1000),
-              endTime: new Date(returnValues.endTime * 1000),
-              priceTicket: Decimal128(
-                new BigNumber(returnValues.priceTicketInOrb)
-                  .div(Math.pow(10, 18))
-                  .toString(),
-              ),
-            });
-            break;
-          case LOTTERY_EVENT.LOTTERY_CLOSE:
-            break;
-          case LOTTERY_EVENT.LOTTERY_TICKETS_PURCHASE:
-            break;
-          case LOTTERY_EVENT.LOTTERY_DRAWN:
-            break;
+        if (event.event == LOTTERY_EVENT.LOTTERY_OPEN) {
+          await this.lotteryService.lotteryRepository.lotteryCreate({
+            lotteryId: returnValues.lotteryId,
+            status: 1,
+            startTime: new Date(returnValues.startTime * 1000),
+            endTime: new Date(returnValues.endTime * 1000),
+            priceTicket: Decimal128(
+              new BigNumber(returnValues.priceTicketInOrb)
+                .div(Math.pow(10, 18))
+                .toString(),
+            ),
+          });
+        } else if (event.event == LOTTERY_EVENT.LOTTERY_CLOSE) {
+          await this.lotteryService.lotteryRepository
+            .getLotteryModel()
+            .findOneAndUpdate(
+              { lotteryId: returnValues.lotteryId },
+              { $set: { status: 2 } },
+            );
+        } else if (event.event == LOTTERY_EVENT.LOTTERY_TICKETS_PURCHASE) {
+          const lottery = await this.lotteryService.lotteryRepository
+            .getLotteryModel()
+            .findOne({ lotteryId: returnValues.lotteryId });
+          const checkUser = await this.userService.createUpdateGetUser(
+            returnValues.buyer,
+          );
+          await this.lotteryService.lotteryRepository
+            .getLotteryParticipantModel()
+            .findOneAndUpdate(
+              { user: checkUser._id, lottery: lottery._id },
+              { $inc: { countTickets: returnValues.numberTickets } },
+              { upsert: true },
+            );
+        } else if (event.event == LOTTERY_EVENT.LOTTERY_DRAWN) {
+          const lottery = await this.lotteryOrbiterCore.viewLottery(
+            returnValues.lotteryId,
+          );
+
+          await this.lotteryService.lotteryRepository
+            .getLotteryModel()
+            .findOneAndUpdate(
+              { lotteryId: returnValues.lotteryId },
+              {
+                $set: {
+                  finalNumber: returnValues.finalNumber,
+                  orbPerBracket: lottery.orbPerBracket,
+                  countWinnersPerBracket: lottery.countWinnersPerBracket,
+                },
+              },
+            );
         }
       })
       .on('error', function (error, receipt) {
