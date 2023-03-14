@@ -56,17 +56,69 @@ export class Web3Service {
 
   getClientWebsocket(): Web3 {
     const urlNode = NODE_GETH_WEBSOCKET[typeNetwork];
-
     if (!this.nodeClientWebsocket[typeNetwork]) {
       let provider = new Web3.providers.WebsocketProvider(urlNode, {
-        reconnect: { auto: true, delay: 5000 },
+        timeout: 50000,
+        clientConfig: {
+          keepalive: true,
+          keepaliveInterval: 60000,
+          maxReceivedFrameSize: 2000000, // bytes - default: 1MiB, current: 2MiB
+          maxReceivedMessageSize: 10000000, // bytes - default: 8MiB, current: 10Mib
+        },
+        reconnect: {
+          auto: true,
+          delay: 60000,
+          onTimeout: true,
+          maxAttempts: 10,
+        },
       });
       const client = new Web3(provider);
-      provider.on('error', console.error);
+      provider.on('error', () => {
+        console.error(`WSS client error - ${typeNetwork}`);
+      });
       provider.on('end', () => {
         console.log('WS closed');
         console.log(`Attempting to reconnect... ${typeNetwork}`);
-        provider = new Web3.providers.WebsocketProvider(urlNode);
+        provider = new Web3.providers.WebsocketProvider(urlNode, {
+          timeout: 50000,
+          clientConfig: {
+            keepalive: true,
+            keepaliveInterval: 60000,
+            maxReceivedFrameSize: 2000000, // bytes - default: 1MiB, current: 2MiB
+            maxReceivedMessageSize: 10000000, // bytes - default: 8MiB, current: 10Mib
+          },
+          reconnect: {
+            auto: true,
+            delay: 60000,
+            onTimeout: true,
+            maxAttempts: 10,
+          },
+        });
+
+        provider.on('connect', function () {
+          console.log(`WSS Reconnected. ${typeNetwork}`);
+        });
+
+        client.setProvider(provider);
+      });
+      provider.on('close', () => {
+        console.log('WS closed');
+        console.log(`Attempting to reconnect... ${typeNetwork}`);
+        provider = new Web3.providers.WebsocketProvider(urlNode, {
+          timeout: 50000,
+          clientConfig: {
+            keepalive: true,
+            keepaliveInterval: 60000,
+            maxReceivedFrameSize: 2000000, // bytes - default: 1MiB, current: 2MiB
+            maxReceivedMessageSize: 10000000, // bytes - default: 8MiB, current: 10Mib
+          },
+          reconnect: {
+            auto: true,
+            delay: 60000,
+            onTimeout: true,
+            maxAttempts: 10,
+          },
+        });
 
         provider.on('connect', function () {
           console.log(`WSS Reconnected. ${typeNetwork}`);
@@ -78,8 +130,9 @@ export class Web3Service {
       this.nodeClientWebsocket[typeNetwork] = client;
 
       return this.nodeClientWebsocket[typeNetwork];
+    } else {
+      return this.nodeClientWebsocket[typeNetwork];
     }
-    return this.nodeClientWebsocket[typeNetwork];
   }
 
   getContract(contractAddress: string, abi: any): Contract {
