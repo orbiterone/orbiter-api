@@ -1,5 +1,23 @@
 import { applyDecorators, Type } from '@nestjs/common';
 import { ApiOkResponse, ApiProperty, getSchemaPath } from '@nestjs/swagger';
+import { IsEnum, IsNumberString, IsOptional } from 'class-validator';
+
+export class BasePagination {
+  @ApiProperty({ required: false, default: 'ASC', enum: ['ASC', 'DESC'] })
+  @IsEnum(['ASC', 'DESC'])
+  @IsOptional()
+  order = 'DESC';
+
+  @ApiProperty({ required: false, default: '1' })
+  @IsOptional()
+  @IsNumberString()
+  page = '1';
+
+  @ApiProperty({ required: false, default: '10' })
+  @IsOptional()
+  @IsNumberString()
+  limit = '10';
+}
 
 export class PaginatedDto<TModel> {
   @ApiProperty({ type: 'number' })

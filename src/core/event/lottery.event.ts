@@ -51,6 +51,23 @@ export class LotteryEvent extends EventService {
               { $inc: { countTickets: returnValues.numberTickets } },
               { upsert: true },
             );
+          const lotteryBlockChain = await this.lotteryOrbiterCore.viewLottery(
+            returnValues.lotteryId,
+          );
+          await this.lotteryService.lotteryRepository
+            .getLotteryModel()
+            .findOneAndUpdate(
+              { lotteryId: returnValues.lotteryId },
+              {
+                $set: {
+                  amountCollectedInOrb: Decimal128(
+                    new BigNumber(lotteryBlockChain.amountCollectedInOrb)
+                      .div(Math.pow(10, 18))
+                      .toString(),
+                  ),
+                },
+              },
+            );
         } else if (event.event == LOTTERY_EVENT.LOTTERY_DRAWN) {
           const lottery = await this.lotteryOrbiterCore.viewLottery(
             returnValues.lotteryId,
@@ -65,6 +82,13 @@ export class LotteryEvent extends EventService {
                   finalNumber: returnValues.finalNumber,
                   orbPerBracket: lottery.orbPerBracket,
                   countWinnersPerBracket: lottery.countWinnersPerBracket,
+                  countWinningTickets: returnValues.countWinningTickets,
+                  amountCollectedInOrb: Decimal128(
+                    new BigNumber(lottery.amountCollectedInOrb)
+                      .div(Math.pow(10, 18))
+                      .toString(),
+                  ),
+                  status: 3,
                 },
               },
             );

@@ -33,7 +33,10 @@ export class Lottery {
   amountCollectedInOrb: Types.Decimal128;
 
   @Prop()
-  finalNumber: number;
+  finalNumber: string;
+
+  @Prop({ default: 0 })
+  countWinningTickets: number;
 }
 
 export const LotterySchema = SchemaFactory.createForClass(Lottery);
