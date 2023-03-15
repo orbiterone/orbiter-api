@@ -171,7 +171,7 @@ export class Web3Service {
   async createTx(
     parameter: Record<string, any>,
     ownerKey: string,
-  ): Promise<TransactionReceipt> {
+  ): Promise<string> {
     const web3 = this.getClient();
     return new Promise(async (resolve, reject) => {
       try {
@@ -194,8 +194,8 @@ export class Web3Service {
 
         await web3.eth
           .sendSignedTransaction(signedTx.rawTransaction)
-          .on('receipt', (receipt) => {
-            return resolve(receipt);
+          .on('transactionHash', (hash) => {
+            return resolve(hash);
           })
           .on('error', (err) => reject(err));
       } catch (err) {

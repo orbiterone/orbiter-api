@@ -45,7 +45,7 @@ export class LotteryCron {
         let diffTime = dateNow < endTime ? endTime - dateNow : 1;
 
         if (diffTime > 1) {
-          diffTime = diffTime < 10000 ? 10000 : diffTime;
+          diffTime = 60000;
           await this.wait(diffTime);
         }
 
@@ -62,6 +62,7 @@ export class LotteryCron {
           );
 
           console.log(`Lottery - ${currentLotteryId} close`);
+          await this.wait(120000);
         }
 
         if (lotteryInfo.status == 1 || lotteryInfo.status == 2) {
@@ -76,6 +77,7 @@ export class LotteryCron {
             LOTTERY_OPERATOR_KEY,
           );
           console.log(`Lottery - ${currentLotteryId} draw`);
+          await this.wait(120000);
         }
 
         await this.createLottery(now, owner, lotteryContract);
@@ -101,7 +103,10 @@ export class LotteryCron {
           to: LOTTERY,
           data: lotteryContract.methods
             .startLottery(
-              now.add(+period[0], period[1]).unix(),
+              now
+                .add(+period[0], period[1])
+                .startOf('hour')
+                .unix(),
               new BigNumber(LOTTERY_TICKET_PRICE_ORB)
                 .multipliedBy(Math.pow(10, 18))
                 .toString(),
