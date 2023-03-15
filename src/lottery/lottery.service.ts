@@ -8,16 +8,21 @@ import {
 } from '@app/core/constant';
 import {
   CurrentLotteryResponse,
+  TicketsUserByLotteryResponse,
   UserLotteryResponse,
 } from './interfaces/lottery.interface';
 import { LotteryRepository } from './lottery.repository';
 import { BasePagination, PaginatedDto } from '@app/core/interface/response';
-import { LotteryDocument } from '@app/core/schemas/lottery.schema';
+import { Lottery, LotteryDocument } from '@app/core/schemas/lottery.schema';
 import { User } from '@app/core/schemas/user.schema';
+import { LotteryOrbiterCore } from '@app/core/orbiter/lottery.orbiter';
 
 @Injectable()
 export class LotteryService {
-  constructor(public readonly lotteryRepository: LotteryRepository) {}
+  constructor(
+    public readonly lotteryRepository: LotteryRepository,
+    private readonly lotteryOrbiterCore: LotteryOrbiterCore,
+  ) {}
 
   private async infoByLottery(
     lottery: LotteryDocument,
@@ -147,5 +152,74 @@ export class LotteryService {
     );
 
     return lotteries;
+  }
+
+  async ticketsUserByLottery(
+    user: User | null,
+    lottery: Lottery,
+  ): Promise<TicketsUserByLotteryResponse> {
+    const userTickets = await this.lotteryRepository
+      .getLotteryParticipantModel()
+      .findOne({ user: user ? user._id : null, lottery: lottery._id });
+
+    if (!userTickets) {
+      return null;
+    }
+
+    const response = {
+      winingNumber: lottery.finalNumber,
+      totalTickets: 0,
+      winningTickets: 0,
+      tickets: [],
+    };
+
+    const {
+      0: ticketIds,
+      1: ticketNumbers,
+      2: ticketStatuses,
+    } = await this.lotteryOrbiterCore.viewUserInfoForLotteryId(
+      user.address,
+      lottery.lotteryId.toString(),
+      '0',
+      userTickets.countTickets.toString(),
+    );
+
+    if (ticketIds && ticketIds.length) {
+      response.totalTickets = ticketIds.length;
+      if (lottery.status == 1) {
+        return response;
+      }
+
+      let i = 0;
+      for (const ticketId of ticketIds) {
+        response.tickets[i] = {
+          ticketId: ticketId,
+          ticketNumber: ticketNumbers[i],
+          claimStatus: ticketStatuses[i],
+          winning: false,
+          matches: [],
+        };
+        for (let bracket = 0; bracket <= 5; bracket++) {
+          const checkReward =
+            await this.lotteryOrbiterCore.viewRewardsForTicketId(
+              lottery.lotteryId.toString(),
+              ticketId.toString(),
+              bracket.toString(),
+            );
+          response.tickets[i].matches[bracket] =
+            +checkReward > 0 ? true : false;
+
+          if (+checkReward > 0) {
+            response.tickets[i].winning = true;
+          }
+        }
+        if (response.tickets[i].winning) {
+          response.winningTickets++;
+        }
+        i++;
+      }
+    }
+
+    return response;
   }
 }
