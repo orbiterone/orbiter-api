@@ -210,7 +210,7 @@ export class AssetCron extends AssetService {
             .encodeABI(),
         };
         await this.web3Service.createTx(parameter, PRICE_FEED_OWNER_KEY);
-        await this.wait(5000);
+        await this.wait(30000);
       } catch (err) {
         console.error(err);
       }
