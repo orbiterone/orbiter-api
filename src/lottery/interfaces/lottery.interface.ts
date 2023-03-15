@@ -14,6 +14,9 @@ class PrizePotLooteryByGroupInfo extends PrizePotLotteryInfo {
 
   @ApiProperty({ required: false })
   winningTickets?: number;
+
+  @ApiProperty({ required: false })
+  orbByWinningTicket?: string;
 }
 
 export class CurrentLotteryResponse {

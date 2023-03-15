@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { decimalObj } from './user.schema';
+import { Decimal128, decimalObj } from './user.schema';
 
 export type LotteryDocument = Lottery & Document;
 
@@ -20,19 +20,19 @@ export class Lottery {
   @Prop()
   endTime: Date;
 
-  @Prop({ type: Types.Array })
+  @Prop({ type: Types.Array, default: [] })
   orbPerBracket: string[];
 
-  @Prop({ type: Types.Array })
+  @Prop({ type: Types.Array, default: [] })
   countWinnersPerBracket: string[];
 
   @Prop(decimalObj)
   priceTicket: Types.Decimal128;
 
-  @Prop(decimalObj)
+  @Prop({ ...decimalObj, default: Decimal128('0') })
   amountCollectedInOrb: Types.Decimal128;
 
-  @Prop()
+  @Prop({ default: '0' })
   finalNumber: string;
 
   @Prop({ default: 0 })

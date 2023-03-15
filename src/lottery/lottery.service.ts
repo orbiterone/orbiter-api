@@ -32,13 +32,16 @@ export class LotteryService {
     const prizeGroups = [];
     for (const i in distributionPrizePercent) {
       const orb = prizePot.multipliedBy(distributionPrizePercent[i] / 100);
+      const winningTickets = lottery.countWinnersPerBracket.length
+        ? lottery.countWinnersPerBracket[+i - 1]
+        : 0;
       prizeGroups.push({
         group: i,
         orb: orb.toString(),
         usd: orb.multipliedBy(PRICE_ORB).toString(),
-        winningTickets: lottery.countWinnersPerBracket.length
-          ? lottery.countWinnersPerBracket[+i - 1]
-          : 0,
+        winningTickets,
+        orbByWinningTicket:
+          winningTickets > 0 ? orb.dividedBy(winningTickets).toString() : 0,
       });
     }
 
