@@ -12,6 +12,7 @@ import { LotteryService } from './lottery.service';
 import { LotteryRepository } from './lottery.repository';
 import { UserModule } from '@app/user/user.module';
 import { OrbiterModule } from '@app/core/orbiter/orbiter.module';
+import { LotteryCron } from './lottery.cron';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { OrbiterModule } from '@app/core/orbiter/orbiter.module';
     ]),
   ],
   controllers: [LotteryController],
-  providers: [LotteryService, LotteryRepository],
-  exports: [LotteryService, LotteryRepository],
+  providers: [LotteryService, LotteryRepository, LotteryCron],
+  exports: [LotteryService, LotteryRepository, LotteryCron],
 })
 export class LotteryModule {}
