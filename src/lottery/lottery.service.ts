@@ -48,6 +48,7 @@ export class LotteryService {
       endTime: lottery.endTime,
       id: lottery.lotteryId,
       ticketPrice: lottery.priceTicket.toString(),
+      status: lottery.status,
       totalUsers: await this.lotteryRepository
         .getLotteryParticipantModel()
         .countDocuments({ lottery: lottery._id }),
@@ -65,6 +66,10 @@ export class LotteryService {
     const currentLottery = await this.lotteryRepository
       .getLotteryModel()
       .findOne({ status: 1 });
+
+    if (!currentLottery) {
+      return null;
+    }
 
     return await this.infoByLottery(currentLottery);
   }
@@ -120,7 +125,7 @@ export class LotteryService {
       [
         {
           $lookup: {
-            from: 'lotterys',
+            from: 'lotteries',
             localField: 'lottery',
             foreignField: '_id',
             as: 'lottery',

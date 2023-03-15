@@ -32,6 +32,9 @@ export class CurrentLotteryResponse {
   @ApiProperty()
   totalUsers: number;
 
+  @ApiProperty()
+  status: number;
+
   @ApiProperty({ type: PrizePotLotteryInfo })
   prizePot: PrizePotLotteryInfo;
 
