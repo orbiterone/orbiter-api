@@ -58,6 +58,10 @@ jobs:
             echo COINPRICE_KEY="${{ secrets.COINPRICE_KEY_DEV }}" >> .env
             echo PRICE_FEED_OWNER_KEY="${{ secrets.PRICE_FEED_OWNER_KEY_DEV }}" >> .env
             echo PRICE_ORB="${{ secrets.PRICE_ORB_DEV }}" >> .env
+            echo LOTTERY_OPERATOR_KEY="${{ secrets.LOTTERY_OPERATOR_KEY_DEV }}" >> .env
+            echo LOTTERY_TICKET_PRICE_ORB="${{ secrets.LOTTERY_TICKET_PRICE_ORB_DEV }}" >> .env
+            echo CRON_LOTTERY="${{ secrets.CRON_LOTTERY_DEV }}" >> .env
+            echo CRON_LOTTERY_TIME="${{ secrets.CRON_LOTTERY_TIME_DEV }}" >> .env
 
             export DOCKER_SCAN_SUGGEST=false
             docker compose -f docker-stack.yml build --no-cache --compress
