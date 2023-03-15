@@ -10,10 +10,12 @@ import {
 import { LotteryController } from './lottery.controller';
 import { LotteryService } from './lottery.service';
 import { LotteryRepository } from './lottery.repository';
+import { UserModule } from '@app/user/user.module';
 
 @Module({
   imports: [
     CoreModule,
+    UserModule,
     MongooseModule.forFeature([
       { name: Lottery.name, schema: LotterySchema },
       { name: LotteryParticipant.name, schema: LotteryParticipantSchema },
