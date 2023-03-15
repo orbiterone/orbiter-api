@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression, Timeout } from '@nestjs/schedule';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import BigNumber from 'bignumber.js';
 
 import { Web3Service } from '@app/core/web3/web3.service';
@@ -38,13 +38,17 @@ export class LotteryCron {
       currentLotteryId,
     );
 
-    if (lotteryInfo && lotteryInfo.status == 1) {
+    if (lotteryInfo && lotteryInfo.status < 3) {
       try {
         const dateNow = new Date().getTime();
         const endTime = +lotteryInfo.endTime * 1000;
         const diffTime = dateNow < endTime ? endTime - dateNow : 1;
 
-        setTimeout(async () => {
+        if (diffTime > 1) {
+          await this.wait(diffTime);
+        }
+
+        if (lotteryInfo.status == 1) {
           await this.web3Service.createTx(
             {
               from: owner.address,
@@ -57,7 +61,9 @@ export class LotteryCron {
           );
 
           console.log(`Lottery - ${currentLotteryId} close`);
+        }
 
+        if (lotteryInfo.status == 1 || lotteryInfo.status == 2) {
           await this.web3Service.createTx(
             {
               from: owner.address,
@@ -69,7 +75,9 @@ export class LotteryCron {
             LOTTERY_OPERATOR_KEY,
           );
           console.log(`Lottery - ${currentLotteryId} draw`);
-        }, diffTime);
+        }
+
+        await this.createLottery(now, owner, lotteryContract);
       } catch (err) {
         console.error(
           `Cron lottery ${currentLotteryId} close error. ${err.message}`,
@@ -77,6 +85,12 @@ export class LotteryCron {
       }
     }
 
+    if (lotteryInfo && lotteryInfo.status == 3) {
+      await this.createLottery(now, owner, lotteryContract);
+    }
+  }
+
+  private async createLottery(now: Moment, owner, lotteryContract) {
     try {
       const period: any = CRON_LOTTERY_TIME.split(' ');
 
@@ -102,5 +116,9 @@ export class LotteryCron {
     } catch (err) {
       console.error(`Cron lottery start error. ${err.message}`);
     }
+  }
+
+  async wait(ms: number): Promise<any> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
