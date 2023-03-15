@@ -5,7 +5,6 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { isEthereumAddress } from 'class-validator';
 import { UserRepository } from '@app/user/user.repository';

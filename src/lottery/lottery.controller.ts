@@ -19,10 +19,13 @@ import {
 } from '@app/core/interface/response';
 import {
   CurrentLotteryResponse,
+  TicketsUserByLotteryResponse,
   UserLotteryResponse,
 } from './interfaces/lottery.interface';
 import { UserByAddressPipe } from '@app/core/pipes/user-by-address.pipe';
 import { User } from '@app/core/schemas/user.schema';
+import { LotteryByIdPipe } from '@app/core/pipes/lottery-by-id.pipe';
+import { Lottery } from '@app/core/schemas/lottery.schema';
 
 @Controller('lotteries')
 @UseGuards(ApiKeyGuard)
@@ -60,6 +63,24 @@ export class LotteryController {
       .json(
         jsend.success(
           await this.lotteryService.historyLotteryByAccount(user, query),
+        ),
+      );
+  }
+
+  @Get('ticket/:lotteryId/:account')
+  @ApiParam({ name: 'lotteryId', type: 'string' })
+  @ApiParam({ name: 'account', type: 'string' })
+  @ApiDataResponse(TicketsUserByLotteryResponse)
+  async ticketsUserByLottery(
+    @Response() res: any,
+    @Param('account', UserByAddressPipe) user: User | null,
+    @Param('lotteryId', LotteryByIdPipe) lottery: Lottery,
+  ) {
+    return res
+      .status(HttpStatus.OK)
+      .json(
+        jsend.success(
+          await this.lotteryService.ticketsUserByLottery(user, lottery),
         ),
       );
   }

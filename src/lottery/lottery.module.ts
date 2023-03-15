@@ -11,11 +11,13 @@ import { LotteryController } from './lottery.controller';
 import { LotteryService } from './lottery.service';
 import { LotteryRepository } from './lottery.repository';
 import { UserModule } from '@app/user/user.module';
+import { OrbiterModule } from '@app/core/orbiter/orbiter.module';
 
 @Module({
   imports: [
     CoreModule,
     UserModule,
+    OrbiterModule,
     MongooseModule.forFeature([
       { name: Lottery.name, schema: LotterySchema },
       { name: LotteryParticipant.name, schema: LotteryParticipantSchema },

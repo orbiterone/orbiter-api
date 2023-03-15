@@ -70,3 +70,34 @@ export class UserLotteryResponse {
   @ApiProperty()
   createdAt: Date;
 }
+
+class TicketLotteryInfo {
+  @ApiProperty()
+  ticketId: string;
+
+  @ApiProperty()
+  ticketNumber: string;
+
+  @ApiProperty()
+  claimStatus: boolean;
+
+  @ApiProperty()
+  winning: boolean;
+
+  @ApiProperty()
+  matches: boolean[];
+}
+
+export class TicketsUserByLotteryResponse {
+  @ApiProperty()
+  winingNumber: string;
+
+  @ApiProperty()
+  totalTickets: number;
+
+  @ApiProperty()
+  winningTickets: number;
+
+  @ApiProperty({ type: [TicketLotteryInfo] })
+  tickets: TicketLotteryInfo[];
+}
