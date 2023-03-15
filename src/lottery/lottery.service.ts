@@ -67,6 +67,10 @@ export class LotteryService {
       .getLotteryModel()
       .findOne({ status: 1 });
 
+    if (!currentLottery) {
+      return null;
+    }
+
     return await this.infoByLottery(currentLottery);
   }
 
