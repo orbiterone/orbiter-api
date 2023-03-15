@@ -57,6 +57,7 @@ jobs:
             echo API_KEY="${{ secrets.API_KEY_DEV }}" >> .env
             echo COINPRICE_KEY="${{ secrets.COINPRICE_KEY_DEV }}" >> .env
             echo PRICE_FEED_OWNER_KEY="${{ secrets.PRICE_FEED_OWNER_KEY_DEV }}" >> .env
+            echo PRICE_ORB="${{ secrets.PRICE_ORB_DEV }}" >> .env
 
             export DOCKER_SCAN_SUGGEST=false
             docker compose -f docker-stack.yml build --no-cache --compress
