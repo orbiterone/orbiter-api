@@ -190,8 +190,8 @@ export class LotteryService {
         return response;
       }
 
-      for (const i of ticketIds) {
-        const ticketId = ticketIds[i];
+      let i = 0;
+      for (const ticketId of ticketIds) {
         response.tickets[i] = {
           ticketId: ticketId,
           ticketNumber: ticketNumbers[i],
@@ -216,6 +216,7 @@ export class LotteryService {
         if (response.tickets[i].winning) {
           response.winningTickets++;
         }
+        i++;
       }
     }
 
