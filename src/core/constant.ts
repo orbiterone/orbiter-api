@@ -20,11 +20,22 @@ import {
   settings as MoonbeamSettings,
 } from '@app/core/contracts/moonbeam.json';
 
-const { NODE_TYPE, PRICE_FEED_OWNER_KEY } = process.env;
+const { NODE_TYPE, PRICE_FEED_OWNER_KEY, PRICE_ORB } = process.env;
 
 const ethMantissa = 1e18;
 const blocksPerDay = 7200; // 15 seconds per block
 const daysPerYear = 365;
+
+const distributionPrizePercent = {
+  1: 2,
+  2: 3,
+  3: 5,
+  4: 10,
+  5: 20,
+  6: 40,
+};
+
+const burnPool = 20;
 
 const COMPTROLLER =
   NODE_TYPE == 'moonbase'
@@ -32,6 +43,13 @@ const COMPTROLLER =
     : NODE_TYPE == 'moonriver'
     ? MoonriverContracts.Comptroller
     : MoonbeamContracts.Comptroller;
+
+const LOTTERY =
+  NODE_TYPE == 'moonbase'
+    ? MoonbaseContracts.Lottery
+    : NODE_TYPE == 'moonriver'
+    ? MoonriverContracts.Lottery
+    : MoonbeamContracts.Lottery;
 
 const READER =
   NODE_TYPE == 'moonbase'
@@ -80,6 +98,7 @@ export {
   blocksPerDay,
   daysPerYear,
   COMPTROLLER,
+  LOTTERY,
   READER,
   INCENTIVE,
   DEFAULT_TOKEN,
@@ -88,4 +107,7 @@ export {
   NODE_TYPE,
   SETTINGS,
   PRICE_FEED_OWNER_KEY,
+  PRICE_ORB,
+  distributionPrizePercent,
+  burnPool,
 };

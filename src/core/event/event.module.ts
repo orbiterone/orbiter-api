@@ -8,6 +8,8 @@ import { MarketEvent } from './market.event';
 import { TokenEvent } from './token.event';
 import { AssetModule } from '@app/asset/asset.module';
 import { TransactionModule } from '@app/transaction/transaction.module';
+import { LotteryModule } from '@app/lottery/lottery.module';
+import { LotteryEvent } from './lottery.event';
 
 @Module({
   imports: [
@@ -16,8 +18,9 @@ import { TransactionModule } from '@app/transaction/transaction.module';
     UserModule,
     AssetModule,
     TransactionModule,
+    LotteryModule,
   ],
-  providers: [TokenEvent, MarketEvent, ControllerEvent],
-  exports: [TokenEvent, MarketEvent, ControllerEvent],
+  providers: [TokenEvent, MarketEvent, ControllerEvent, LotteryEvent],
+  exports: [TokenEvent, MarketEvent, ControllerEvent, LotteryEvent],
 })
 export class EventModule {}
