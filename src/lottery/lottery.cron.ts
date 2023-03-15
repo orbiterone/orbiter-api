@@ -42,7 +42,7 @@ export class LotteryCron {
       try {
         const dateNow = new Date().getTime();
         const endTime = +lotteryInfo.endTime * 1000;
-        const diffTime = dateNow < endTime ? endTime - dateNow : 0;
+        const diffTime = dateNow < endTime ? endTime - dateNow : 1;
 
         setTimeout(async () => {
           await this.web3Service.createTx(
@@ -56,6 +56,8 @@ export class LotteryCron {
             LOTTERY_OPERATOR_KEY,
           );
 
+          console.log(`Lottery - ${currentLotteryId} close`);
+
           await this.web3Service.createTx(
             {
               from: owner.address,
@@ -66,6 +68,7 @@ export class LotteryCron {
             },
             LOTTERY_OPERATOR_KEY,
           );
+          console.log(`Lottery - ${currentLotteryId} draw`);
         }, diffTime);
       } catch (err) {
         console.error(
@@ -95,6 +98,7 @@ export class LotteryCron {
         },
         LOTTERY_OPERATOR_KEY,
       );
+      console.log(`Lottery - create new`);
     } catch (err) {
       console.error(`Cron lottery start error. ${err.message}`);
     }
