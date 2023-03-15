@@ -4,6 +4,7 @@ import { CoreModule } from '../core.module';
 import { ControllerOrbiterCore } from './controller.orbiter';
 import { Erc20OrbiterCore } from './erc20.orbiter';
 import { IncentiveOrbiterCore } from './incentive.orbiter';
+import { LotteryOrbiterCore } from './lottery.orbiter';
 import { OracleOrbiterCore } from './oracle.orbiter';
 import { OTokenOrbiterCore } from './oToken.orbiter';
 import { ReaderOrbiterCore } from './reader.orbiter';
@@ -17,6 +18,7 @@ import { ReaderOrbiterCore } from './reader.orbiter';
     OracleOrbiterCore,
     ReaderOrbiterCore,
     IncentiveOrbiterCore,
+    LotteryOrbiterCore,
   ],
   exports: [
     OTokenOrbiterCore,
@@ -25,6 +27,7 @@ import { ReaderOrbiterCore } from './reader.orbiter';
     OracleOrbiterCore,
     ReaderOrbiterCore,
     IncentiveOrbiterCore,
+    LotteryOrbiterCore,
   ],
 })
 export class OrbiterModule {}
