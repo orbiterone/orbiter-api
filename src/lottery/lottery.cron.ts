@@ -42,9 +42,10 @@ export class LotteryCron {
       try {
         const dateNow = new Date().getTime();
         const endTime = +lotteryInfo.endTime * 1000;
-        const diffTime = dateNow < endTime ? endTime - dateNow : 1;
+        let diffTime = dateNow < endTime ? endTime - dateNow : 1;
 
         if (diffTime > 1) {
+          diffTime = diffTime < 10000 ? 10000 : diffTime;
           await this.wait(diffTime);
         }
 
