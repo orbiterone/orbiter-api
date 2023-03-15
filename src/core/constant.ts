@@ -20,7 +20,15 @@ import {
   settings as MoonbeamSettings,
 } from '@app/core/contracts/moonbeam.json';
 
-const { NODE_TYPE, PRICE_FEED_OWNER_KEY, PRICE_ORB } = process.env;
+const {
+  NODE_TYPE,
+  PRICE_FEED_OWNER_KEY,
+  PRICE_ORB,
+  LOTTERY_OPERATOR_KEY,
+  CRON_LOTTERY,
+  CRON_LOTTERY_TIME,
+  LOTTERY_TICKET_PRICE_ORB,
+} = process.env;
 
 const ethMantissa = 1e18;
 const blocksPerDay = 7200; // 15 seconds per block
@@ -93,6 +101,12 @@ const SETTINGS =
     ? MoonriverSettings
     : MoonbeamSettings;
 
+const LOTTERY_SETTING = {
+  discount: 2000,
+  rewards: [250, 375, 625, 1250, 2500, 5000],
+  treasury: 2000,
+};
+
 export {
   ethMantissa,
   blocksPerDay,
@@ -110,4 +124,9 @@ export {
   PRICE_ORB,
   distributionPrizePercent,
   burnPool,
+  LOTTERY_SETTING,
+  LOTTERY_OPERATOR_KEY,
+  CRON_LOTTERY,
+  CRON_LOTTERY_TIME,
+  LOTTERY_TICKET_PRICE_ORB,
 };

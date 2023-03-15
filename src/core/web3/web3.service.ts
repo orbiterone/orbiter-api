@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
 
 const {
@@ -170,7 +171,7 @@ export class Web3Service {
   async createTx(
     parameter: Record<string, any>,
     ownerKey: string,
-  ): Promise<string> {
+  ): Promise<TransactionReceipt> {
     const web3 = this.getClient();
     return new Promise(async (resolve, reject) => {
       try {
@@ -193,8 +194,8 @@ export class Web3Service {
 
         await web3.eth
           .sendSignedTransaction(signedTx.rawTransaction)
-          .once('transactionHash', (hash) => {
-            return resolve(hash);
+          .once('receipt', (receipt) => {
+            return resolve(receipt);
           })
           .on('error', (err) => reject(err));
       } catch (err) {
