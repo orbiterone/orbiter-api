@@ -23,8 +23,7 @@ export class LotteryCron {
     private readonly lotteryOrbiterCore: LotteryOrbiterCore,
   ) {}
 
-  @Timeout(3000)
-  //   @Cron(cronTimeLottery)
+  @Cron(cronTimeLottery)
   async cronLottery() {
     console.log(`Job cronLottery start - ${new Date()}`);
 
