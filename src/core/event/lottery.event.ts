@@ -14,7 +14,7 @@ export class LotteryEvent extends EventService {
     contract.events
       .allEvents()
       .on('connected', function (subscriptionId) {
-        console.log(`Controller successfully connected.`, subscriptionId);
+        console.log(`Lottery successfully connected.`, subscriptionId);
       })
       .on('data', async (event) => {
         const { returnValues, transactionHash: txHash } = event;
