@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Cron, CronExpression, Timeout } from '@nestjs/schedule';
 import moment from 'moment';
 import BigNumber from 'bignumber.js';
 
@@ -23,7 +23,8 @@ export class LotteryCron {
     private readonly lotteryOrbiterCore: LotteryOrbiterCore,
   ) {}
 
-  @Cron(cronTimeLottery)
+  @Timeout(3000)
+  //   @Cron(cronTimeLottery)
   async cronLottery() {
     console.log(`Job cronLottery start - ${new Date()}`);
 
@@ -74,25 +75,29 @@ export class LotteryCron {
       }
     }
 
-    const period: any = CRON_LOTTERY_TIME.split(' ');
+    try {
+      const period: any = CRON_LOTTERY_TIME.split(' ');
 
-    await this.web3Service.createTx(
-      {
-        from: owner.address,
-        to: LOTTERY,
-        data: lotteryContract.methods
-          .startLottery(
-            now.add(+period[0], period[1]).unix,
-            new BigNumber(LOTTERY_TICKET_PRICE_ORB)
-              .multipliedBy(Math.pow(10, 18))
-              .toString(),
-            LOTTERY_SETTING.discount,
-            LOTTERY_SETTING.rewards,
-            LOTTERY_SETTING.treasury,
-          )
-          .encodeABI(),
-      },
-      LOTTERY_OPERATOR_KEY,
-    );
+      await this.web3Service.createTx(
+        {
+          from: owner.address,
+          to: LOTTERY,
+          data: lotteryContract.methods
+            .startLottery(
+              now.add(+period[0], period[1]).unix(),
+              new BigNumber(LOTTERY_TICKET_PRICE_ORB)
+                .multipliedBy(Math.pow(10, 18))
+                .toString(),
+              LOTTERY_SETTING.discount,
+              LOTTERY_SETTING.rewards,
+              LOTTERY_SETTING.treasury,
+            )
+            .encodeABI(),
+        },
+        LOTTERY_OPERATOR_KEY,
+      );
+    } catch (err) {
+      console.error(`Cron lottery start error. ${err.message}`);
+    }
   }
 }
