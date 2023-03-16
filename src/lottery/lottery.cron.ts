@@ -42,7 +42,7 @@ export class LotteryCron {
       try {
         if (lotteryInfo.status == 1) {
           await this.wait(60000);
-          await this.web3Service.createTx(
+          const hashTx = await this.web3Service.createTx(
             {
               from: owner.address,
               to: LOTTERY,
@@ -53,12 +53,14 @@ export class LotteryCron {
             LOTTERY_OPERATOR_KEY,
           );
 
-          console.log(`Lottery - ${currentLotteryId} close. ${new Date()}`);
-          await this.wait(120000);
+          console.log(
+            `Lottery - ${currentLotteryId} close  ${hashTx}. ${new Date()}`,
+          );
+          await this.wait(60000 * 3);
         }
 
         if (lotteryInfo.status == 1 || lotteryInfo.status == 2) {
-          await this.web3Service.createTx(
+          const hashTx = await this.web3Service.createTx(
             {
               from: owner.address,
               to: LOTTERY,
@@ -68,8 +70,10 @@ export class LotteryCron {
             },
             LOTTERY_OPERATOR_KEY,
           );
-          console.log(`Lottery - ${currentLotteryId} draw. ${new Date()}`);
-          await this.wait(120000);
+          console.log(
+            `Lottery - ${currentLotteryId} draw - ${hashTx}. ${new Date()}`,
+          );
+          await this.wait(60000 * 3);
         }
 
         await this.createLottery(now, owner, lotteryContract);
@@ -89,7 +93,7 @@ export class LotteryCron {
     try {
       const period: any = CRON_LOTTERY_TIME.split(' ');
 
-      await this.web3Service.createTx(
+      const hashTx = await this.web3Service.createTx(
         {
           from: owner.address,
           to: LOTTERY,
@@ -110,7 +114,7 @@ export class LotteryCron {
         },
         LOTTERY_OPERATOR_KEY,
       );
-      console.log(`Lottery - create new. ${new Date()}`);
+      console.log(`Lottery - create new - ${hashTx}. ${new Date()}`);
     } catch (err) {
       console.error(`Cron lottery start error. ${err.message}`);
     }
