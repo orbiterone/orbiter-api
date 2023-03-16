@@ -108,6 +108,9 @@ export class Token {
   @Prop({ default: true })
   isActive: boolean;
 
+  @Prop({ default: 0 })
+  sortOrder: number;
+
   countSuppliers: number;
   countBorrowers: number;
   utilization: number;

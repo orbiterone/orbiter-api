@@ -286,7 +286,7 @@ export class AssetService implements OnModuleInit {
   async assetsList(): Promise<Token[]> {
     return await this.assetRepository.find({
       options: { isActive: true },
-      sort: { name: 1 },
+      sort: { sortOrder: 1 },
     });
   }
 
@@ -419,7 +419,7 @@ export class AssetService implements OnModuleInit {
             },
           },
           { $match: { 'token.isActive': true } },
-          { $sort: { 'token.name': 1 } },
+          { $sort: { 'token.sortOrder': 1 } },
           {
             $group: {
               _id: null,
@@ -523,7 +523,7 @@ export class AssetService implements OnModuleInit {
           },
         },
         { $match: { 'token.isActive': true } },
-        { $sort: { 'token.name': 1 } },
+        { $sort: { 'token.sortOrder': 1 } },
         {
           $group: {
             _id: null,
@@ -712,7 +712,7 @@ export class AssetService implements OnModuleInit {
       );
     const assets = await this.assetRepository.find({
       options: { isActive: true },
-      sort: { name: 1 },
+      sort: { sortOrder: 1 },
     });
     const assetList = [];
     for (const asset of assets) {
