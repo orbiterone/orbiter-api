@@ -71,9 +71,11 @@ export class LotteryService {
   }
 
   async currentLottery(): Promise<CurrentLotteryResponse> {
+    const currentLotteryId = await this.lotteryOrbiterCore.currentLotteryId();
+
     const currentLottery = await this.lotteryRepository
       .getLotteryModel()
-      .findOne({ status: { $lt: 3 } });
+      .findOne({ lotteryId: +currentLotteryId });
 
     if (!currentLottery) {
       return null;
