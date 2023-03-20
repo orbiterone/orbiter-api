@@ -58,7 +58,13 @@ export class LotteryCron {
           );
           await this.wait(60000 * 3);
         }
+      } catch (err) {
+        console.error(
+          `Cron lottery ${currentLotteryId} close error. ${err.message}`,
+        );
+      }
 
+      try {
         if (lotteryInfo.status == 1 || lotteryInfo.status == 2) {
           const hashTx = await this.web3Service.createTx(
             {
@@ -73,15 +79,15 @@ export class LotteryCron {
           console.log(
             `Lottery - ${currentLotteryId} draw - ${hashTx}. ${new Date()}`,
           );
-          await this.wait(60000 * 3);
+          await this.wait(60000 * 4);
         }
-
-        await this.createLottery(now, owner, lotteryContract);
       } catch (err) {
         console.error(
-          `Cron lottery ${currentLotteryId} close error. ${err.message}`,
+          `Cron lottery ${currentLotteryId} draw error. ${err.message}`,
         );
       }
+
+      await this.createLottery(now, owner, lotteryContract);
     }
 
     if (lotteryInfo && lotteryInfo.status == 3) {

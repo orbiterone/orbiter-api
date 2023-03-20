@@ -73,7 +73,7 @@ export class LotteryService {
   async currentLottery(): Promise<CurrentLotteryResponse> {
     const currentLottery = await this.lotteryRepository
       .getLotteryModel()
-      .findOne({ status: 1 });
+      .findOne({ status: { $lt: 3 } });
 
     if (!currentLottery) {
       return null;
@@ -99,7 +99,7 @@ export class LotteryService {
         finalNumber: 1,
         countWinningTickets: 1,
       },
-      [{ $match: { status: { $gt: 1 } } }],
+      [{ $match: { status: { $eq: 3 } } }],
       query,
     );
 
