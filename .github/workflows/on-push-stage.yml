@@ -62,6 +62,7 @@ jobs:
             echo LOTTERY_TICKET_PRICE_ORB="${{ secrets.LOTTERY_TICKET_PRICE_ORB_STAGE }}" >> .env
             echo CRON_LOTTERY="${{ secrets.CRON_LOTTERY_STAGE }}" >> .env
             echo CRON_LOTTERY_TIME="${{ secrets.CRON_LOTTERY_TIME_STAGE }}" >> .env
+            echo PRICE_FEED_UPDATE="${{ secrets.PRICE_FEED_UPDATE_STAGE }}" >> .env
 
             cp src/core/contracts/moonbase.stage.json src/core/contracts/moonbase.json
 
