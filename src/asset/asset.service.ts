@@ -211,35 +211,28 @@ export class AssetService implements OnModuleInit {
 
             const borrowApy =
               +obj.totalBorrow.toString() > 0
-                ? new BigNumber(100).multipliedBy(
-                    Math.pow(
-                      1 +
-                        borrowersPerDay
-                          .multipliedBy(incentivePrice)
-                          .toNumber() /
-                          new BigNumber(obj.totalBorrow.toString())
-                            .multipliedBy(obj.lastPrice.toString())
-                            .toNumber(),
-                      365,
-                    ) - 1,
-                  )
-                : new BigNumber(0);
-
+                ? 100 *
+                  (Math.pow(
+                    1 +
+                      (incentivePrice * borrowersPerDay.toNumber()) /
+                        (+obj.totalBorrow.toString() *
+                          +obj.lastPrice.toString()),
+                    365,
+                  ) -
+                    1)
+                : 0;
             const supplyApy =
               +obj.totalSupply.toString() > 0
-                ? new BigNumber(100).multipliedBy(
-                    Math.pow(
-                      1 +
-                        suppliersPerDay
-                          .multipliedBy(incentivePrice)
-                          .toNumber() /
-                          new BigNumber(obj.totalSupply.toString())
-                            .multipliedBy(obj.lastPrice.toString())
-                            .toNumber(),
-                      365,
-                    ) - 1,
-                  )
-                : new BigNumber(0);
+                ? 100 *
+                  (Math.pow(
+                    1 +
+                      (incentivePrice * suppliersPerDay.toNumber()) /
+                        (+obj.totalSupply.toString() *
+                          +obj.lastPrice.toString()),
+                    365,
+                  ) -
+                    1)
+                : 0;
 
             obj.incentives.push({
               symbol: incentiveSymbol,
