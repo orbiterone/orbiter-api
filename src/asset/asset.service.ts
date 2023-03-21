@@ -272,6 +272,7 @@ export class AssetService implements OnModuleInit {
   }
 
   async onModuleInit() {
+    return;
     const supportMarkets = Object.values(SUPPORT_MARKET);
     if (supportMarkets && supportMarkets.length > 0) {
       for (const oToken of supportMarkets) {
