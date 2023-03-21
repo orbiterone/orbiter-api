@@ -5,7 +5,11 @@ import { BigNumber } from 'bignumber.js';
 
 import { Decimal128 } from '@app/core/schemas/user.schema';
 import { AssetService } from './asset.service';
-import { NODE_TYPE, PRICE_FEED_OWNER_KEY } from '@app/core/constant';
+import {
+  NODE_TYPE,
+  PRICE_FEED_OWNER_KEY,
+  PRICE_FEED_UPDATE,
+} from '@app/core/constant';
 
 BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
 
@@ -169,6 +173,7 @@ export class AssetCron extends AssetService {
   @Cron(CronExpression.EVERY_HOUR)
   async updatePriceFeed() {
     console.log(`Job updatePriceFeed start - ${new Date()}`);
+    if (PRICE_FEED_UPDATE == 'false') return;
     if (NODE_TYPE != 'moonbase') return;
     const assets = await this.assetRepository.find({});
     const oracleContract = this.oracleOrbiterCore.contract();

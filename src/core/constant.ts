@@ -28,6 +28,7 @@ const {
   CRON_LOTTERY,
   CRON_LOTTERY_TIME,
   LOTTERY_TICKET_PRICE_ORB,
+  PRICE_FEED_UPDATE,
 } = process.env;
 
 const ethMantissa = 1e18;
@@ -129,4 +130,5 @@ export {
   CRON_LOTTERY,
   CRON_LOTTERY_TIME,
   LOTTERY_TICKET_PRICE_ORB,
+  PRICE_FEED_UPDATE,
 };
