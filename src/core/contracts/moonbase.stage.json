@@ -1,0 +1,168 @@
+{
+    "contracts": {
+        "PriceOracle": "0x32fe93EAa774f2de4a8ACD8c332aD4FaD1Fc2844",
+        "Comptroller": "0x51baDca1A83bB02FC8631F59021d526873BfE368",
+        "Incentive": "0x1E2Ff8CF01cA98A4B688CBaDC02867DF647aae88",
+        "Reader": "0x27B55C1200282D6BE03A81823d5823e1244cF37B",
+        "Lottery": "0x5A5FbAF0735Ff2D807094272Fa39c4D8AeECE07a"
+    },
+    "tokens": {
+        "FRAX": "0x3b18F5E81906fc771B1e0886B7B7FD50Fc4849E7",
+        "BUSD": "0xb489C860a76c9f4a0fCCbbc399FAa8E6E860192c",
+        "AVAX": "0x82A7629930880188cF96F3a14E44682D6Dd57992",
+        "DAI": "0x3F8375a873079bA412B2c9DC14F295aa3328EE20",
+        "USDT": "0xe646e110c8d22022065396F258a83DbA975e0E0b",
+        "BNB": "0x9Be08875DfC20916De17016e06F5f913A6340B51",
+        "ETH": "0x29C4b890731e08152AFF2FCFd4fE92d695F2c783",
+        "WBTC": "0x2860F35FF18553deBCd05a205D34D382cAB79791",
+        "LINK": "0xd5de20BF649f3479f25026E9874B15a44eB14Ae1",
+        "USDC": "0xB4839B64349612e7091d9E8BA739C9bE3f00935C",
+        "FTM": "0xc3e5b869A04B0305aA918A3Fda70021A3d61FaD5",
+        "xcKSM": "0xe2246cB9970d46032367c1fAd3d4F29D4BD17482",
+        "ORBIT": "0x734EbdbB1258e91Db663a9D5740cc62326ada02a",
+        "xcAUSD": "0xfAb721CF62B58D4C11E06dc217B2e199493dFEab",
+        "MAI": "0xCb10810e1B83f81858994Ced3dE2EeC8328F161A",
+        "xcKBTC": "0x4aDe7E5637618a9Ca55503026c4bAE5820Bf81d6",
+        "wstKSM": "0x1a6B75Bc537bAA6B29e9b543891abE9c96F6beD3",
+        "D2O": "0x607F26BC84035088e3AD308e6d9439Da507190dB"
+    },
+    "markets": {
+        "oBNB": "0x4A2D42F34D80028c597B81E717B06328324db71b",
+        "oLINK": "0xA9e09D47E46A2AB203d52D6B8Ca9367C0D59a9D8",
+        "oWBTC": "0xfbe99cbA53563d0F067ec803455CF4224e63de9e",
+        "oETH": "0x170f7561F243f12A2cf6512E1bAaD6C90C54214E",
+        "oUSDC": "0x91b717Af883C79E52e5F92b5DB92F0381C57031B",
+        "oMOVR": "0x4FCbCb148E653A6dE3454d8094b3eC5FCe9f8436",
+        "oFTM": "0x0C18a265fa052f89915FEb414D7C32db5a404181",
+        "oFRAX": "0x3453ee3547ad402248D74628D91fF21122180504",
+        "oBUSD": "0x6Bb1adbAB98B62ED869F946fA5bd0B10C90f6FE7",
+        "oKSM": "0xB9ce4AD4F8E0013706dd7CC462a90F83290F0DC4",
+        "oAVAX": "0x1C8472f35c3991C394F4Aa36baE7D95296d659ed",
+        "oUSDT": "0x66A544058390638cf35032c9aF080d8ef1FA34ad",
+        "oDAI": "0xfE409710BdFee4bF21c68592B0C96455BbEE088F",
+        "oxcAUSD": "0x98cDeb8A7ae470805DE47672aa3F7E947Fb07a73",
+        "oMAI": "0x9C202DAF77bf84b5B024881CB35f7721c29dEC47",
+        "oxcKBTC": "0xE0027A77d0e40007f54cC2CdF5a729ca651B1877",
+        "oORBIT": "",
+        "owstKSM": "0x7cf0aE50bD17Fb8F4F822Cdb828dA31F8779dDCB",
+        "od2O": "0xC004879232d980C64913BDF6e2BDA661A5409346"
+    },
+    "supportMarkets": {
+        "oBNB": "0x4A2D42F34D80028c597B81E717B06328324db71b",
+        "oLINK": "0xA9e09D47E46A2AB203d52D6B8Ca9367C0D59a9D8",
+        "oWBTC": "0xfbe99cbA53563d0F067ec803455CF4224e63de9e",
+        "oETH": "0x170f7561F243f12A2cf6512E1bAaD6C90C54214E",
+        "oUSDC": "0x91b717Af883C79E52e5F92b5DB92F0381C57031B",
+        "oMOVR": "0x4FCbCb148E653A6dE3454d8094b3eC5FCe9f8436",
+        "oFTM": "0x0C18a265fa052f89915FEb414D7C32db5a404181",
+        "oFRAX": "0x3453ee3547ad402248D74628D91fF21122180504",
+        "oBUSD": "0x6Bb1adbAB98B62ED869F946fA5bd0B10C90f6FE7",
+        "oKSM": "0xB9ce4AD4F8E0013706dd7CC462a90F83290F0DC4",
+        "oAVAX": "0x1C8472f35c3991C394F4Aa36baE7D95296d659ed",
+        "oUSDT": "0x66A544058390638cf35032c9aF080d8ef1FA34ad",
+        "oDAI": "0xfE409710BdFee4bF21c68592B0C96455BbEE088F",
+        "oxcAUSD": "0x98cDeb8A7ae470805DE47672aa3F7E947Fb07a73",
+        "oMAI": "0x9C202DAF77bf84b5B024881CB35f7721c29dEC47",
+        "oxcKBTC": "0xE0027A77d0e40007f54cC2CdF5a729ca651B1877",
+        "owstKSM": "0x7cf0aE50bD17Fb8F4F822Cdb828dA31F8779dDCB",
+        "od2O": "0xC004879232d980C64913BDF6e2BDA661A5409346"
+    },
+    "defaultMarket": "0x4FCbCb148E653A6dE3454d8094b3eC5FCe9f8436",
+    "settings": {
+        "WBTC": {
+            "color": "#FB8D28",
+            "image": "https://assets.orbiter.one/images/tokens/WBTC.svg",
+            "fullName" : "Wrapped Bitcoin"
+        },
+        "ETH": {
+            "color": "#939DC2",
+            "image": "https://assets.orbiter.one/images/tokens/ETH.svg",
+            "fullName" : "Ethereum"
+        },
+        "BNB": {
+            "color": "#FBC028",
+            "image": "https://assets.orbiter.one/images/tokens/BNB.svg",
+            "fullName" : "BNB"
+        },
+        "BUSD": {
+            "color": "#F7B654",
+            "image": "https://assets.orbiter.one/images/tokens/BUSD.svg",
+            "fullName" : "Binance USD"
+        },
+        "USDC": {
+            "color": "#5493F7",
+            "image": "https://assets.orbiter.one/images/tokens/USDC.svg",
+            "fullName" : "USD Coin"
+        },
+        "USDT": {
+            "color": "#53CBA0",
+            "image": "https://assets.orbiter.one/images/tokens/USDT.svg",
+            "fullName" : "Tether"
+        },
+        "LINK": {
+            "color": "#5464F7",
+            "image": "https://assets.orbiter.one/images/tokens/LINK.svg",
+            "fullName" : "Chainlink"
+        },
+        "FRAX": {
+            "color": "#0A1018",
+            "image": "https://assets.orbiter.one/images/tokens/frax.svg",
+            "fullName" : "Frax"
+        },
+        "xcKSM": {
+            "color": "#8854F7",
+            "image": "https://assets.orbiter.one/images/tokens/xcKSM.svg",
+            "fullName" : "xcKSM"
+        },
+        "wstKSM": {
+            "color": "#8854F7",
+            "image": "https://assets.orbiter.one/images/tokens/wstKSM.svg",
+            "fullName" : "wstKSM"
+        },
+        "DAI": {
+            "color": "#F78F54",
+            "image": "https://assets.orbiter.one/images/tokens/DAI.svg",
+            "fullName" : "Dai"
+        },
+        "FTM": {
+            "color": "#54BCF7",
+            "image": "https://assets.orbiter.one/images/tokens/FTM.svg",
+            "fullName" : "Fantom"
+        },
+        "AVAX": {
+            "color": "#F75454",
+            "image": "https://assets.orbiter.one/images/tokens/avax.svg",
+            "fullName" : "Avalanche"
+        },
+        "MOVR": {
+            "color": "#53CBC8",
+            "image": "https://assets.orbiter.one/images/tokens/movr.svg",
+            "fullName" : "Moonriver"
+        },
+        "xcAUSD": {
+            "color": "#F754AC",
+            "image": "https://assets.orbiter.one/images/tokens/ausd.svg",
+            "fullName" : "Acalla Dollar"
+        },
+        "MAI": {
+            "color": "#F7547B",
+            "image": "https://assets.orbiter.one/images/tokens/mai.svg",
+            "fullName" : "MAI Stablecoin"
+        },
+        "xcKBTC": {
+            "color": "#FB8D28",
+            "image": "https://assets.orbiter.one/images/tokens/kbtc.svg",
+            "fullName" : "Kintsugi WBTC"
+        },
+        "d2O": {
+            "color": "#C354F7",
+            "image": "https://assets.orbiter.one/images/tokens/d2o.svg",
+            "fullName" : "Deuterium"
+        },
+        "GLMR": {
+            "color": "",
+            "image": "",
+            "fullName" : ""
+        }
+    }
+}
