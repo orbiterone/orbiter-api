@@ -191,9 +191,6 @@ export class LotteryService {
 
     if (ticketIds && ticketIds.length) {
       response.totalTickets = ticketIds.length;
-      if (lottery.status == 1) {
-        return response;
-      }
 
       let i = 0;
       for (const ticketId of ticketIds) {
