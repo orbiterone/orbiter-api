@@ -30,7 +30,11 @@ import { Lottery } from '@app/core/schemas/lottery.schema';
 @Controller('lotteries')
 @UseGuards(ApiKeyGuard)
 @ApiTags('lotteries')
-@ApiExtraModels(CurrentLotteryResponse, UserLotteryResponse)
+@ApiExtraModels(
+  CurrentLotteryResponse,
+  UserLotteryResponse,
+  TicketsUserByLotteryResponse,
+)
 export class LotteryController {
   constructor(private readonly lotteryService: LotteryService) {}
 
