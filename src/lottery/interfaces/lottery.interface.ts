@@ -103,4 +103,7 @@ export class TicketsUserByLotteryResponse {
 
   @ApiProperty({ type: [TicketLotteryInfo] })
   tickets: TicketLotteryInfo[];
+
+  @ApiProperty({ type: CurrentLotteryResponse })
+  info: CurrentLotteryResponse;
 }

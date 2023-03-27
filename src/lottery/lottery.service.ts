@@ -176,6 +176,7 @@ export class LotteryService {
       totalTickets: 0,
       winningTickets: 0,
       tickets: [],
+      info: await this.infoByLottery(lottery as LotteryDocument),
     };
 
     const {
