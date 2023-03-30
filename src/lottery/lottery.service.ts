@@ -176,6 +176,7 @@ export class LotteryService {
       totalTickets: 0,
       winningTickets: 0,
       tickets: [],
+      info: await this.infoByLottery(lottery as LotteryDocument),
     };
 
     const {
@@ -191,9 +192,6 @@ export class LotteryService {
 
     if (ticketIds && ticketIds.length) {
       response.totalTickets = ticketIds.length;
-      if (lottery.status == 1) {
-        return response;
-      }
 
       let i = 0;
       for (const ticketId of ticketIds) {

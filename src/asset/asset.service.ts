@@ -182,7 +182,7 @@ export class AssetService implements OnModuleInit {
           );
 
           if (supplySpeed.gt(0) || borrowSpeed.gt(0)) {
-            const incentiveSymbol = await this.erc20OrbierCore.symbol(
+            let incentiveSymbol = await this.erc20OrbierCore.symbol(
               incentiveAddress,
             );
             const incentiveDecimals = await this.erc20OrbierCore.decimals(
@@ -195,6 +195,9 @@ export class AssetService implements OnModuleInit {
             if (incentiveSymbol == 'ORB') {
               incentivePrice = 0.3;
             } else {
+              if (incentiveSymbol == 'd2O') {
+                incentiveSymbol = 'USDC';
+              }
               incentivePrice = await this.exchangeService.getPrice(
                 incentiveSymbol,
                 'USDT',
