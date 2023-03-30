@@ -241,12 +241,12 @@ export class AssetService implements OnModuleInit {
               symbol: incentiveSymbol,
               address: incentiveAddress,
               supplyApy: Decimal128(
-                isFinite(supplyApy) || supplyApy > 999999
+                supplyApy == Infinity || supplyApy > 999999
                   ? '999999'
                   : supplyApy.toString(),
               ),
               borrowApy: Decimal128(
-                isFinite(borrowApy) || borrowApy > 999999
+                borrowApy == Infinity || borrowApy > 999999
                   ? '999999'
                   : borrowApy.toString(),
               ),
