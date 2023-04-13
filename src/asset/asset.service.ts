@@ -185,6 +185,7 @@ export class AssetService implements OnModuleInit {
             let incentiveSymbol = await this.erc20OrbierCore.symbol(
               incentiveAddress,
             );
+            const originalIncentiveSymbol = incentiveSymbol;
             const incentiveDecimals = await this.erc20OrbierCore.decimals(
               incentiveAddress,
             );
@@ -238,7 +239,7 @@ export class AssetService implements OnModuleInit {
                 : 0;
 
             obj.incentives.push({
-              symbol: incentiveSymbol,
+              symbol: originalIncentiveSymbol,
               address: incentiveAddress,
               supplyApy: Decimal128(
                 supplyApy == Infinity || supplyApy > 999999
