@@ -2,7 +2,7 @@
     "contracts": {
         "PriceOracle": "0x4EEaa1fd27c50C64E77272BCdDe68c28F0A3c3D7",
         "Comptroller": "0xeB36b18CceCBbC90885BC2Cf0345933F026050d0",
-        "Incentive": "",
+        "Incentive": "0xa84698A60f613E1113F29c2363c511135c05E056",
         "Reader": "0x4D7d33CD41a49Bf875Cf207B3f43004d74d721aa",
         "Lottery": ""
     },
