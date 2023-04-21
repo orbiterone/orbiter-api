@@ -42,22 +42,24 @@ export class Web3Service {
 
   private contractsWebsocket = [];
 
-  getClient(): Web3 {
-    const urlNode = NODE_GETH[typeNetwork];
+  getClient(network?: string): Web3 {
+    const type = network || typeNetwork;
+    const urlNode = NODE_GETH[type];
 
-    if (!this.nodeClient[typeNetwork]) {
+    if (!this.nodeClient[type]) {
       const client = new Web3(new Web3.providers.HttpProvider(urlNode));
-      this.nodeClient[typeNetwork] = client;
+      this.nodeClient[type] = client;
 
-      return this.nodeClient[typeNetwork];
+      return this.nodeClient[type];
     } else {
-      return this.nodeClient[typeNetwork];
+      return this.nodeClient[type];
     }
   }
 
-  getClientWebsocket(): Web3 {
-    const urlNode = NODE_GETH_WEBSOCKET[typeNetwork];
-    if (!this.nodeClientWebsocket[typeNetwork]) {
+  getClientWebsocket(network?: string): Web3 {
+    const type = network || typeNetwork;
+    const urlNode = NODE_GETH_WEBSOCKET[type];
+    if (!this.nodeClientWebsocket[type]) {
       let provider = new Web3.providers.WebsocketProvider(urlNode, {
         timeout: 50000,
         clientConfig: {
@@ -75,11 +77,11 @@ export class Web3Service {
       });
       const client = new Web3(provider);
       provider.on('error', () => {
-        console.error(`WSS client error - ${typeNetwork}`);
+        console.error(`WSS client error - ${type}`);
       });
       provider.on('end', () => {
         console.log('WS closed');
-        console.log(`Attempting to reconnect... ${typeNetwork}`);
+        console.log(`Attempting to reconnect... ${type}`);
         provider = new Web3.providers.WebsocketProvider(urlNode, {
           timeout: 50000,
           clientConfig: {
@@ -97,14 +99,14 @@ export class Web3Service {
         });
 
         provider.on('connect', function () {
-          console.log(`WSS Reconnected. ${typeNetwork}`);
+          console.log(`WSS Reconnected. ${type}`);
         });
 
         client.setProvider(provider);
       });
       provider.on('close', () => {
         console.log('WS closed');
-        console.log(`Attempting to reconnect... ${typeNetwork}`);
+        console.log(`Attempting to reconnect... ${type}`);
         provider = new Web3.providers.WebsocketProvider(urlNode, {
           timeout: 50000,
           clientConfig: {
@@ -122,50 +124,53 @@ export class Web3Service {
         });
 
         provider.on('connect', function () {
-          console.log(`WSS Reconnected. ${typeNetwork}`);
+          console.log(`WSS Reconnected. ${type}`);
         });
 
         client.setProvider(provider);
       });
 
-      this.nodeClientWebsocket[typeNetwork] = client;
+      this.nodeClientWebsocket[type] = client;
 
-      return this.nodeClientWebsocket[typeNetwork];
+      return this.nodeClientWebsocket[type];
     } else {
-      return this.nodeClientWebsocket[typeNetwork];
+      return this.nodeClientWebsocket[type];
     }
   }
 
-  getContract(contractAddress: string, abi: any): Contract {
-    if (
-      !this.contracts[typeNetwork] ||
-      !this.contracts[typeNetwork][contractAddress]
-    ) {
+  getContract(contractAddress: string, abi: any, network?: string): Contract {
+    const type = network || typeNetwork;
+    if (!this.contracts[type] || !this.contracts[type][contractAddress]) {
       const client = this.getClient();
       const contract = new client.eth.Contract(abi, contractAddress);
-      if (!this.contracts[typeNetwork]) {
-        this.contracts[typeNetwork] = {};
+      if (!this.contracts[type]) {
+        this.contracts[type] = {};
       }
-      this.contracts[typeNetwork][contractAddress] = contract;
+      this.contracts[type][contractAddress] = contract;
     }
 
-    return this.contracts[typeNetwork][contractAddress];
+    return this.contracts[type][contractAddress];
   }
 
-  getContractByWebsocket(contractAddress: string, abi: any): Contract {
+  getContractByWebsocket(
+    contractAddress: string,
+    abi: any,
+    network?: string,
+  ): Contract {
+    const type = network || typeNetwork;
     if (
-      !this.contractsWebsocket[typeNetwork] ||
-      !this.contractsWebsocket[typeNetwork][contractAddress]
+      !this.contractsWebsocket[type] ||
+      !this.contractsWebsocket[type][contractAddress]
     ) {
       const client = this.getClientWebsocket();
       const contract = new client.eth.Contract(abi, contractAddress);
-      if (!this.contractsWebsocket[typeNetwork]) {
-        this.contractsWebsocket[typeNetwork] = {};
+      if (!this.contractsWebsocket[type]) {
+        this.contractsWebsocket[type] = {};
       }
-      this.contractsWebsocket[typeNetwork][contractAddress] = contract;
+      this.contractsWebsocket[type][contractAddress] = contract;
     }
 
-    return this.contractsWebsocket[typeNetwork][contractAddress];
+    return this.contractsWebsocket[type][contractAddress];
   }
 
   async createTx(

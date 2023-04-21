@@ -15,6 +15,8 @@ import { LotteryOrbiterCore } from '@app/core/orbiter/lottery.orbiter';
 
 const cronTimeLottery = CRON_LOTTERY || CronExpression.EVERY_30_MINUTES;
 
+const { NODE_TYPE_LOTTERY: typeNetwork } = process.env;
+
 @Injectable()
 export class LotteryCron {
   constructor(
@@ -28,15 +30,15 @@ export class LotteryCron {
 
     const now = moment();
     this.web3Service
-      .getClient()
+      .getClient(typeNetwork)
       .eth.accounts.wallet.add('0x' + LOTTERY_OPERATOR_KEY);
 
     const myWalletAddress =
-      this.web3Service.getClient().eth.accounts.wallet[0].address;
+      this.web3Service.getClient(typeNetwork).eth.accounts.wallet[0].address;
 
     const fromMyWallet = {
       from: myWalletAddress,
-      gasLimit: this.web3Service.getClient().utils.toHex(12990000),
+      gasLimit: this.web3Service.getClient(typeNetwork).utils.toHex(12990000),
     };
 
     const lotteryContract = this.lotteryOrbiterCore.contract();

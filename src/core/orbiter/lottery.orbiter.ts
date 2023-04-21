@@ -5,6 +5,8 @@ import { LOTTERY } from '../constant';
 import { Web3Service } from '../web3/web3.service';
 import { lotteryAbi } from '@app/core/abi/contracts.json';
 
+const { NODE_TYPE_LOTTERY: typeNetwork } = process.env;
+
 @Injectable()
 export class LotteryOrbiterCore {
   constructor(private readonly web3Service: Web3Service) {}
@@ -12,9 +14,13 @@ export class LotteryOrbiterCore {
   contract(websocket = false): Contract {
     switch (websocket) {
       case true:
-        return this.web3Service.getContractByWebsocket(LOTTERY, lotteryAbi);
+        return this.web3Service.getContractByWebsocket(
+          LOTTERY,
+          lotteryAbi,
+          typeNetwork,
+        );
       case false:
-        return this.web3Service.getContract(LOTTERY, lotteryAbi);
+        return this.web3Service.getContract(LOTTERY, lotteryAbi, typeNetwork);
     }
   }
 
