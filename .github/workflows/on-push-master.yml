@@ -54,10 +54,16 @@ jobs:
             echo NODE_MOONBASE_HOST="${{ secrets.NODE_MOONBASE_HOST_MASTER }}" >> .env
             echo NODE_MOONBEAM_HOST="${{ secrets.NODE_MOONBEAM_HOST_MASTER }}" >> .env
             echo NODE_TYPE="${{ secrets.NODE_TYPE_MASTER }}" >> .env
+            echo NODE_TYPE_LOTTERY="${{ secrets.NODE_TYPE_LOTTERY_MASTER }}" >> .env
             echo API_KEY="${{ secrets.API_KEY_MASTER }}" >> .env
             echo COINPRICE_KEY="${{ secrets.COINPRICE_KEY_MASTER }}" >> .env
             echo PRICE_FEED_OWNER_KEY="${{ secrets.PRICE_FEED_OWNER_KEY_MASTER }}" >> .env
             echo PRICE_FEED_UPDATE="${{ secrets.PRICE_FEED_UPDATE_MASTER }}" >> .env
+            echo PRICE_ORB="${{ secrets.PRICE_ORB_MASTER }}" >> .env
+            echo LOTTERY_OPERATOR_KEY="${{ secrets.LOTTERY_OPERATOR_KEY_MASTER }}" >> .env
+            echo LOTTERY_TICKET_PRICE_ORB="${{ secrets.LOTTERY_TICKET_PRICE_ORB_MASTER }}" >> .env
+            echo CRON_LOTTERY="${{ secrets.CRON_LOTTERY_MASTER }}" >> .env
+            echo CRON_LOTTERY_TIME="${{ secrets.CRON_LOTTERY_TIME_MASTER }}" >> .env
 
             export DOCKER_SCAN_SUGGEST=false
             docker compose -f docker-stack.yml build --no-cache --compress
