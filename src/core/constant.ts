@@ -22,6 +22,7 @@ import {
 
 const {
   NODE_TYPE,
+  NODE_TYPE_LOTTERY,
   PRICE_FEED_OWNER_KEY,
   PRICE_ORB,
   LOTTERY_OPERATOR_KEY,
@@ -54,9 +55,9 @@ const COMPTROLLER =
     : MoonbeamContracts.Comptroller;
 
 const LOTTERY =
-  NODE_TYPE == 'moonbase'
+  NODE_TYPE_LOTTERY == 'moonbase'
     ? MoonbaseContracts.Lottery
-    : NODE_TYPE == 'moonriver'
+    : NODE_TYPE_LOTTERY == 'moonriver'
     ? MoonriverContracts.Lottery
     : MoonbeamContracts.Lottery;
 
