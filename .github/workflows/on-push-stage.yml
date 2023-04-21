@@ -54,6 +54,7 @@ jobs:
             echo NODE_MOONBASE_HOST="${{ secrets.NODE_MOONBASE_HOST_STAGE }}" >> .env
             echo NODE_MOONBEAM_HOST="${{ secrets.NODE_MOONBEAM_HOST_STAGE }}" >> .env
             echo NODE_TYPE="${{ secrets.NODE_TYPE_STAGE }}" >> .env
+            echo NODE_TYPE_LOTTERY="${{ secrets.NODE_TYPE_LOTTERY_STAGE }}" >> .env
             echo API_KEY="${{ secrets.API_KEY_STAGE }}" >> .env
             echo COINPRICE_KEY="${{ secrets.COINPRICE_KEY_STAGE }}" >> .env
             echo PRICE_FEED_OWNER_KEY="${{ secrets.PRICE_FEED_OWNER_KEY_STAGE }}" >> .env
