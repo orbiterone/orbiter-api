@@ -65,9 +65,15 @@ export class UserService {
         }
 
         if (+totalCollateral > 0) {
-          percentage = +new BigNumber(
+          percentage = new BigNumber(
             new BigNumber(totalBorrowed).div(totalCollateral),
-          ).multipliedBy(100);
+          )
+            .multipliedBy(100)
+            .toNumber();
+        }
+
+        if (percentage > 100) {
+          percentage = 100;
         }
 
         return {

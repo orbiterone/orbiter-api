@@ -28,6 +28,7 @@ import {
 import { UserRepository } from '@app/user/user.repository';
 import { ExchangeService } from '@app/core/exchange/exchange.service';
 import { ReaderOrbiterCore } from '@app/core/orbiter/reader.orbiter';
+import { IncentiveOrbiterCore } from '@app/core/orbiter/incentive.orbiter';
 
 const web3 = new Web3();
 
@@ -44,6 +45,7 @@ export class AssetService implements OnModuleInit {
     public readonly oTokenCore: OTokenOrbiterCore,
     public readonly erc20OrbierCore: Erc20OrbiterCore,
     public readonly readerOrbiterCore: ReaderOrbiterCore,
+    public readonly incentiveOrbiterCore: IncentiveOrbiterCore,
     public readonly controllerOrbiterCore: ControllerOrbiterCore,
     public readonly oracleOrbiterCore: OracleOrbiterCore,
     public readonly userRepository: UserRepository,
@@ -127,7 +129,7 @@ export class AssetService implements OnModuleInit {
       ).div(new BigNumber(10).pow(tokenData.tokenDecimal));
     }
 
-    return {
+    const obj = {
       oTokenAddress: oToken,
       oTokenDecimal: oTokenDecimal,
       tokenAddress: underlying || '',
@@ -152,7 +154,113 @@ export class AssetService implements OnModuleInit {
       borrowPaused: await this.controllerOrbiterCore.borrowGuardianPaused(
         oToken,
       ),
+      incentives: [],
     };
+
+    try {
+      const supportIncentives =
+        await this.incentiveOrbiterCore.getAllSupportIncentives();
+
+      if (
+        supportIncentives &&
+        supportIncentives.length &&
+        (+obj.totalBorrow.toString() > 0 || +obj.totalSupply.toString() > 0)
+      ) {
+        const apxBlockSpeedInSeconds = 12;
+        for (const incentiveAddress of supportIncentives) {
+          let supplySpeed = new BigNumber(
+            await this.incentiveOrbiterCore.supplyRewardSpeeds(
+              incentiveAddress,
+              oToken,
+            ),
+          );
+          let borrowSpeed = new BigNumber(
+            await this.incentiveOrbiterCore.borrowRewardSpeeds(
+              incentiveAddress,
+              oToken,
+            ),
+          );
+
+          if (supplySpeed.gt(0) || borrowSpeed.gt(0)) {
+            let incentiveSymbol = await this.erc20OrbierCore.symbol(
+              incentiveAddress,
+            );
+            const originalIncentiveSymbol = incentiveSymbol;
+            const incentiveDecimals = await this.erc20OrbierCore.decimals(
+              incentiveAddress,
+            );
+
+            borrowSpeed = borrowSpeed.div(Math.pow(10, +incentiveDecimals));
+            supplySpeed = supplySpeed.div(Math.pow(10, +incentiveDecimals));
+            let incentivePrice = 0;
+            if (incentiveSymbol == 'ORB') {
+              incentivePrice = 0.3;
+            } else {
+              if (incentiveSymbol == 'd2O') {
+                incentiveSymbol = 'USDC';
+              }
+              incentivePrice = await this.exchangeService.getPrice(
+                incentiveSymbol,
+                'USDT',
+                1,
+              );
+            }
+
+            const borrowersPerDay = borrowSpeed.multipliedBy(
+              parseInt(((60 * 60 * 24) / apxBlockSpeedInSeconds).toString()),
+            );
+            const suppliersPerDay = supplySpeed.multipliedBy(
+              parseInt(((60 * 60 * 24) / apxBlockSpeedInSeconds).toString()),
+            );
+
+            const borrowApy =
+              +obj.totalBorrow.toString() > 0
+                ? 100 *
+                  (Math.pow(
+                    1 +
+                      (incentivePrice * borrowersPerDay.toNumber()) /
+                        (+obj.totalBorrow.toString() *
+                          +obj.lastPrice.toString()),
+                    365,
+                  ) -
+                    1)
+                : 0;
+            const supplyApy =
+              +obj.totalSupply.toString() > 0
+                ? 100 *
+                  (Math.pow(
+                    1 +
+                      (incentivePrice * suppliersPerDay.toNumber()) /
+                        (+obj.totalSupply.toString() *
+                          +obj.lastPrice.toString()),
+                    365,
+                  ) -
+                    1)
+                : 0;
+
+            obj.incentives.push({
+              symbol: originalIncentiveSymbol,
+              address: incentiveAddress,
+              supplyApy: Decimal128(
+                supplyApy == Infinity || supplyApy > 999999
+                  ? '999999'
+                  : supplyApy.toString(),
+              ),
+              borrowApy: Decimal128(
+                borrowApy == Infinity || borrowApy > 999999
+                  ? '999999'
+                  : borrowApy.toString(),
+              ),
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.log(`Fetch incentives error. ${err.message}`);
+      delete obj.incentives;
+    }
+
+    return obj;
   }
 
   async updateAssetInfo(oToken: string) {
@@ -183,7 +291,7 @@ export class AssetService implements OnModuleInit {
   async assetsList(): Promise<Token[]> {
     return await this.assetRepository.find({
       options: { isActive: true },
-      sort: { name: 1 },
+      sort: { sortOrder: 1 },
     });
   }
 
@@ -214,6 +322,14 @@ export class AssetService implements OnModuleInit {
               lastPrice: asset.lastPrice,
               exchangeRate: asset.exchangeRate,
               collateralFactor: asset.collateralFactor,
+              incentives: asset.incentives.map((el) => {
+                return {
+                  address: el.address,
+                  symbol: el.symbol,
+                  supplyApy: el.supplyApy.toString(),
+                  borrowApy: el.borrowApy.toString(),
+                };
+              }),
             },
             collateral: s.collateral,
             value: new BigNumber(s.totalSupply)
@@ -245,6 +361,14 @@ export class AssetService implements OnModuleInit {
               lastPrice: asset.lastPrice,
               exchangeRate: asset.exchangeRate,
               collateralFactor: asset.collateralFactor,
+              incentives: asset.incentives.map((el) => {
+                return {
+                  address: el.address,
+                  symbol: el.symbol,
+                  supplyApy: el.supplyApy.toString(),
+                  borrowApy: el.borrowApy.toString(),
+                };
+              }),
             },
             collateral: null,
             value: new BigNumber(b.totalBorrow)
@@ -300,7 +424,7 @@ export class AssetService implements OnModuleInit {
             },
           },
           { $match: { 'token.isActive': true } },
-          { $sort: { 'token.name': 1 } },
+          { $sort: { 'token.sortOrder': 1 } },
           {
             $group: {
               _id: null,
@@ -318,6 +442,7 @@ export class AssetService implements OnModuleInit {
                     lastPrice: '$token.lastPrice',
                     exchangeRate: '$token.exchangeRate',
                     collateralFactor: '$token.collateralFactor',
+                    incentives: '$token.incentives',
                   },
                   collateral: '$collateral',
                   value: {
@@ -345,6 +470,7 @@ export class AssetService implements OnModuleInit {
                     lastPrice: '$token.lastPrice',
                     exchangeRate: '$token.exchangeRate',
                     collateralFactor: '$token.collateralFactor',
+                    incentives: '$token.incentives',
                   },
                   collateral: '$collateral',
                   value: { $toString: '$totalBorrow' },
@@ -402,7 +528,7 @@ export class AssetService implements OnModuleInit {
           },
         },
         { $match: { 'token.isActive': true } },
-        { $sort: { 'token.name': 1 } },
+        { $sort: { 'token.sortOrder': 1 } },
         {
           $group: {
             _id: null,
@@ -591,7 +717,7 @@ export class AssetService implements OnModuleInit {
       );
     const assets = await this.assetRepository.find({
       options: { isActive: true },
-      sort: { name: 1 },
+      sort: { sortOrder: 1 },
     });
     const assetList = [];
     for (const asset of assets) {

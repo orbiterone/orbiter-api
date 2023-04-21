@@ -9,7 +9,9 @@ import { ControllerOrbiterCore } from '../orbiter/controller.orbiter';
 import { Erc20OrbiterCore } from '../orbiter/erc20.orbiter';
 import { OracleOrbiterCore } from '../orbiter/oracle.orbiter';
 import { OTokenOrbiterCore } from '../orbiter/oToken.orbiter';
+import { LotteryOrbiterCore } from '../orbiter/lottery.orbiter';
 import { Web3Service } from '../web3/web3.service';
+import { LotteryService } from '@app/lottery/lottery.service';
 
 @Injectable()
 export abstract class EventService {
@@ -24,10 +26,12 @@ export abstract class EventService {
     public readonly erc20OrbierCore: Erc20OrbiterCore,
     public readonly controllerOrbiterCore: ControllerOrbiterCore,
     public readonly oracleOrbiterCore: OracleOrbiterCore,
+    public readonly lotteryOrbiterCore: LotteryOrbiterCore,
     public readonly eventEmitter: EventEmitter2,
     public readonly userService: UserService,
     public readonly assetService: AssetService,
     public readonly transactionService: TransactionService,
+    public readonly lotteryService: LotteryService,
   ) {}
 
   abstract addListenContract(): void;

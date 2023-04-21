@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
 
 const {
@@ -41,77 +42,135 @@ export class Web3Service {
 
   private contractsWebsocket = [];
 
-  getClient(): Web3 {
-    const urlNode = NODE_GETH[typeNetwork];
+  getClient(network?: string): Web3 {
+    const type = network || typeNetwork;
+    const urlNode = NODE_GETH[type];
 
-    if (!this.nodeClient[typeNetwork]) {
+    if (!this.nodeClient[type]) {
       const client = new Web3(new Web3.providers.HttpProvider(urlNode));
-      this.nodeClient[typeNetwork] = client;
+      this.nodeClient[type] = client;
 
-      return this.nodeClient[typeNetwork];
+      return this.nodeClient[type];
     } else {
-      return this.nodeClient[typeNetwork];
+      return this.nodeClient[type];
     }
   }
 
-  getClientWebsocket(): Web3 {
-    const urlNode = NODE_GETH_WEBSOCKET[typeNetwork];
-
-    if (!this.nodeClientWebsocket[typeNetwork]) {
+  getClientWebsocket(network?: string): Web3 {
+    const type = network || typeNetwork;
+    const urlNode = NODE_GETH_WEBSOCKET[type];
+    if (!this.nodeClientWebsocket[type]) {
       let provider = new Web3.providers.WebsocketProvider(urlNode, {
-        reconnect: { auto: true, delay: 5000 },
+        timeout: 50000,
+        clientConfig: {
+          keepalive: true,
+          keepaliveInterval: 60000,
+          maxReceivedFrameSize: 2000000, // bytes - default: 1MiB, current: 2MiB
+          maxReceivedMessageSize: 10000000, // bytes - default: 8MiB, current: 10Mib
+        },
+        reconnect: {
+          auto: true,
+          delay: 60000,
+          onTimeout: true,
+          maxAttempts: 10,
+        },
       });
       const client = new Web3(provider);
-      provider.on('error', console.error);
+      provider.on('error', () => {
+        console.error(`WSS client error - ${type}`);
+      });
       provider.on('end', () => {
         console.log('WS closed');
-        console.log(`Attempting to reconnect... ${typeNetwork}`);
-        provider = new Web3.providers.WebsocketProvider(urlNode);
+        console.log(`Attempting to reconnect... ${type}`);
+        provider = new Web3.providers.WebsocketProvider(urlNode, {
+          timeout: 50000,
+          clientConfig: {
+            keepalive: true,
+            keepaliveInterval: 60000,
+            maxReceivedFrameSize: 2000000, // bytes - default: 1MiB, current: 2MiB
+            maxReceivedMessageSize: 10000000, // bytes - default: 8MiB, current: 10Mib
+          },
+          reconnect: {
+            auto: true,
+            delay: 60000,
+            onTimeout: true,
+            maxAttempts: 10,
+          },
+        });
 
         provider.on('connect', function () {
-          console.log(`WSS Reconnected. ${typeNetwork}`);
+          console.log(`WSS Reconnected. ${type}`);
+        });
+
+        client.setProvider(provider);
+      });
+      provider.on('close', () => {
+        console.log('WS closed');
+        console.log(`Attempting to reconnect... ${type}`);
+        provider = new Web3.providers.WebsocketProvider(urlNode, {
+          timeout: 50000,
+          clientConfig: {
+            keepalive: true,
+            keepaliveInterval: 60000,
+            maxReceivedFrameSize: 2000000, // bytes - default: 1MiB, current: 2MiB
+            maxReceivedMessageSize: 10000000, // bytes - default: 8MiB, current: 10Mib
+          },
+          reconnect: {
+            auto: true,
+            delay: 60000,
+            onTimeout: true,
+            maxAttempts: 10,
+          },
+        });
+
+        provider.on('connect', function () {
+          console.log(`WSS Reconnected. ${type}`);
         });
 
         client.setProvider(provider);
       });
 
-      this.nodeClientWebsocket[typeNetwork] = client;
+      this.nodeClientWebsocket[type] = client;
 
-      return this.nodeClientWebsocket[typeNetwork];
+      return this.nodeClientWebsocket[type];
+    } else {
+      return this.nodeClientWebsocket[type];
     }
-    return this.nodeClientWebsocket[typeNetwork];
   }
 
-  getContract(contractAddress: string, abi: any): Contract {
-    if (
-      !this.contracts[typeNetwork] ||
-      !this.contracts[typeNetwork][contractAddress]
-    ) {
+  getContract(contractAddress: string, abi: any, network?: string): Contract {
+    const type = network || typeNetwork;
+    if (!this.contracts[type] || !this.contracts[type][contractAddress]) {
       const client = this.getClient();
       const contract = new client.eth.Contract(abi, contractAddress);
-      if (!this.contracts[typeNetwork]) {
-        this.contracts[typeNetwork] = {};
+      if (!this.contracts[type]) {
+        this.contracts[type] = {};
       }
-      this.contracts[typeNetwork][contractAddress] = contract;
+      this.contracts[type][contractAddress] = contract;
     }
 
-    return this.contracts[typeNetwork][contractAddress];
+    return this.contracts[type][contractAddress];
   }
 
-  getContractByWebsocket(contractAddress: string, abi: any): Contract {
+  getContractByWebsocket(
+    contractAddress: string,
+    abi: any,
+    network?: string,
+  ): Contract {
+    const type = network || typeNetwork;
     if (
-      !this.contractsWebsocket[typeNetwork] ||
-      !this.contractsWebsocket[typeNetwork][contractAddress]
+      !this.contractsWebsocket[type] ||
+      !this.contractsWebsocket[type][contractAddress]
     ) {
       const client = this.getClientWebsocket();
       const contract = new client.eth.Contract(abi, contractAddress);
-      if (!this.contractsWebsocket[typeNetwork]) {
-        this.contractsWebsocket[typeNetwork] = {};
+      if (!this.contractsWebsocket[type]) {
+        this.contractsWebsocket[type] = {};
       }
-      this.contractsWebsocket[typeNetwork][contractAddress] = contract;
+      this.contractsWebsocket[type][contractAddress] = contract;
     }
 
-    return this.contractsWebsocket[typeNetwork][contractAddress];
+    return this.contractsWebsocket[type][contractAddress];
   }
 
   async createTx(
@@ -140,7 +199,7 @@ export class Web3Service {
 
         await web3.eth
           .sendSignedTransaction(signedTx.rawTransaction)
-          .once('transactionHash', (hash) => {
+          .on('transactionHash', (hash) => {
             return resolve(hash);
           })
           .on('error', (err) => reject(err));

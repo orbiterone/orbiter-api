@@ -2,7 +2,9 @@
     "contracts": {
         "PriceOracle": "",
         "Comptroller": "",
-        "Reader": ""
+        "Incentive": "",
+        "Reader": "",
+        "Lottery": "0x9968788811688D037392c0DE5e270D13a0C8719C"
     },
     "tokens": {
         "ETH": "0xfA9343C3897324496A05fC75abeD6bAC29f8A40f",

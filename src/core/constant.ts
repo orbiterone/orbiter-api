@@ -20,11 +20,32 @@ import {
   settings as MoonbeamSettings,
 } from '@app/core/contracts/moonbeam.json';
 
-const { NODE_TYPE, PRICE_FEED_OWNER_KEY } = process.env;
+const {
+  NODE_TYPE,
+  NODE_TYPE_LOTTERY,
+  PRICE_FEED_OWNER_KEY,
+  PRICE_ORB,
+  LOTTERY_OPERATOR_KEY,
+  CRON_LOTTERY,
+  CRON_LOTTERY_TIME,
+  LOTTERY_TICKET_PRICE_ORB,
+  PRICE_FEED_UPDATE,
+} = process.env;
 
 const ethMantissa = 1e18;
 const blocksPerDay = 7200; // 15 seconds per block
 const daysPerYear = 365;
+
+const distributionPrizePercent = {
+  1: 2,
+  2: 3,
+  3: 5,
+  4: 10,
+  5: 20,
+  6: 40,
+};
+
+const burnPool = 20;
 
 const COMPTROLLER =
   NODE_TYPE == 'moonbase'
@@ -33,12 +54,26 @@ const COMPTROLLER =
     ? MoonriverContracts.Comptroller
     : MoonbeamContracts.Comptroller;
 
+const LOTTERY =
+  NODE_TYPE_LOTTERY == 'moonbase'
+    ? MoonbaseContracts.Lottery
+    : NODE_TYPE_LOTTERY == 'moonriver'
+    ? MoonriverContracts.Lottery
+    : MoonbeamContracts.Lottery;
+
 const READER =
   NODE_TYPE == 'moonbase'
     ? MoonbaseContracts.Reader
     : NODE_TYPE == 'moonriver'
     ? MoonriverContracts.Reader
     : MoonbeamContracts.Reader;
+
+const INCENTIVE =
+  NODE_TYPE == 'moonbase'
+    ? MoonbaseContracts.Incentive
+    : NODE_TYPE == 'moonriver'
+    ? MoonriverContracts.Incentive
+    : MoonbeamContracts.Incentive;
 
 const DEFAULT_TOKEN =
   NODE_TYPE == 'moonbase'
@@ -68,16 +103,33 @@ const SETTINGS =
     ? MoonriverSettings
     : MoonbeamSettings;
 
+const LOTTERY_SETTING = {
+  discount: 2000,
+  rewards: [250, 375, 625, 1250, 2500, 5000],
+  treasury: 2000,
+};
+
 export {
   ethMantissa,
   blocksPerDay,
   daysPerYear,
   COMPTROLLER,
+  LOTTERY,
   READER,
+  INCENTIVE,
   DEFAULT_TOKEN,
   SUPPORT_MARKET,
   TOKENS,
   NODE_TYPE,
   SETTINGS,
   PRICE_FEED_OWNER_KEY,
+  PRICE_ORB,
+  distributionPrizePercent,
+  burnPool,
+  LOTTERY_SETTING,
+  LOTTERY_OPERATOR_KEY,
+  CRON_LOTTERY,
+  CRON_LOTTERY_TIME,
+  LOTTERY_TICKET_PRICE_ORB,
+  PRICE_FEED_UPDATE,
 };
