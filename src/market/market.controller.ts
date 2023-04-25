@@ -6,7 +6,12 @@ import {
   Response,
   UseGuards,
 } from '@nestjs/common';
-import { ApiExtraModels, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiExtraModels,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import jsend from 'jsend';
 
 import { ApiKeyGuard } from '@app/core/guard/apikey';
@@ -44,5 +49,16 @@ export class MarketController {
     return res
       .status(HttpStatus.OK)
       .json(jsend.success(await this.marketService.getMarketOverview()));
+  }
+
+  @Get('orb-rate')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    schema: { properties: { data: { type: 'number' } } },
+  })
+  async orbRate(@Response() res: any) {
+    return res
+      .status(HttpStatus.OK)
+      .json(jsend.success(await this.marketService.getOrbRate()));
   }
 }
