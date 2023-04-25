@@ -10,12 +10,14 @@ import {
   MarketOverviewResponse,
 } from './interfaces/market.interface';
 import { MarketRepository } from './market.repository';
+import { ExchangeService } from '@app/core/exchange/exchange.service';
 
 @Injectable()
 export class MarketService {
   constructor(
     private readonly marketRepository: MarketRepository,
     private readonly assetRepository: AssetRepository,
+    private readonly exchangeService: ExchangeService,
   ) {}
 
   async getMarketHistory(token: Token): Promise<MarketHistoryResponse[]> {
@@ -90,5 +92,12 @@ export class MarketService {
         });
       }
     }
+  }
+
+  async getOrbRate(): Promise<number> {
+    const WGLMR_ORB = await this.exchangeService.getPrice('WGLMR', 'ORB', 6);
+    const WGLMR_USDC = await this.exchangeService.getPrice('WGLMR', 'USDC', 6);
+
+    return WGLMR_USDC / WGLMR_ORB;
   }
 }
