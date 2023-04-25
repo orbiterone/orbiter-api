@@ -141,7 +141,7 @@ export class Web3Service {
   getContract(contractAddress: string, abi: any, network?: string): Contract {
     const type = network || typeNetwork;
     if (!this.contracts[type] || !this.contracts[type][contractAddress]) {
-      const client = this.getClient();
+      const client = this.getClient(network);
       const contract = new client.eth.Contract(abi, contractAddress);
       if (!this.contracts[type]) {
         this.contracts[type] = {};
@@ -162,7 +162,7 @@ export class Web3Service {
       !this.contractsWebsocket[type] ||
       !this.contractsWebsocket[type][contractAddress]
     ) {
-      const client = this.getClientWebsocket();
+      const client = this.getClientWebsocket(network);
       const contract = new client.eth.Contract(abi, contractAddress);
       if (!this.contractsWebsocket[type]) {
         this.contractsWebsocket[type] = {};
