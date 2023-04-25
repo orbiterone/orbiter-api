@@ -11,6 +11,7 @@ import {
   LOTTERY_TICKET_PRICE_ORB,
   LOTTERY_SETTING,
 } from '@app/core/constant';
+import { HttpRequestsService } from '@app/core/http-requests/http-requests.service';
 import { LotteryOrbiterCore } from '@app/core/orbiter/lottery.orbiter';
 
 const cronTimeLottery = CRON_LOTTERY || CronExpression.EVERY_30_MINUTES;
@@ -22,6 +23,7 @@ export class LotteryCron {
   constructor(
     private readonly web3Service: Web3Service,
     private readonly lotteryOrbiterCore: LotteryOrbiterCore,
+    private readonly httpRequestService: HttpRequestsService,
   ) {}
 
   @Cron(cronTimeLottery)
@@ -36,10 +38,28 @@ export class LotteryCron {
     const myWalletAddress =
       this.web3Service.getClient(typeNetwork).eth.accounts.wallet[0].address;
 
-    const fromMyWallet = {
+    const fromMyWallet: any = {
       from: myWalletAddress,
       gasLimit: this.web3Service.getClient(typeNetwork).utils.toHex(12990000),
     };
+    if (typeNetwork == 'moonbeam') {
+      try {
+        const getGasPrice = await this.httpRequestService.requestGet(
+          'https://gmbeam.blockscan.com/gasapi.ashx?apikey=key&method=gasoracle',
+        );
+        if (
+          getGasPrice &&
+          getGasPrice.result &&
+          getGasPrice.result.ProposeGasPrice
+        ) {
+          fromMyWallet.gasPrice = this.web3Service
+            .getClient(typeNetwork)
+            .utils.toHex(+getGasPrice.result.ProposeGasPrice * 1000000000);
+        }
+      } catch (err) {
+        console.error(`Error get gas price: ${err.message}`);
+      }
+    }
 
     const lotteryContract = this.lotteryOrbiterCore.contract();
 
