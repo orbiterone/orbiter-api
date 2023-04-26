@@ -54,7 +54,11 @@ export class LotteryCron {
         ) {
           fromMyWallet.gasPrice = this.web3Service
             .getClient(typeNetwork)
-            .utils.toHex(+getGasPrice.result.ProposeGasPrice * 1000000000);
+            .utils.toHex(
+              parseInt(
+                (+getGasPrice.result.ProposeGasPrice * 1000000000).toString(),
+              ),
+            );
         }
       } catch (err) {
         console.error(`Error get gas price: ${err.message}`);
