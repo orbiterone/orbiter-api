@@ -17,6 +17,7 @@ import {
   AssetByAccountResponse,
   AssetCompositionByAccountResponse,
   AssetEstimateMaxWithdrawalResponse,
+  AssetIncentiveResponse,
   AssetInfoResponse,
 } from './interfaces/asset.interface';
 import { UserByAddressPipe } from '@app/core/pipes/user-by-address.pipe';
@@ -33,6 +34,7 @@ import { Token } from '@app/core/schemas/token.schema';
   AssetCompositionByAccountResponse,
   AssetBalanceByAccountResponse,
   AssetEstimateMaxWithdrawalResponse,
+  AssetIncentiveResponse,
 )
 export class AssetController {
   constructor(private readonly assetService: AssetService) {}
@@ -85,6 +87,21 @@ export class AssetController {
         jsend.success(
           await this.assetService.assetsListForFaucet(user, userAddress),
         ),
+      );
+  }
+
+  @Get(':account/incentives')
+  @ApiDataResponse(AssetIncentiveResponse, 'array')
+  @ApiParam({ name: 'account', type: 'string' })
+  async incentives(
+    @Response() res: any,
+    @Param('account', UserByAddressPipe) user: User | null,
+    @Param('account') userAddress: string,
+  ) {
+    return res
+      .status(HttpStatus.OK)
+      .json(
+        jsend.success(await this.assetService.incentives(user, userAddress)),
       );
   }
 

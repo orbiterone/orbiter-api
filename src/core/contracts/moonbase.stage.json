@@ -3,7 +3,7 @@
         "PriceOracle": "0x5B887b579C5ABc79BC10EBe7eef72cF14F12565A",
         "Comptroller": "0xbAc26FB1583C107e01431cb9af524EebfF08cCb1",
         "Incentive": "0xA9318D0a2F7E41885598639b0967ea47ac045f1C",
-        "Reader": "0x27B55C1200282D6BE03A81823d5823e1244cF37B",
+        "Reader": "0x59e69B2E89eaB065A4C6bB9c2dF0E3c884095C54",
         "Lottery": "0x5A5FbAF0735Ff2D807094272Fa39c4D8AeECE07a"
     },
     "tokens": {
