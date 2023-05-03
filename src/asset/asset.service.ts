@@ -718,7 +718,7 @@ export class AssetService implements OnModuleInit {
       );
 
     const incentives: AssetIncentiveResponse[] = [];
-    const result = await this.readerOrbiterCore.incentives(user.address);
+    const result = await this.readerOrbiterCore.incentives(userAddress);
     if (result && result.length) {
       for (const item of result) {
         incentives.push({
