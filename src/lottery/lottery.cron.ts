@@ -40,17 +40,17 @@ export class LotteryCron {
       const nowDate = parseInt((new Date().getTime() / 1000).toString());
       const endLotteryTime = lotteryInfo.endTime;
       if (nowDate >= endLotteryTime) {
-        await this.cronLottery();
         setInterval(() => {
           this.cronLottery();
         }, +cronTimeLottery);
+        await this.cronLottery();
       } else if (endLotteryTime > nowDate) {
         const diffTime = (endLotteryTime - nowDate) * 1000;
         await this.wait(diffTime);
-        await this.cronLottery();
         setInterval(() => {
           this.cronLottery();
         }, +cronTimeLottery);
+        await this.cronLottery();
       }
     } catch (err) {
       console.error(`Lottery init error: ${err.message}`);
