@@ -23,6 +23,7 @@ import {
   AssetByAccountResponse,
   AssetCompositionByAccountResponse,
   AssetEstimateMaxWithdrawalResponse,
+  AssetIncentiveResponse,
   SupplyBorrowInfoByAssetAccount,
 } from './interfaces/asset.interface';
 import { UserRepository } from '@app/user/user.repository';
@@ -704,6 +705,34 @@ export class AssetService implements OnModuleInit {
     }
 
     return { max };
+  }
+
+  async incentives(
+    user: User | null,
+    userAddress: string,
+  ): Promise<AssetIncentiveResponse[]> {
+    if (!isEthereumAddress(userAddress))
+      throw new HttpException(
+        'Address is not correct.',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const incentives: AssetIncentiveResponse[] = [];
+    const result = await this.readerOrbiterCore.incentives(userAddress);
+    if (result && result.length) {
+      for (const item of result) {
+        incentives.push({
+          token: item.token,
+          tokenName: item.tokenName,
+          tokenSymbol: item.tokenSymbol,
+          reward: new BigNumber(item.reward)
+            .div(Math.pow(10, +item.tokenDecimal))
+            .toString(),
+        });
+      }
+    }
+
+    return incentives;
   }
 
   async assetsListForFaucet(
