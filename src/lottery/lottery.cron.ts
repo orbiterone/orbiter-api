@@ -30,25 +30,28 @@ export class LotteryCron {
 
   @Timeout(5000)
   async lotteryInit() {
-    const currentLotteryId = await this.lotteryOrbiterCore.currentLotteryId();
-    const lotteryInfo = await this.lotteryOrbiterCore.viewLottery(
-      currentLotteryId,
-    );
-    const nowDate = parseInt((new Date().getTime() / 1000).toString());
-    const endLotteryTime = lotteryInfo.endTime;
-    if (nowDate >= endLotteryTime) {
-      await this.cronLottery();
-      setInterval(() => {
-        this.cronLottery();
-      }, +cronTimeLottery);
-    } else if (endLotteryTime > nowDate) {
-      const diffTime = endLotteryTime - nowDate;
-      setTimeout(async () => {
+    try {
+      const currentLotteryId = await this.lotteryOrbiterCore.currentLotteryId();
+      const lotteryInfo = await this.lotteryOrbiterCore.viewLottery(
+        currentLotteryId,
+      );
+      const nowDate = parseInt((new Date().getTime() / 1000).toString());
+      const endLotteryTime = lotteryInfo.endTime;
+      if (nowDate >= endLotteryTime) {
         await this.cronLottery();
         setInterval(() => {
           this.cronLottery();
         }, +cronTimeLottery);
-      }, diffTime);
+      } else if (endLotteryTime > nowDate) {
+        const diffTime = (endLotteryTime - nowDate) * 1000;
+        await this.wait(diffTime);
+        await this.cronLottery();
+        setInterval(() => {
+          this.cronLottery();
+        }, +cronTimeLottery);
+      }
+    } catch (err) {
+      console.error(`Lottery init error: ${err.message}`);
     }
   }
 
