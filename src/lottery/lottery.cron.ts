@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression, Timeout } from '@nestjs/schedule';
+import { Cron, CronExpression, Interval, Timeout } from '@nestjs/schedule';
 import moment, { Moment } from 'moment';
 import BigNumber from 'bignumber.js';
 
@@ -14,7 +14,7 @@ import {
 import { HttpRequestsService } from '@app/core/http-requests/http-requests.service';
 import { LotteryOrbiterCore } from '@app/core/orbiter/lottery.orbiter';
 
-const cronTimeLottery = CRON_LOTTERY || CronExpression.EVERY_30_MINUTES;
+const cronTimeLottery = CRON_LOTTERY || 86400000;
 
 const { NODE_TYPE_LOTTERY: typeNetwork } = process.env;
 
@@ -26,7 +26,9 @@ export class LotteryCron {
     private readonly httpRequestService: HttpRequestsService,
   ) {}
 
-  @Cron(cronTimeLottery)
+  private reinitCount = 0;
+
+  @Interval(+cronTimeLottery)
   async cronLottery() {
     console.log(`Job cronLottery start - ${new Date()}`);
 
@@ -65,50 +67,63 @@ export class LotteryCron {
       }
     }
 
-    const lotteryContract = this.lotteryOrbiterCore.contract();
+    try {
+      const lotteryContract = this.lotteryOrbiterCore.contract();
 
-    const currentLotteryId = await this.lotteryOrbiterCore.currentLotteryId();
-    const lotteryInfo = await this.lotteryOrbiterCore.viewLottery(
-      currentLotteryId,
-    );
+      const currentLotteryId = await this.lotteryOrbiterCore.currentLotteryId();
+      const lotteryInfo = await this.lotteryOrbiterCore.viewLottery(
+        currentLotteryId,
+      );
 
-    if (lotteryInfo && lotteryInfo.status < 3) {
-      try {
-        if (lotteryInfo.status == 1) {
-          await this.wait(60000);
-          await lotteryContract.methods
-            .closeLottery(currentLotteryId)
-            .send(fromMyWallet);
+      if (lotteryInfo && lotteryInfo.status < 3) {
+        try {
+          if (lotteryInfo.status == 1) {
+            await this.wait(60000);
+            await lotteryContract.methods
+              .closeLottery(currentLotteryId)
+              .send(fromMyWallet);
 
-          console.log(`Lottery - ${currentLotteryId} close. ${new Date()}`);
-          await this.wait(60000 * 2);
+            console.log(`Lottery - ${currentLotteryId} close. ${new Date()}`);
+            await this.wait(60000 * 2);
+          }
+        } catch (err) {
+          console.error(
+            `Cron lottery ${currentLotteryId} close error. ${err.message}`,
+          );
         }
-      } catch (err) {
-        console.error(
-          `Cron lottery ${currentLotteryId} close error. ${err.message}`,
-        );
+
+        try {
+          if (lotteryInfo.status == 1 || lotteryInfo.status == 2) {
+            await lotteryContract.methods
+              .drawFinalNumberAndMakeLotteryClaimable(currentLotteryId, true)
+              .send(fromMyWallet);
+
+            console.log(`Lottery - ${currentLotteryId} draw. ${new Date()}`);
+            await this.wait(60000 * 2);
+          }
+        } catch (err) {
+          console.error(
+            `Cron lottery ${currentLotteryId} draw error. ${err.message}`,
+          );
+        }
+
+        await this.createLottery(now, fromMyWallet, lotteryContract);
       }
 
-      try {
-        if (lotteryInfo.status == 1 || lotteryInfo.status == 2) {
-          await lotteryContract.methods
-            .drawFinalNumberAndMakeLotteryClaimable(currentLotteryId, true)
-            .send(fromMyWallet);
-
-          console.log(`Lottery - ${currentLotteryId} draw. ${new Date()}`);
-          await this.wait(60000 * 2);
-        }
-      } catch (err) {
-        console.error(
-          `Cron lottery ${currentLotteryId} draw error. ${err.message}`,
-        );
+      if (lotteryInfo && lotteryInfo.status == 3) {
+        await this.createLottery(now, fromMyWallet, lotteryContract);
       }
-
-      await this.createLottery(now, fromMyWallet, lotteryContract);
-    }
-
-    if (lotteryInfo && lotteryInfo.status == 3) {
-      await this.createLottery(now, fromMyWallet, lotteryContract);
+    } catch (err) {
+      if (this.reinitCount == 5) {
+        this.reinitCount = 0;
+        return;
+      }
+      console.error(
+        `Cron lottery error: ${err.message}. Reinit cron lottery after 60 sec`,
+      );
+      await this.wait(60000);
+      this.reinitCount++;
+      await this.cronLottery();
     }
   }
 
