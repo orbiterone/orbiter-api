@@ -13,15 +13,17 @@ import {
 } from '@app/core/constant';
 import { HttpRequestsService } from '@app/core/http-requests/http-requests.service';
 import { LotteryOrbiterCore } from '@app/core/orbiter/lottery.orbiter';
+import { DiscordService } from '@app/core/discord/discord.service';
 
 const cronTimeLottery = CRON_LOTTERY || 86400000;
 
-const { NODE_TYPE_LOTTERY: typeNetwork } = process.env;
+const { NODE_TYPE_LOTTERY: typeNetwork, DISCORD_WEBHOOK_LOTTERY } = process.env;
 
 @Injectable()
 export class LotteryCron {
   constructor(
     private readonly web3Service: Web3Service,
+    private readonly discordService: DiscordService,
     private readonly lotteryOrbiterCore: LotteryOrbiterCore,
     private readonly httpRequestService: HttpRequestsService,
   ) {}
@@ -52,6 +54,10 @@ export class LotteryCron {
       }
     } catch (err) {
       console.error(`Lottery init error: ${err.message}`);
+      await this.discordService.sendNotification(
+        DISCORD_WEBHOOK_LOTTERY,
+        `:warning: Lottery init error: ${err.message}`,
+      );
     }
   }
 
@@ -90,6 +96,10 @@ export class LotteryCron {
         }
       } catch (err) {
         console.error(`Error get gas price: ${err.message}`);
+        await this.discordService.sendNotification(
+          DISCORD_WEBHOOK_LOTTERY,
+          `:warning: Error get gas price: ${err.message}`,
+        );
       }
     }
 
@@ -110,11 +120,19 @@ export class LotteryCron {
               .send(fromMyWallet);
 
             console.log(`Lottery - ${currentLotteryId} close. ${new Date()}`);
+            await this.discordService.sendNotification(
+              DISCORD_WEBHOOK_LOTTERY,
+              `:white_check_mark: Lottery - ${currentLotteryId} close. ${new Date()}`,
+            );
             await this.wait(60000 * 2);
           }
         } catch (err) {
           console.error(
             `Cron lottery ${currentLotteryId} close error. ${err.message}`,
+          );
+          await this.discordService.sendNotification(
+            DISCORD_WEBHOOK_LOTTERY,
+            `:warning: Cron lottery ${currentLotteryId} close error. ${err.message}`,
           );
           throw err;
         }
@@ -126,11 +144,19 @@ export class LotteryCron {
               .send(fromMyWallet);
 
             console.log(`Lottery - ${currentLotteryId} draw. ${new Date()}`);
+            await this.discordService.sendNotification(
+              DISCORD_WEBHOOK_LOTTERY,
+              `:white_check_mark: Lottery - ${currentLotteryId} draw. ${new Date()}`,
+            );
             await this.wait(60000 * 2);
           }
         } catch (err) {
           console.error(
             `Cron lottery ${currentLotteryId} draw error. ${err.message}`,
+          );
+          await this.discordService.sendNotification(
+            DISCORD_WEBHOOK_LOTTERY,
+            `:warning: Cron lottery ${currentLotteryId} draw error. ${err.message}`,
           );
           throw err;
         }
@@ -148,6 +174,10 @@ export class LotteryCron {
       }
       console.error(
         `Cron lottery error: ${err.message}. Reinit cron lottery after 60 sec`,
+      );
+      await this.discordService.sendNotification(
+        DISCORD_WEBHOOK_LOTTERY,
+        `:warning: Cron lottery error: ${err.message}. Reinit cron lottery after 60 sec`,
       );
       await this.wait(60000);
       this.reinitCount++;
@@ -174,8 +204,16 @@ export class LotteryCron {
         .send(fromMyWallet);
 
       console.log(`Lottery - create new. ${new Date()}`);
+      await this.discordService.sendNotification(
+        DISCORD_WEBHOOK_LOTTERY,
+        `:white_check_mark: Lottery - create new. ${new Date()}`,
+      );
     } catch (err) {
       console.error(`Cron lottery start error. ${err.message}`);
+      await this.discordService.sendNotification(
+        DISCORD_WEBHOOK_LOTTERY,
+        `:warning: Cron lottery start error. ${err.message}`,
+      );
       throw err;
     }
   }
