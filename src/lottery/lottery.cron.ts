@@ -28,7 +28,30 @@ export class LotteryCron {
 
   private reinitCount = 0;
 
-  @Interval(+cronTimeLottery)
+  @Timeout(5000)
+  async lotteryInit() {
+    const currentLotteryId = await this.lotteryOrbiterCore.currentLotteryId();
+    const lotteryInfo = await this.lotteryOrbiterCore.viewLottery(
+      currentLotteryId,
+    );
+    const nowDate = parseInt((new Date().getTime() / 1000).toString());
+    const endLotteryTime = lotteryInfo.endTime;
+    if (nowDate >= endLotteryTime) {
+      await this.cronLottery();
+      setInterval(() => {
+        this.cronLottery();
+      }, +cronTimeLottery);
+    } else if (endLotteryTime > nowDate) {
+      const diffTime = endLotteryTime - nowDate;
+      setTimeout(async () => {
+        await this.cronLottery();
+        setInterval(() => {
+          this.cronLottery();
+        }, +cronTimeLottery);
+      }, diffTime);
+    }
+  }
+
   async cronLottery() {
     console.log(`Job cronLottery start - ${new Date()}`);
 
@@ -90,6 +113,7 @@ export class LotteryCron {
           console.error(
             `Cron lottery ${currentLotteryId} close error. ${err.message}`,
           );
+          throw err;
         }
 
         try {
@@ -105,6 +129,7 @@ export class LotteryCron {
           console.error(
             `Cron lottery ${currentLotteryId} draw error. ${err.message}`,
           );
+          throw err;
         }
 
         await this.createLottery(now, fromMyWallet, lotteryContract);
@@ -134,7 +159,7 @@ export class LotteryCron {
         .startLottery(
           now
             .add(+period[0], period[1])
-            .startOf('hour')
+            .startOf('minute')
             .unix(),
           new BigNumber(LOTTERY_TICKET_PRICE_ORB)
             .multipliedBy(Math.pow(10, 18))
@@ -148,6 +173,7 @@ export class LotteryCron {
       console.log(`Lottery - create new. ${new Date()}`);
     } catch (err) {
       console.error(`Cron lottery start error. ${err.message}`);
+      throw err;
     }
   }
 
