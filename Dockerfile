@@ -3,7 +3,9 @@ FROM node:18-alpine as start_dev
 WORKDIR /app
 RUN apk update && apk add --no-cache python3 g++ make
 COPY ./ .
-RUN npm ci
+COPY dev-entrypoint.sh /usr/local/bin/dev-entrypoint
+RUN chmod +x /usr/local/bin/dev-entrypoint
+ENTRYPOINT ["dev-entrypoint"]
 CMD [ "npm", "run", "start:dev" ]
 
 # ---------------------PROD-------------------------
