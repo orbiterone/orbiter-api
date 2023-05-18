@@ -52,6 +52,11 @@
             "color": "#C354F7",
             "image": "https://assets.orbiter.one/images/tokens/d2o.svg",
             "fullName" : "Deuterium"
+        },
+        "MOVR": {
+            "color": "#53CBC8",
+            "image": "https://assets.orbiter.one/images/tokens/movr.svg",
+            "fullName" : "Moonriver"
         }
     }
 }
