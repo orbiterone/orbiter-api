@@ -38,25 +38,20 @@
             "image": "https://assets.orbiter.one/images/tokens/frax.svg",
             "fullName" : "Frax"
         },
-        "DOT": {
-            "color": "",
-            "image": "",
+        "xcDOT": {
+            "color": "#E6007A",
+            "image": "https://assets.orbiter.one/images/tokens/dot.svg",
             "fullName" : "Dot"
         },
         "GLMR": {
-            "color": "",
-            "image": "",
-            "fullName" : ""
+            "color": "#BC2E75",
+            "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
+            "fullName" : "Glimmer"
         },
         "d2O": {
             "color": "#C354F7",
             "image": "https://assets.orbiter.one/images/tokens/d2o.svg",
             "fullName" : "Deuterium"
-        },
-        "MOVR": {
-            "color": "",
-            "image": "",
-            "fullName" : ""
         }
     }
 }
