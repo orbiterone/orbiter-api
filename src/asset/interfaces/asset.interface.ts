@@ -217,4 +217,10 @@ export class AssetIncentiveResponse {
 
   @ApiProperty()
   tokenSymbol: string;
+
+  @ApiProperty()
+  lastPrice: number;
+
+  @ApiProperty()
+  image: string;
 }

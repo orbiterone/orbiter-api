@@ -52,6 +52,8 @@ export class ReaderOrbiterCore {
       tokenDecimal: string;
       token: string;
       reward: string;
+      lastPrice?: number;
+      image?: string;
     }[]
   > {
     const result = await this.contract().methods.incentives(account).call();

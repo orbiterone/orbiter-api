@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { CoreModule } from '@app/core/core.module';
@@ -9,11 +9,13 @@ import { AssetRepository } from './asset.repository';
 import { OrbiterModule } from '@app/core/orbiter/orbiter.module';
 import { UserModule } from '@app/user/user.module';
 import { AssetCron } from './asset.cron';
+import { MarketModule } from '@app/market/market.module';
 
 @Module({
   imports: [
     CoreModule,
     MongooseModule.forFeature([{ name: Token.name, schema: TokenSchema }]),
+    forwardRef(() => MarketModule),
     OrbiterModule,
     UserModule,
   ],
