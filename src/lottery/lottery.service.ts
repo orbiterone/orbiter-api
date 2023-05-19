@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import BigNumber from 'bignumber.js';
 
-import {
-  burnPool,
-  distributionPrizePercent,
-  PRICE_ORB,
-} from '@app/core/constant';
+import { burnPool, distributionPrizePercent } from '@app/core/constant';
 import {
   CurrentLotteryResponse,
   TicketsUserByLotteryResponse,
@@ -16,12 +12,14 @@ import { BasePagination, PaginatedDto } from '@app/core/interface/response';
 import { Lottery, LotteryDocument } from '@app/core/schemas/lottery.schema';
 import { User } from '@app/core/schemas/user.schema';
 import { LotteryOrbiterCore } from '@app/core/orbiter/lottery.orbiter';
+import { MarketService } from '@app/market/market.service';
 
 @Injectable()
 export class LotteryService {
   constructor(
     public readonly lotteryRepository: LotteryRepository,
     private readonly lotteryOrbiterCore: LotteryOrbiterCore,
+    private readonly marketService: MarketService,
   ) {}
 
   private async infoByLottery(
@@ -30,6 +28,7 @@ export class LotteryService {
     const prizePot = new BigNumber(lottery.amountCollectedInOrb.toString());
 
     const prizeGroups = [];
+    const orbRate = await this.marketService.getOrbRate();
     for (const i in distributionPrizePercent) {
       const orb = prizePot.multipliedBy(distributionPrizePercent[i] / 100);
       const winningTickets = lottery.countWinnersPerBracket.length
@@ -38,7 +37,7 @@ export class LotteryService {
       prizeGroups.push({
         group: i,
         orb: orb.toString(),
-        usd: orb.multipliedBy(PRICE_ORB).toString(),
+        usd: orb.multipliedBy(orbRate).toString(),
         winningTickets,
         orbByWinningTicket:
           winningTickets > 0 ? orb.dividedBy(winningTickets).toString() : 0,
@@ -48,7 +47,7 @@ export class LotteryService {
     const prizeBurnOrb = prizePot.multipliedBy(burnPool / 100);
     const prizeBurn = {
       orb: prizeBurnOrb.toString(),
-      usd: prizeBurnOrb.multipliedBy(PRICE_ORB).toString(),
+      usd: prizeBurnOrb.multipliedBy(orbRate).toString(),
     };
 
     return {
@@ -62,7 +61,7 @@ export class LotteryService {
         .countDocuments({ lottery: lottery._id }),
       prizePot: {
         orb: prizePot.toString(),
-        usd: prizePot.multipliedBy(PRICE_ORB).toString(),
+        usd: prizePot.multipliedBy(orbRate).toString(),
       },
       prizeGroups,
       prizeBurn,
