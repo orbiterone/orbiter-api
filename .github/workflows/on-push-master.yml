@@ -59,7 +59,6 @@ jobs:
             echo COINPRICE_KEY="${{ secrets.COINPRICE_KEY_MASTER }}" >> .env
             echo PRICE_FEED_OWNER_KEY="${{ secrets.PRICE_FEED_OWNER_KEY_MASTER }}" >> .env
             echo PRICE_FEED_UPDATE="${{ secrets.PRICE_FEED_UPDATE_MASTER }}" >> .env
-            echo PRICE_ORB="${{ secrets.PRICE_ORB_MASTER }}" >> .env
             echo LOTTERY_OPERATOR_KEY="${{ secrets.LOTTERY_OPERATOR_KEY_MASTER }}" >> .env
             echo LOTTERY_TICKET_PRICE_ORB="${{ secrets.LOTTERY_TICKET_PRICE_ORB_MASTER }}" >> .env
             echo CRON_LOTTERY="${{ secrets.CRON_LOTTERY_MASTER }}" >> .env

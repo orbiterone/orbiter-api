@@ -12,12 +12,14 @@ import { LotteryService } from './lottery.service';
 import { LotteryRepository } from './lottery.repository';
 import { UserModule } from '@app/user/user.module';
 import { OrbiterModule } from '@app/core/orbiter/orbiter.module';
+import { MarketModule } from '@app/market/market.module';
 import { LotteryCron } from './lottery.cron';
 
 @Module({
   imports: [
     CoreModule,
     UserModule,
+    MarketModule,
     OrbiterModule,
     MongooseModule.forFeature([
       { name: Lottery.name, schema: LotterySchema },
