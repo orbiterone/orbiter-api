@@ -204,3 +204,23 @@ export class AssetEstimateMaxWithdrawalResponse {
   @ApiProperty()
   max: string;
 }
+
+export class AssetIncentiveResponse {
+  @ApiProperty()
+  token: string;
+
+  @ApiProperty()
+  reward: string;
+
+  @ApiProperty()
+  tokenName: string;
+
+  @ApiProperty()
+  tokenSymbol: string;
+
+  @ApiProperty()
+  lastPrice: number;
+
+  @ApiProperty()
+  image: string;
+}

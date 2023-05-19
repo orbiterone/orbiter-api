@@ -44,4 +44,20 @@ export class ReaderOrbiterCore {
       borrowed,
     };
   }
+
+  async incentives(account: string): Promise<
+    {
+      tokenName: string;
+      tokenSymbol: string;
+      tokenDecimal: string;
+      token: string;
+      reward: string;
+      lastPrice?: number;
+      image?: string;
+    }[]
+  > {
+    const result = await this.contract().methods.incentives(account).call();
+
+    return result;
+  }
 }

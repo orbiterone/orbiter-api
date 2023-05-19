@@ -23,12 +23,14 @@ import {
   AssetByAccountResponse,
   AssetCompositionByAccountResponse,
   AssetEstimateMaxWithdrawalResponse,
+  AssetIncentiveResponse,
   SupplyBorrowInfoByAssetAccount,
 } from './interfaces/asset.interface';
 import { UserRepository } from '@app/user/user.repository';
 import { ExchangeService } from '@app/core/exchange/exchange.service';
 import { ReaderOrbiterCore } from '@app/core/orbiter/reader.orbiter';
 import { IncentiveOrbiterCore } from '@app/core/orbiter/incentive.orbiter';
+import { MarketService } from '@app/market/market.service';
 
 const web3 = new Web3();
 
@@ -49,6 +51,7 @@ export class AssetService implements OnModuleInit {
     public readonly controllerOrbiterCore: ControllerOrbiterCore,
     public readonly oracleOrbiterCore: OracleOrbiterCore,
     public readonly userRepository: UserRepository,
+    public readonly marketService: MarketService,
     @InjectRedisClient() private readonly redisClient: RedisClient,
   ) {
     (async () => {
@@ -704,6 +707,45 @@ export class AssetService implements OnModuleInit {
     }
 
     return { max };
+  }
+
+  async incentives(
+    user: User | null,
+    userAddress: string,
+  ): Promise<AssetIncentiveResponse[]> {
+    if (!isEthereumAddress(userAddress))
+      throw new HttpException(
+        'Address is not correct.',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const incentives: AssetIncentiveResponse[] = [];
+    const result = await this.readerOrbiterCore.incentives(userAddress);
+    if (result && result.length) {
+      const tokens = await this.assetRepository.find({});
+
+      for (const item of result) {
+        incentives.push({
+          token: item.token,
+          tokenName: item.tokenName,
+          tokenSymbol: item.tokenSymbol,
+          reward: new BigNumber(item.reward)
+            .div(Math.pow(10, +item.tokenDecimal))
+            .toString(),
+          lastPrice:
+            item.tokenSymbol !== 'ORB'
+              ? Number(
+                  tokens.find((obj) => obj.name === item.tokenName)?.lastPrice,
+                ) || null
+              : await this.marketService.getOrbRate(),
+          image:
+            item.tokenSymbol !== 'ORB'
+              ? tokens.find((obj) => obj.name === item.tokenName)?.image || null
+              : 'https://assets.orbiter.one/images/tokens/ORB.svg',
+        });
+      }
+    }
+    return incentives;
   }
 
   async assetsListForFaucet(

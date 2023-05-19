@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { CoreModule } from '@app/core/core.module';
@@ -17,7 +17,7 @@ import { AssetModule } from '@app/asset/asset.module';
     MongooseModule.forFeature([
       { name: MarketHistory.name, schema: MarketHistorySchema },
     ]),
-    AssetModule,
+    forwardRef(() => AssetModule),
   ],
   controllers: [MarketController],
   providers: [MarketService, MarketRepository],
