@@ -58,7 +58,6 @@ jobs:
             echo API_KEY="${{ secrets.API_KEY_STAGE }}" >> .env
             echo COINPRICE_KEY="${{ secrets.COINPRICE_KEY_STAGE }}" >> .env
             echo PRICE_FEED_OWNER_KEY="${{ secrets.PRICE_FEED_OWNER_KEY_STAGE }}" >> .env
-            echo PRICE_ORB="${{ secrets.PRICE_ORB_STAGE }}" >> .env
             echo LOTTERY_OPERATOR_KEY="${{ secrets.LOTTERY_OPERATOR_KEY_STAGE }}" >> .env
             echo LOTTERY_TICKET_PRICE_ORB="${{ secrets.LOTTERY_TICKET_PRICE_ORB_STAGE }}" >> .env
             echo CRON_LOTTERY="${{ secrets.CRON_LOTTERY_STAGE }}" >> .env
