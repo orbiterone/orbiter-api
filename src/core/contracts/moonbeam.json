@@ -9,19 +9,25 @@
     "tokens": {
         "xcDOT": "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080",
         "xcUSDT": "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d",
-        "FRAX": "0x322E86852e492a7Ee17f28a78c663da38FB33bfb"
+        "FRAX": "0x322E86852e492a7Ee17f28a78c663da38FB33bfb",
+        "USDC.wh": "0x931715FEE2d06333043d11F658C8CE934aC61D0c",
+        "ETH.wh": "0xab3f0245B83feB11d15AAffeFD7AD465a59817eD"
     },
     "markets": {
         "oGLMR": "0xCc444ca6bba3764Fc55BeEFe4FFA27435cF6c259",
         "oxcDOT": "0x5693227b49d79C294dBFC6DF76399013a860d947",
         "oFRAX": "0x168525d35D61ce3C9cf17b91C98755f2197DCf57",
-        "oxcUSDT": "0xDf2B90E2eD9a77054bE91aA00bD52F78A86886B7"
+        "oxcUSDT": "0xDf2B90E2eD9a77054bE91aA00bD52F78A86886B7",
+        "oETH": "0xe48451B26E140b9B2f1A55f2879fe0cA66a43Efe",
+        "oUSDC": "0x0bD102515503F1bD2B37bc723Ba5EE7Cfb198419"
     },
     "supportMarkets": {
         "oGLMR": "0xCc444ca6bba3764Fc55BeEFe4FFA27435cF6c259",
         "oxcDOT": "0x5693227b49d79C294dBFC6DF76399013a860d947",
         "oFRAX": "0x168525d35D61ce3C9cf17b91C98755f2197DCf57",
-        "oxcUSDT": "0xDf2B90E2eD9a77054bE91aA00bD52F78A86886B7"
+        "oxcUSDT": "0xDf2B90E2eD9a77054bE91aA00bD52F78A86886B7",
+        "oETH": "0xe48451B26E140b9B2f1A55f2879fe0cA66a43Efe",
+        "oUSDC": "0x0bD102515503F1bD2B37bc723Ba5EE7Cfb198419"
     },
     "defaultMarket": "0xCc444ca6bba3764Fc55BeEFe4FFA27435cF6c259",
     "settings": {
@@ -39,6 +45,16 @@
             "color": "#E6007A",
             "image": "https://assets.orbiter.one/images/tokens/dot.svg",
             "fullName" : "Dot"
+        },
+        "WETH": {
+            "color": "#939DC2",
+            "image": "https://assets.orbiter.one/images/tokens/ETH.svg",
+            "fullName" : "Ethereum"
+        },
+        "USDC": {
+            "color": "#5493F7",
+            "image": "https://assets.orbiter.one/images/tokens/USDC.svg",
+            "fullName" : "USD Coin"
         },
         "GLMR": {
             "color": "#BC2E75",
