@@ -45,6 +45,11 @@
             "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
             "fullName" : "Glimmer"
         },
+        "WGLMR": {
+            "color": "#BC2E75",
+            "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
+            "fullName" : "Wrapped GLMR"
+        },
         "MOVR": {
             "color": "#53CBC8",
             "image": "https://assets.orbiter.one/images/tokens/movr.svg",
