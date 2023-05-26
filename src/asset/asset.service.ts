@@ -740,7 +740,9 @@ export class AssetService implements OnModuleInit {
               : await this.marketService.getOrbRate(),
           image:
             item.tokenSymbol !== 'ORB'
-              ? tokens.find((obj) => obj.name === item.tokenName)?.image || null
+              ? tokens.find((obj) => obj.name === item.tokenName)?.image ||
+                SETTINGS[item.tokenSymbol]?.image ||
+                null
               : 'https://assets.orbiter.one/images/tokens/ORB.svg',
         });
       }
