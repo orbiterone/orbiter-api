@@ -49,12 +49,14 @@
         "WETH": {
             "color": "#939DC2",
             "image": "https://assets.orbiter.one/images/tokens/ETH.svg",
-            "fullName" : "Ethereum"
+            "fullName" : "Ethereum",
+            "symbol": "ETH.wh"
         },
         "USDC": {
             "color": "#5493F7",
             "image": "https://assets.orbiter.one/images/tokens/USDC.svg",
-            "fullName" : "USD Coin"
+            "fullName" : "USD Coin",
+            "symbol": "USDC.wh"
         },
         "GLMR": {
             "color": "#BC2E75",
