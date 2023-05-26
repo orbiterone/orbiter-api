@@ -50,7 +50,7 @@
             "color": "#939DC2",
             "image": "https://assets.orbiter.one/images/tokens/ETH.svg",
             "fullName" : "Ethereum",
-            "symbol": "ETH.wh"
+            "symbol": "WETH.wh"
         },
         "USDC": {
             "color": "#5493F7",
