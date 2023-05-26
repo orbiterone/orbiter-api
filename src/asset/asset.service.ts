@@ -137,6 +137,7 @@ export class AssetService implements OnModuleInit {
       oTokenDecimal: oTokenDecimal,
       tokenAddress: underlying || '',
       ...tokenData,
+      symbol: SETTINGS[tokenData.symbol]?.symbol || tokenData.symbol,
       typeNetwork: NODE_TYPE,
       collateralFactor:
         +web3.utils.fromWei(`${collateralFactorMantissa}`, 'ether') * 100,
