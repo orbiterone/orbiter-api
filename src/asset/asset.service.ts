@@ -242,7 +242,9 @@ export class AssetService implements OnModuleInit {
                 : 0;
 
             obj.incentives.push({
-              symbol: originalIncentiveSymbol,
+              symbol:
+                SETTINGS[originalIncentiveSymbol]?.symbol ||
+                originalIncentiveSymbol,
               address: incentiveAddress,
               supplyApy: Decimal128(
                 supplyApy == Infinity || supplyApy > 999999
