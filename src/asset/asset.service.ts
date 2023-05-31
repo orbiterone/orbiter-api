@@ -730,7 +730,7 @@ export class AssetService implements OnModuleInit {
         incentives.push({
           token: item.token,
           tokenName: item.tokenName,
-          tokenSymbol: item.tokenSymbol,
+          tokenSymbol: SETTINGS[item.tokenSymbol]?.symbol || item.tokenSymbol,
           reward: new BigNumber(item.reward)
             .div(Math.pow(10, +item.tokenDecimal))
             .toString(),
