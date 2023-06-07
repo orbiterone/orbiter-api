@@ -1,6 +1,6 @@
 {
     "contracts": {
-        "PriceOracle": "0x320D4cd1a549da7415890abbafD9Bf38eD5B9b4a",
+        "PriceOracle": "0x39cBe088dc510596d5FB14f051917F88932ccc70",
         "Comptroller": "0x27DC3DAdBfb40ADc677A2D5ef192d40aD7c4c97D",
         "Incentive": "0xa5EbbfE3d4391C7079fa6cd5DC230B915936d951",
         "Reader": "0x864F6a9A0BA613C079a7C0ab9F1AC8b3E63Fee4b",
@@ -11,7 +11,8 @@
         "xcUSDT": "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d",
         "FRAX": "0x322E86852e492a7Ee17f28a78c663da38FB33bfb",
         "USDC.wh": "0x931715FEE2d06333043d11F658C8CE934aC61D0c",
-        "ETH.wh": "0xab3f0245B83feB11d15AAffeFD7AD465a59817eD"
+        "ETH.wh": "0xab3f0245B83feB11d15AAffeFD7AD465a59817eD",
+        "d2O": "0xc806B0600cbAfA0B197562a9F7e3B9856866E9bF"
     },
     "markets": {
         "oGLMR": "0xCc444ca6bba3764Fc55BeEFe4FFA27435cF6c259",
@@ -19,7 +20,8 @@
         "oFRAX": "0x168525d35D61ce3C9cf17b91C98755f2197DCf57",
         "oxcUSDT": "0xDf2B90E2eD9a77054bE91aA00bD52F78A86886B7",
         "oETH": "0xe48451B26E140b9B2f1A55f2879fe0cA66a43Efe",
-        "oUSDC": "0x0bD102515503F1bD2B37bc723Ba5EE7Cfb198419"
+        "oUSDC": "0x0bD102515503F1bD2B37bc723Ba5EE7Cfb198419",
+        "od2O": "0x64Cff24763227511475B345498f71b987EbdB693"
     },
     "supportMarkets": {
         "oGLMR": "0xCc444ca6bba3764Fc55BeEFe4FFA27435cF6c259",
@@ -27,7 +29,8 @@
         "oFRAX": "0x168525d35D61ce3C9cf17b91C98755f2197DCf57",
         "oxcUSDT": "0xDf2B90E2eD9a77054bE91aA00bD52F78A86886B7",
         "oETH": "0xe48451B26E140b9B2f1A55f2879fe0cA66a43Efe",
-        "oUSDC": "0x0bD102515503F1bD2B37bc723Ba5EE7Cfb198419"
+        "oUSDC": "0x0bD102515503F1bD2B37bc723Ba5EE7Cfb198419",
+        "od2O": "0x64Cff24763227511475B345498f71b987EbdB693"
     },
     "defaultMarket": "0xCc444ca6bba3764Fc55BeEFe4FFA27435cF6c259",
     "settings": {
@@ -67,6 +70,11 @@
             "color": "#BC2E75",
             "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
             "fullName" : "Wrapped GLMR"
+        },
+        "d2O": {
+            "color": "#C354F7",
+            "image": "https://assets.orbiter.one/images/tokens/d2o.svg",
+            "fullName" : "Deuterium"
         },
         "MOVR": {
             "color": "#53CBC8",
