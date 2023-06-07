@@ -731,6 +731,7 @@ export class AssetService implements OnModuleInit {
           token: item.token,
           tokenName: item.tokenName,
           tokenSymbol: SETTINGS[item.tokenSymbol]?.symbol || item.tokenSymbol,
+          decimal: +item.tokenDecimal,
           reward: new BigNumber(item.reward)
             .div(Math.pow(10, +item.tokenDecimal))
             .toString(),
