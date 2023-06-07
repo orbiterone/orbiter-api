@@ -222,5 +222,8 @@ export class AssetIncentiveResponse {
   lastPrice: number;
 
   @ApiProperty()
+  decimal: number;
+
+  @ApiProperty()
   image: string;
 }
