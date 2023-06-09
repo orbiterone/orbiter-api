@@ -1,80 +1,81 @@
-import { Injectable } from '@nestjs/common';
-import { Timeout } from '@nestjs/schedule';
-import { BigNumber } from 'bignumber.js';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { EventData } from 'web3-eth-contract';
+import BigNumber from 'bignumber.js';
 
-import { NODE_TYPE } from '../constant';
+import { HttpEventService } from './http-event.service';
+import { HandledEventsType } from '../schemas/handled-block-number.schema';
+import { MARKET_TOKEN_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
-import { EventService } from './event.service';
-import { MARKET_TOKEN_EVENT } from './interfaces/event.interface';
 
-BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
+const { NODE_TYPE: typeNetwork } = process.env;
 
 @Injectable()
-export class MarketEvent extends EventService {
-  // @Timeout(5000)
-  async addListenContract() {
+export class MarketEventHandler
+  extends HttpEventService
+  implements OnModuleInit
+{
+  onModuleInit() {
     const { supportMarkets: markets } = this.contracts;
-
     for (const token of Object.values(markets)) {
-      const contract = this.oTokenCore.contract(token, true);
-      contract.events
-        .allEvents()
-        .on('connected', function (subscriptionId) {
-          console.log(
-            `oToken - ${token} successfully connected.`,
-            subscriptionId,
-          );
-        })
-        .on('data', async (event) => {
-          const { returnValues, transactionHash: txHash } = event;
-          switch (event.event) {
-            case MARKET_TOKEN_EVENT.MINT:
-              await this.handleMintEvent({
-                ...returnValues,
-                token,
-                event: event.event,
-                txHash,
-              });
-              break;
-            case MARKET_TOKEN_EVENT.BORROW:
-              await this.handleBorrowEvent({
-                ...returnValues,
-                token,
-                event: event.event,
-                txHash,
-              });
-              break;
-            case MARKET_TOKEN_EVENT.REPAY_BORROW:
-              await this.handleRepayBorrowEvent({
-                ...returnValues,
-                token,
-                event: event.event,
-                txHash,
-              });
-              break;
-            case MARKET_TOKEN_EVENT.REDEEM:
-              await this.handleRedeemEvent({
-                ...returnValues,
-                token,
-                event: event.event,
-                txHash,
-              });
-              break;
-            case MARKET_TOKEN_EVENT.TRANSFER:
-              await this.handleTransferEvent({
-                ...returnValues,
-                token,
-                event: event.event,
-                txHash,
-              });
-              break;
-            case MARKET_TOKEN_EVENT.LIQUIDATE_BORROW:
-              break;
-          }
-        })
-        .on('error', function (error, receipt) {
-          console.log(error, receipt);
-        });
+      const contract = this.oTokenCore.contract(token);
+      this.addListenContract({
+        contract,
+        contractType: HandledEventsType.MARKET_TOKEN,
+        network: typeNetwork,
+        eventHandlerCallback: (events: EventData[]) =>
+          this.handleEvents(events),
+      });
+    }
+  }
+
+  private async handleEvents(events: EventData[]): Promise<void> {
+    for (let i = 0; i < events.length; i++) {
+      const event = events[i];
+      const { returnValues, transactionHash: txHash, address: token } = event;
+      switch (event.event) {
+        case MARKET_TOKEN_EVENT.MINT:
+          await this.handleMintEvent({
+            ...returnValues,
+            token,
+            event: event.event,
+            txHash,
+          } as any);
+          break;
+        case MARKET_TOKEN_EVENT.BORROW:
+          await this.handleBorrowEvent({
+            ...returnValues,
+            token,
+            event: event.event,
+            txHash,
+          } as any);
+          break;
+        case MARKET_TOKEN_EVENT.REPAY_BORROW:
+          await this.handleRepayBorrowEvent({
+            ...returnValues,
+            token,
+            event: event.event,
+            txHash,
+          } as any);
+          break;
+        case MARKET_TOKEN_EVENT.REDEEM:
+          await this.handleRedeemEvent({
+            ...returnValues,
+            token,
+            event: event.event,
+            txHash,
+          } as any);
+          break;
+        case MARKET_TOKEN_EVENT.TRANSFER:
+          await this.handleTransferEvent({
+            ...returnValues,
+            token,
+            event: event.event,
+            txHash,
+          } as any);
+          break;
+        case MARKET_TOKEN_EVENT.LIQUIDATE_BORROW:
+          break;
+      }
     }
   }
 
@@ -110,7 +111,7 @@ export class MarketEvent extends EventService {
               user: checkUser._id,
               token: checkToken._id,
               totalSupply: Decimal128(totalSupply.toString()),
-              typeNetwork: NODE_TYPE,
+              typeNetwork,
             },
           },
           { upsert: true },
@@ -122,7 +123,7 @@ export class MarketEvent extends EventService {
           user: checkUser._id,
           event,
           status: true,
-          typeNetwork: NODE_TYPE,
+          typeNetwork,
           txHash,
           data: {
             user: minter,
@@ -178,7 +179,7 @@ export class MarketEvent extends EventService {
               user: checkUser._id,
               token: checkToken._id,
               totalBorrow: Decimal128(totalBorrow.toString()),
-              typeNetwork: NODE_TYPE,
+              typeNetwork,
               collateral: checkEnteredAsset,
             },
           },
@@ -190,7 +191,7 @@ export class MarketEvent extends EventService {
         user: checkUser._id,
         event,
         status: true,
-        typeNetwork: NODE_TYPE,
+        typeNetwork,
         txHash,
         data: {
           user: borrower,
@@ -251,7 +252,7 @@ export class MarketEvent extends EventService {
               user: checkUser._id,
               token: checkToken._id,
               totalBorrow: Decimal128(totalBorrow.toString()),
-              typeNetwork: NODE_TYPE,
+              typeNetwork,
             },
           },
           { upsert: true },
@@ -262,7 +263,7 @@ export class MarketEvent extends EventService {
         user: checkUser._id,
         event,
         status: true,
-        typeNetwork: NODE_TYPE,
+        typeNetwork,
         txHash,
         data: {
           user: payer,
@@ -321,7 +322,7 @@ export class MarketEvent extends EventService {
               user: checkUser._id,
               token: checkToken._id,
               totalSupply: Decimal128(totalSupply.toString()),
-              typeNetwork: NODE_TYPE,
+              typeNetwork,
             },
           },
           { upsert: true },
@@ -332,7 +333,7 @@ export class MarketEvent extends EventService {
         user: checkUser._id,
         event,
         status: true,
-        typeNetwork: NODE_TYPE,
+        typeNetwork,
         txHash,
         data: {
           user: redeemer,

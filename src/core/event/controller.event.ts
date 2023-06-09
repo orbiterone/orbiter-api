@@ -16,7 +16,7 @@ export class ControllerEvent extends EventService {
 
   private decoder = new InputDataDecoder(comptrollerAbi);
 
-  @Timeout(5000)
+  // @Timeout(5000)
   async addListenContract() {
     const contract = this.controllerOrbiterCore.contract(true);
     contract.events

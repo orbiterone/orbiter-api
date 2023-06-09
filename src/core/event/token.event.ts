@@ -11,7 +11,7 @@ BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
 
 @Injectable()
 export class TokenEvent extends EventService {
-  @Timeout(5000)
+  // @Timeout(5000)
   async addListenContract() {
     const { tokens } = this.contracts;
 
