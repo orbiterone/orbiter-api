@@ -22,14 +22,16 @@ import {
   HandledEventsType,
 } from '../schemas/handled-block-number.schema';
 
-const { FETCH_EVENTS_INTERVAL, BLOCKS_RANGE } = process.env;
-
 @Injectable()
 export abstract class HttpEventService {
   protected readonly contracts = {
     tokens: TOKENS,
     supportMarkets: SUPPORT_MARKET,
   };
+
+  private fetchIventsInterval = 20000;
+
+  private blocksRange = 500;
 
   protected autoCleanTarget = 100;
 
@@ -97,7 +99,7 @@ export abstract class HttpEventService {
 
         lastProcessedBlockNumber = currentBlockNumber;
 
-        await this.wait(+FETCH_EVENTS_INTERVAL);
+        await this.wait(this.fetchIventsInterval);
       } catch (error) {
         console.error(error);
       }
@@ -113,7 +115,7 @@ export abstract class HttpEventService {
     let fromBlock = lastProcessedBlockNumber;
 
     while (true) {
-      const toBlock = fromBlock + Number(BLOCKS_RANGE);
+      const toBlock = fromBlock + this.blocksRange;
 
       const eventsRangeBlocks = await contract.getPastEvents('allEvents', {
         fromBlock,
