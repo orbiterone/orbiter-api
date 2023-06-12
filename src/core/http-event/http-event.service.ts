@@ -82,7 +82,7 @@ export abstract class HttpEventService {
           .eth.getBlockNumber();
 
         const events = await this.handleContractBlockNumbers(
-          lastProcessedBlockNumber,
+          lastProcessedBlockNumber + 1,
           currentBlockNumber,
           contract,
         );
@@ -90,7 +90,7 @@ export abstract class HttpEventService {
         await eventHandlerCallback(events);
 
         await this.handledBlockNumberModel.create({
-          fromBlock: lastProcessedBlockNumber,
+          fromBlock: lastProcessedBlockNumber + 1,
           toBlock: currentBlockNumber,
           type: contractType,
         });
