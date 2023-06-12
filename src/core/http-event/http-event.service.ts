@@ -25,6 +25,7 @@ import { IncentiveOrbiterCore } from '../orbiter/incentive.orbiter';
 import { ReaderOrbiterCore } from '../orbiter/reader.orbiter';
 import { NftOrbiterCore } from '../orbiter/nft.orbiter';
 import { StakingNftOrbiterCore } from '../orbiter/staking.nft.orbiter';
+import { DiscordService } from '@app/core/discord/discord.service';
 
 @Injectable()
 export abstract class HttpEventService {
@@ -59,6 +60,7 @@ export abstract class HttpEventService {
     protected readonly assetService: AssetService,
     protected readonly transactionService: TransactionService,
     protected readonly lotteryService: LotteryService,
+    protected readonly discordService: DiscordService,
   ) {}
 
   protected async addListenContract({
