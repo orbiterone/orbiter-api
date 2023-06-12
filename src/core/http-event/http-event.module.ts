@@ -15,6 +15,7 @@ import {
   HandledBlockNumber,
   HandledBlockNumberSchema,
 } from '../schemas/handled-block-number.schema';
+import { TokenEventHandler } from './token-event.handler';
 
 @Module({
   imports: [
@@ -28,7 +29,17 @@ import {
     TransactionModule,
     LotteryModule,
   ],
-  providers: [ControllerEventHandler, LotteryEventHandler, MarketEventHandler],
-  exports: [ControllerEventHandler, LotteryEventHandler, MarketEventHandler],
+  providers: [
+    ControllerEventHandler,
+    LotteryEventHandler,
+    MarketEventHandler,
+    TokenEventHandler,
+  ],
+  exports: [
+    ControllerEventHandler,
+    LotteryEventHandler,
+    MarketEventHandler,
+    TokenEventHandler,
+  ],
 })
 export class HttpEventModule {}
