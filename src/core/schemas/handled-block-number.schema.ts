@@ -8,6 +8,9 @@ export enum HandledEventsType {
   MARKET_TOKEN = 'MARKET_TOKEN',
   CONTROLLER = 'CONTROLLER',
   LOTTERY = 'LOTTERY',
+  INCENTIVE = 'INCENTIVE',
+  NFT = 'NFT',
+  STAKING_NFT = 'STAKING_NFT',
 }
 
 @Schema()

@@ -21,6 +21,10 @@ import {
   HandledBlockNumberDocument,
   HandledEventsType,
 } from '../schemas/handled-block-number.schema';
+import { IncentiveOrbiterCore } from '../orbiter/incentive.orbiter';
+import { ReaderOrbiterCore } from '../orbiter/reader.orbiter';
+import { NftOrbiterCore } from '../orbiter/nft.orbiter';
+import { StakingNftOrbiterCore } from '../orbiter/staking.nft.orbiter';
 import { DiscordService } from '@app/core/discord/discord.service';
 
 @Injectable()
@@ -36,6 +40,8 @@ export abstract class HttpEventService {
 
   protected autoCleanTarget = 100;
 
+  protected zeroAddress = '0x0000000000000000000000000000000000000000';
+
   constructor(
     @InjectModel(HandledBlockNumber.name)
     protected readonly handledBlockNumberModel: Model<HandledBlockNumberDocument>,
@@ -45,6 +51,10 @@ export abstract class HttpEventService {
     protected readonly controllerOrbiterCore: ControllerOrbiterCore,
     protected readonly oracleOrbiterCore: OracleOrbiterCore,
     protected readonly lotteryOrbiterCore: LotteryOrbiterCore,
+    protected readonly incentiveOrbiterCore: IncentiveOrbiterCore,
+    protected readonly readerOrbiterCore: ReaderOrbiterCore,
+    protected readonly nftOrbiterCore: NftOrbiterCore,
+    protected readonly stakingNftOrbiterCore: StakingNftOrbiterCore,
     protected readonly eventEmitter: EventEmitter2,
     protected readonly userService: UserService,
     protected readonly assetService: AssetService,
