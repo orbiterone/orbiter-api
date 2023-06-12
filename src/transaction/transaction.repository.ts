@@ -68,11 +68,19 @@ export class TransactionRepository extends BaseRepository {
         {
           $unwind: {
             path: '$token',
+            preserveNullAndEmptyArrays: true,
           },
         },
         {
           $match: {
-            'token.isActive': true,
+            $or: [
+              {
+                'token.isActive': true,
+              },
+              {
+                token: { $eq: null },
+              },
+            ],
           },
         },
       ],
