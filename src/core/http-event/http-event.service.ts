@@ -81,23 +81,25 @@ export abstract class HttpEventService {
           .getClient(network)
           .eth.getBlockNumber();
 
-        const events = await this.handleContractBlockNumbers(
-          lastProcessedBlockNumber + 1,
-          currentBlockNumber,
-          contract,
-        );
+        if (lastProcessedBlockNumber < currentBlockNumber) {
+          const events = await this.handleContractBlockNumbers(
+            lastProcessedBlockNumber + 1,
+            currentBlockNumber,
+            contract,
+          );
 
-        await eventHandlerCallback(events);
+          await eventHandlerCallback(events);
 
-        await this.handledBlockNumberModel.create({
-          fromBlock: lastProcessedBlockNumber + 1,
-          toBlock: currentBlockNumber,
-          type: contractType,
-        });
+          await this.handledBlockNumberModel.create({
+            fromBlock: lastProcessedBlockNumber + 1,
+            toBlock: currentBlockNumber,
+            type: contractType,
+          });
 
-        handledCounter++;
+          handledCounter++;
 
-        lastProcessedBlockNumber = currentBlockNumber;
+          lastProcessedBlockNumber = currentBlockNumber;
+        }
 
         await this.wait(this.fetchIventsInterval);
       } catch (error) {
