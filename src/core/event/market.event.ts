@@ -9,6 +9,8 @@ import { MARKET_TOKEN_EVENT } from './interfaces/event.interface';
 
 BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
 
+const { DISCORD_WEBHOOK_ORBITER } = process.env;
+
 @Injectable()
 export class MarketEvent extends EventService {
   // @Timeout(5000)
@@ -139,6 +141,15 @@ export class MarketEvent extends EventService {
           },
         });
         await this.assetService.updateAssetInfo(token);
+
+        await this.discordService.sendNotification(
+          DISCORD_WEBHOOK_ORBITER,
+          `1. Wallet address: ${minter}\n 2. Type: Supply\n 3. Asset name: ${
+            checkToken.name
+          }\n 4. Amount: ${new BigNumber(mintAmount)
+            .div(new BigNumber(10).pow(checkToken.tokenDecimal))
+            .toString()}`,
+        );
       }
     }
   }
@@ -212,6 +223,15 @@ export class MarketEvent extends EventService {
         },
       });
       await this.assetService.updateAssetInfo(token);
+
+      await this.discordService.sendNotification(
+        DISCORD_WEBHOOK_ORBITER,
+        `1. Wallet address: ${borrower}\n 2. Type: Borrow\n 3. Asset name: ${
+          checkToken.name
+        }\n 4. Amount: ${new BigNumber(borrowAmount)
+          .div(new BigNumber(10).pow(checkToken.tokenDecimal))
+          .toString()}`,
+      );
     }
   }
 

@@ -12,6 +12,7 @@ import { OTokenOrbiterCore } from '../orbiter/oToken.orbiter';
 import { LotteryOrbiterCore } from '../orbiter/lottery.orbiter';
 import { Web3Service } from '../web3/web3.service';
 import { LotteryService } from '@app/lottery/lottery.service';
+import { DiscordService } from '@app/core/discord/discord.service';
 
 @Injectable()
 export abstract class EventService {
@@ -32,6 +33,7 @@ export abstract class EventService {
     public readonly assetService: AssetService,
     public readonly transactionService: TransactionService,
     public readonly lotteryService: LotteryService,
+    public readonly discordService: DiscordService,
   ) {}
 
   abstract addListenContract(): void;
