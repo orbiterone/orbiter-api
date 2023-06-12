@@ -21,6 +21,7 @@ import {
   HandledBlockNumberDocument,
   HandledEventsType,
 } from '../schemas/handled-block-number.schema';
+import { DiscordService } from '@app/core/discord/discord.service';
 
 @Injectable()
 export abstract class HttpEventService {
@@ -49,6 +50,7 @@ export abstract class HttpEventService {
     protected readonly assetService: AssetService,
     protected readonly transactionService: TransactionService,
     protected readonly lotteryService: LotteryService,
+    protected readonly discordService: DiscordService,
   ) {}
 
   protected async addListenContract({
