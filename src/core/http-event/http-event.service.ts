@@ -29,7 +29,7 @@ export abstract class HttpEventService {
     supportMarkets: SUPPORT_MARKET,
   };
 
-  private fetchIventsInterval = 20000;
+  private fetchEventsInterval = 10000;
 
   private blocksRange = 500;
 
@@ -101,7 +101,7 @@ export abstract class HttpEventService {
           lastProcessedBlockNumber = currentBlockNumber;
         }
 
-        await this.wait(this.fetchIventsInterval);
+        await this.wait(this.fetchEventsInterval);
       } catch (error) {
         console.error(error);
       }
