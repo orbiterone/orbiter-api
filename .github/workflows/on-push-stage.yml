@@ -64,6 +64,7 @@ jobs:
             echo CRON_LOTTERY_TIME="${{ secrets.CRON_LOTTERY_TIME_STAGE }}" >> .env
             echo PRICE_FEED_UPDATE="${{ secrets.PRICE_FEED_UPDATE_STAGE }}" >> .env
             echo DISCORD_WEBHOOK_LOTTERY="${{ secrets.DISCORD_WEBHOOK_LOTTERY_STAGE }}" >> .env
+            echo DISCORD_WEBHOOK_ORBITER="${{ secrets.DISCORD_WEBHOOK_ORBITER_STAGE }}" >> .env
 
             cp src/core/contracts/moonbase.stage.json src/core/contracts/moonbase.json
 
