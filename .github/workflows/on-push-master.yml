@@ -64,6 +64,7 @@ jobs:
             echo CRON_LOTTERY="${{ secrets.CRON_LOTTERY_MASTER }}" >> .env
             echo CRON_LOTTERY_TIME="${{ secrets.CRON_LOTTERY_TIME_MASTER }}" >> .env
             echo DISCORD_WEBHOOK_LOTTERY="${{ secrets.DISCORD_WEBHOOK_LOTTERY_MASTER }}" >> .env
+            echo DISCORD_WEBHOOK_ORBITER="${{ secrets.DISCORD_WEBHOOK_ORBITER_MASTER }}" >> .env
 
             export DOCKER_SCAN_SUGGEST=false
             docker compose -f docker-stack.yml build --no-cache --compress
