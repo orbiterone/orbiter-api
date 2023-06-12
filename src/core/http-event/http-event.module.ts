@@ -16,6 +16,9 @@ import {
   HandledBlockNumberSchema,
 } from '../schemas/handled-block-number.schema';
 import { TokenEventHandler } from './token-event.handler';
+import { IncentiveEventHandler } from './incentive-event.handler';
+import { NftEventHandler } from './nft-event.handler';
+import { StakeNftEventHandler } from './stake-nft-event.handler';
 
 @Module({
   imports: [
@@ -34,12 +37,18 @@ import { TokenEventHandler } from './token-event.handler';
     LotteryEventHandler,
     MarketEventHandler,
     TokenEventHandler,
+    IncentiveEventHandler,
+    NftEventHandler,
+    StakeNftEventHandler,
   ],
   exports: [
     ControllerEventHandler,
     LotteryEventHandler,
     MarketEventHandler,
     TokenEventHandler,
+    IncentiveEventHandler,
+    NftEventHandler,
+    StakeNftEventHandler,
   ],
 })
 export class HttpEventModule {}
