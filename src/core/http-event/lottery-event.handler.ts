@@ -61,6 +61,19 @@ export class LotteryEventHandler
             { $inc: { countTickets: returnValues.numberTickets } },
             { upsert: true },
           );
+        await this.transactionService.transactionRepository.transactionCreate({
+          user: checkUser._id,
+          event: event.event,
+          status: true,
+          typeNetwork,
+          txHash,
+          data: {
+            lottery: {
+              id: returnValues.lotteryId,
+              countTickets: returnValues.numberTickets,
+            },
+          },
+        });
         const lotteryBlockChain = await this.lotteryOrbiterCore.viewLottery(
           returnValues.lotteryId,
         );

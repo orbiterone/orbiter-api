@@ -31,6 +31,22 @@ export enum LOTTERY_EVENT {
   LOTTERY_TICKETS_PURCHASE = 'TicketsPurchase',
 }
 
+export enum INCENTIVE_EVENT {
+  TRANSFER = 'Transfer',
+  CLAIM_REWARD = 'ClaimRewardIncentive',
+}
+
+export enum NFT_EVENT {
+  TRANSFER = 'Transfer',
+  MINT = 'MintNft',
+}
+
+export enum STAKING_NFT_EVENT {
+  STAKING = 'NftStaked',
+  UNSTAKING = 'NftUnstaked',
+  CLAIM_REWARD = 'ClaimedRewards',
+}
+
 export enum AVAILABLE_EVENT {
   USER_CREATE_UPDATE = 'UserCreateUpdate',
 }

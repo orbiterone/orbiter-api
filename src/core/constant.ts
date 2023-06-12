@@ -74,6 +74,20 @@ const INCENTIVE =
     ? MoonriverContracts.Incentive
     : MoonbeamContracts.Incentive;
 
+const NFT =
+  NODE_TYPE == 'moonbase'
+    ? MoonbaseContracts.NFT
+    : NODE_TYPE == 'moonriver'
+    ? MoonriverContracts.NFT
+    : MoonbeamContracts.NFT;
+
+const STAKING =
+  NODE_TYPE == 'moonbase'
+    ? MoonbaseContracts.Staking
+    : NODE_TYPE == 'moonriver'
+    ? MoonriverContracts.Staking
+    : MoonbeamContracts.Staking;
+
 const DEFAULT_TOKEN =
   NODE_TYPE == 'moonbase'
     ? MoonbaseDefaultMarket
@@ -130,4 +144,6 @@ export {
   CRON_LOTTERY_TIME,
   LOTTERY_TICKET_PRICE_ORB,
   PRICE_FEED_UPDATE,
+  NFT,
+  STAKING,
 };
