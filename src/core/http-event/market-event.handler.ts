@@ -7,7 +7,7 @@ import { HandledEventsType } from '../schemas/handled-block-number.schema';
 import { MARKET_TOKEN_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
 
-const { NODE_TYPE: typeNetwork } = process.env;
+const { NODE_TYPE: typeNetwork, DISCORD_WEBHOOK_ORBITER } = process.env;
 
 @Injectable()
 export class MarketEventHandler
@@ -140,6 +140,14 @@ export class MarketEventHandler
           },
         });
         await this.assetService.updateAssetInfo(token);
+        await this.discordService.sendNotification(
+          DISCORD_WEBHOOK_ORBITER,
+          `:white_check_mark: Wallet address: ${minter}\nType: Supply\nAsset name: ${
+            checkToken.name
+          }\nAmount: ${new BigNumber(mintAmount)
+            .div(new BigNumber(10).pow(checkToken.tokenDecimal))
+            .toString()}`,
+        );
       }
     }
   }
@@ -213,6 +221,14 @@ export class MarketEventHandler
         },
       });
       await this.assetService.updateAssetInfo(token);
+      await this.discordService.sendNotification(
+        DISCORD_WEBHOOK_ORBITER,
+        `:white_check_mark: Wallet address: ${borrower}\nType: Borrow\nAsset name: ${
+          checkToken.name
+        }\nAmount: ${new BigNumber(borrowAmount)
+          .div(new BigNumber(10).pow(checkToken.tokenDecimal))
+          .toString()}`,
+      );
     }
   }
 
