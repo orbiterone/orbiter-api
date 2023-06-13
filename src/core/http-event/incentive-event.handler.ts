@@ -38,7 +38,7 @@ export class IncentiveEventHandler
       const event = events[i];
       const { returnValues, transactionHash: txHash, address: token } = event;
       if (event.event == INCENTIVE_EVENT.TRANSFER) {
-        const { from, to, value } = returnValues;
+        const { from, to, amount: value } = returnValues;
         if (from.toLowerCase() == INCENTIVE.toLowerCase()) {
           const checkUser = await this.userService.createUpdateGetUser(to);
           const result = await this.readerOrbiterCore.incentives(to);
@@ -63,7 +63,7 @@ export class IncentiveEventHandler
                 user: to,
                 amount: Decimal128(
                   new BigNumber(value)
-                    .div(new BigNumber(10).pow(incentiveToken.tokenDecimal))
+                    .div(new BigNumber(10).pow(+incentiveToken.tokenDecimal))
                     .toString(),
                 ),
               },
