@@ -33,7 +33,7 @@ export abstract class HttpEventService {
     supportMarkets: SUPPORT_MARKET,
   };
 
-  private fetchEventsInterval = 10000;
+  private fetchEventsInterval = 5000;
 
   private blocksRange = 500;
 
