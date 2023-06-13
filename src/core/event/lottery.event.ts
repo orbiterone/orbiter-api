@@ -8,7 +8,7 @@ import { LOTTERY_EVENT } from './interfaces/event.interface';
 
 @Injectable()
 export class LotteryEvent extends EventService {
-  @Timeout(5000)
+  // @Timeout(5000)
   async addListenContract() {
     const contract = this.lotteryOrbiterCore.contract(true);
     contract.events

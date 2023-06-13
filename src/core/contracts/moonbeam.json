@@ -4,7 +4,9 @@
         "Comptroller": "0x27DC3DAdBfb40ADc677A2D5ef192d40aD7c4c97D",
         "Incentive": "0xa5EbbfE3d4391C7079fa6cd5DC230B915936d951",
         "Reader": "0x864F6a9A0BA613C079a7C0ab9F1AC8b3E63Fee4b",
-        "Lottery": "0xAA0c247E385F2995Fb0d88921470bFb450729A13"
+        "Lottery": "0xAA0c247E385F2995Fb0d88921470bFb450729A13",
+        "NFT": "0x6CC6C17d25bd3646b3710D6188d0467f5D398642",
+        "Staking": ""
     },
     "tokens": {
         "xcDOT": "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080",

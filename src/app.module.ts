@@ -6,9 +6,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { AssetModule } from './asset/asset.module';
 import { MarketModule } from './market/market.module';
-import { EventModule } from './core/event/event.module';
 import { UserModule } from './user/user.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { HttpEventModule } from './core/http-event/http-event.module';
 
 const { REDIS_URI, MONGO_URL } = process.env;
 
@@ -18,11 +18,11 @@ const { REDIS_URI, MONGO_URL } = process.env;
     MongooseModule.forRoot(MONGO_URL),
     ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),
-    EventModule,
     AssetModule,
     MarketModule,
     UserModule,
     TransactionModule,
+    HttpEventModule,
   ],
 })
 export class AppModule {}

@@ -8,6 +8,8 @@ import { LotteryOrbiterCore } from './lottery.orbiter';
 import { OracleOrbiterCore } from './oracle.orbiter';
 import { OTokenOrbiterCore } from './oToken.orbiter';
 import { ReaderOrbiterCore } from './reader.orbiter';
+import { NftOrbiterCore } from './nft.orbiter';
+import { StakingNftOrbiterCore } from './staking.nft.orbiter';
 
 @Module({
   imports: [CoreModule],
@@ -19,6 +21,8 @@ import { ReaderOrbiterCore } from './reader.orbiter';
     ReaderOrbiterCore,
     IncentiveOrbiterCore,
     LotteryOrbiterCore,
+    NftOrbiterCore,
+    StakingNftOrbiterCore,
   ],
   exports: [
     OTokenOrbiterCore,
@@ -28,6 +32,8 @@ import { ReaderOrbiterCore } from './reader.orbiter';
     ReaderOrbiterCore,
     IncentiveOrbiterCore,
     LotteryOrbiterCore,
+    NftOrbiterCore,
+    StakingNftOrbiterCore,
   ],
 })
 export class OrbiterModule {}
