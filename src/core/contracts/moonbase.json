@@ -159,7 +159,8 @@
         "d2O": {
             "color": "#C354F7",
             "image": "https://assets.orbiter.one/images/tokens/d2o.svg",
-            "fullName" : "Deuterium"
+            "fullName" : "Deuterium",
+            "symbol": "d2o"
         },
         "GLMR": {
             "color": "",
