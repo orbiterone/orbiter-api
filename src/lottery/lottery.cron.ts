@@ -234,12 +234,20 @@ export class LotteryCron {
           .getClient()
           .eth.getBalance(address);
 
+        const balanceConvert = this.web3Service
+          .getClient()
+          .utils.fromWei(balance, 'ether');
+
         await this.discordService.sendNotification(
           DISCORD_WEBHOOK_DIA_BALANCE,
-          `:white_check_mark: ${address} - ${this.web3Service
-            .getClient()
-            .utils.fromWei(balance, 'ether')} GLMR. ${new Date()}`,
+          `:white_check_mark: ${address} - ${balanceConvert} GLMR. ${new Date()}`,
         );
+        if (+balanceConvert < 1) {
+          await this.discordService.sendNotification(
+            DISCORD_WEBHOOK_DIA_BALANCE,
+            `:warning: ${address} needs to be replenish.`,
+          );
+        }
       }
     }
   }
