@@ -17,7 +17,12 @@ import { DiscordService } from '@app/core/discord/discord.service';
 
 const cronTimeLottery = CRON_LOTTERY || 86400000;
 
-const { NODE_TYPE_LOTTERY: typeNetwork, DISCORD_WEBHOOK_LOTTERY } = process.env;
+const {
+  NODE_TYPE_LOTTERY: typeNetwork,
+  DISCORD_WEBHOOK_LOTTERY,
+  DIA_BALANCE_ADDRESS,
+  DISCORD_WEBHOOK_DIA_BALANCE,
+} = process.env;
 
 @Injectable()
 export class LotteryCron {
@@ -215,6 +220,35 @@ export class LotteryCron {
         `:warning: Cron lottery start error. ${err.message}`,
       );
       throw err;
+    }
+  }
+
+  @Cron(CronExpression.EVERY_30_MINUTES)
+  async checkDiaOracleBalance() {
+    const diaBalances = DIA_BALANCE_ADDRESS
+      ? DIA_BALANCE_ADDRESS.split(',')
+      : [];
+    if (diaBalances && diaBalances.length) {
+      for (const address of diaBalances) {
+        const balance = await this.web3Service
+          .getClient()
+          .eth.getBalance(address);
+
+        const balanceConvert = this.web3Service
+          .getClient()
+          .utils.fromWei(balance, 'ether');
+
+        await this.discordService.sendNotification(
+          DISCORD_WEBHOOK_DIA_BALANCE,
+          `:white_check_mark: ${address} - ${balanceConvert} GLMR. ${new Date()}`,
+        );
+        if (+balanceConvert < 1) {
+          await this.discordService.sendNotification(
+            DISCORD_WEBHOOK_DIA_BALANCE,
+            `:warning: ${address} needs to be replenish.`,
+          );
+        }
+      }
     }
   }
 
