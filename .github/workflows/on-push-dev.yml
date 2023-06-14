@@ -64,6 +64,8 @@ jobs:
             echo CRON_LOTTERY_TIME="${{ secrets.CRON_LOTTERY_TIME_DEV }}" >> .env
             echo PRICE_FEED_UPDATE="${{ secrets.PRICE_FEED_UPDATE_DEV }}" >> .env
             echo DISCORD_WEBHOOK_LOTTERY="${{ secrets.DISCORD_WEBHOOK_LOTTERY_DEV }}" >> .env
+            echo DISCORD_WEBHOOK_DIA_BALANCE="${{ secrets.DISCORD_WEBHOOK_DIA_BALANCE_DEV }}" >> .env
+            echo DIA_BALANCE_ADDRESS="${{ secrets.DIA_BALANCE_ADDRESS_DEV }}" >> .env
 
             export DOCKER_SCAN_SUGGEST=false
             docker compose -f docker-stack.yml build --no-cache --compress
