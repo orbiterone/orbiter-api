@@ -25,6 +25,7 @@ import {
   AssetEstimateMaxWithdrawalResponse,
   AssetIncentiveResponse,
   SupplyBorrowInfoByAssetAccount,
+  ConfigType,
 } from './interfaces/asset.interface';
 import { UserRepository } from '@app/user/user.repository';
 import { ExchangeService } from '@app/core/exchange/exchange.service';
@@ -298,6 +299,10 @@ export class AssetService implements OnModuleInit {
       options: { isActive: true },
       sort: { sortOrder: 1 },
     });
+  }
+
+  configSettings(): ConfigType {
+    return SETTINGS;
   }
 
   async assetsByAccount(user: User | null): Promise<AssetByAccountResponse> {
