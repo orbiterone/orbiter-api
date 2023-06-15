@@ -19,6 +19,7 @@ import {
   AssetEstimateMaxWithdrawalResponse,
   AssetIncentiveResponse,
   AssetInfoResponse,
+  ConfigResponse,
 } from './interfaces/asset.interface';
 import { UserByAddressPipe } from '@app/core/pipes/user-by-address.pipe';
 import { User } from '@app/core/schemas/user.schema';
@@ -35,6 +36,7 @@ import { Token } from '@app/core/schemas/token.schema';
   AssetBalanceByAccountResponse,
   AssetEstimateMaxWithdrawalResponse,
   AssetIncentiveResponse,
+  ConfigResponse,
 )
 export class AssetController {
   constructor(private readonly assetService: AssetService) {}
@@ -45,6 +47,14 @@ export class AssetController {
     return res
       .status(HttpStatus.OK)
       .json(jsend.success(await this.assetService.assetsList()));
+  }
+
+  @Get('config')
+  @ApiDataResponse(ConfigResponse)
+  async config(@Response() res: any) {
+    return res
+      .status(HttpStatus.OK)
+      .json(jsend.success(await this.assetService.configSettings()));
   }
 
   @Get(':account')

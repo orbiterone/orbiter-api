@@ -227,3 +227,21 @@ export class AssetIncentiveResponse {
   @ApiProperty()
   image: string;
 }
+
+export class AssetConfig {
+  @ApiProperty()
+  color: string;
+
+  @ApiProperty()
+  image: string;
+
+  @ApiProperty()
+  fullName: string;
+}
+
+export class ConfigResponse {
+  @ApiProperty({ type: AssetConfig })
+  tokenName: AssetConfig;
+}
+
+export type ConfigType = Record<string, AssetConfig>;
