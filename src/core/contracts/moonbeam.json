@@ -83,6 +83,11 @@
             "color": "#53CBC8",
             "image": "https://assets.orbiter.one/images/tokens/movr.svg",
             "fullName" : "Moonriver"
+        },
+        "ORB": {
+            "color": "#16CDfC",
+            "image": "https://assets.orbiter.one/images/tokens/ORB.svg",
+            "fullName" : "Orbiter"
         }
     }
 }
