@@ -198,10 +198,10 @@ export class AssetService implements OnModuleInit {
             borrowSpeed = borrowSpeed.div(Math.pow(10, +incentiveDecimals));
             supplySpeed = supplySpeed.div(Math.pow(10, +incentiveDecimals));
             let incentivePrice = 0;
-            if (incentiveSymbol == 'ORB') {
+            if (incentiveSymbol.toLowerCase() == 'orb') {
               incentivePrice = await this.marketService.getOrbRate();
             } else {
-              if (incentiveSymbol == 'd2O') {
+              if (incentiveSymbol.toLowerCase() == 'd2o') {
                 incentiveSymbol = 'USDC';
               }
               incentivePrice = await this.exchangeService.getPrice(
