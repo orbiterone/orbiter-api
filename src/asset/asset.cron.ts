@@ -228,7 +228,7 @@ export class AssetCron extends AssetService {
   async liquidationLogger() {
     const users = await this.userService.getUsersAccounts(
       { page: '1' },
-      '1.5',
+      '0.95',
       1000,
     );
     if (users && users.entities && users.entities.length) {
