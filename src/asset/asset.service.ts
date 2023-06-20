@@ -43,19 +43,19 @@ BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
 @Injectable()
 export class AssetService implements OnModuleInit {
   constructor(
-    protected readonly web3Service: Web3Service,
-    protected readonly exchangeService: ExchangeService,
-    protected readonly assetRepository: AssetRepository,
-    protected readonly oTokenCore: OTokenOrbiterCore,
-    protected readonly erc20OrbierCore: Erc20OrbiterCore,
-    protected readonly readerOrbiterCore: ReaderOrbiterCore,
-    protected readonly incentiveOrbiterCore: IncentiveOrbiterCore,
-    protected readonly controllerOrbiterCore: ControllerOrbiterCore,
-    protected readonly oracleOrbiterCore: OracleOrbiterCore,
-    protected readonly userRepository: UserRepository,
-    protected readonly userService: UserService,
-    protected readonly marketService: MarketService,
-    protected readonly discordService: DiscordService,
+    public readonly web3Service: Web3Service,
+    public readonly exchangeService: ExchangeService,
+    public readonly assetRepository: AssetRepository,
+    public readonly oTokenCore: OTokenOrbiterCore,
+    public readonly erc20OrbierCore: Erc20OrbiterCore,
+    public readonly readerOrbiterCore: ReaderOrbiterCore,
+    public readonly incentiveOrbiterCore: IncentiveOrbiterCore,
+    public readonly controllerOrbiterCore: ControllerOrbiterCore,
+    public readonly oracleOrbiterCore: OracleOrbiterCore,
+    public readonly userRepository: UserRepository,
+    public readonly userService: UserService,
+    public readonly marketService: MarketService,
+    public readonly discordService: DiscordService,
   ) {
     (async () => {
       this.oracleOrbiterCore.setToken(
