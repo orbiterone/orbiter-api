@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import Web3 from 'web3';
 import { BigNumber } from 'bignumber.js';
-import { InjectRedisClient, RedisClient } from '@webeleon/nestjs-redis';
 import { isEthereumAddress } from 'class-validator';
 
 import { Web3Service } from '@app/core/web3/web3.service';
@@ -32,6 +31,8 @@ import { ExchangeService } from '@app/core/exchange/exchange.service';
 import { ReaderOrbiterCore } from '@app/core/orbiter/reader.orbiter';
 import { IncentiveOrbiterCore } from '@app/core/orbiter/incentive.orbiter';
 import { MarketService } from '@app/market/market.service';
+import { UserService } from '@app/user/user.service';
+import { DiscordService } from '@app/core/discord/discord.service';
 
 const web3 = new Web3();
 
@@ -42,18 +43,19 @@ BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
 @Injectable()
 export class AssetService implements OnModuleInit {
   constructor(
-    public readonly web3Service: Web3Service,
-    public readonly exchangeService: ExchangeService,
-    public readonly assetRepository: AssetRepository,
-    public readonly oTokenCore: OTokenOrbiterCore,
-    public readonly erc20OrbierCore: Erc20OrbiterCore,
-    public readonly readerOrbiterCore: ReaderOrbiterCore,
-    public readonly incentiveOrbiterCore: IncentiveOrbiterCore,
-    public readonly controllerOrbiterCore: ControllerOrbiterCore,
-    public readonly oracleOrbiterCore: OracleOrbiterCore,
-    public readonly userRepository: UserRepository,
-    public readonly marketService: MarketService,
-    @InjectRedisClient() private readonly redisClient: RedisClient,
+    protected readonly web3Service: Web3Service,
+    protected readonly exchangeService: ExchangeService,
+    protected readonly assetRepository: AssetRepository,
+    protected readonly oTokenCore: OTokenOrbiterCore,
+    protected readonly erc20OrbierCore: Erc20OrbiterCore,
+    protected readonly readerOrbiterCore: ReaderOrbiterCore,
+    protected readonly incentiveOrbiterCore: IncentiveOrbiterCore,
+    protected readonly controllerOrbiterCore: ControllerOrbiterCore,
+    protected readonly oracleOrbiterCore: OracleOrbiterCore,
+    protected readonly userRepository: UserRepository,
+    protected readonly userService: UserService,
+    protected readonly marketService: MarketService,
+    protected readonly discordService: DiscordService,
   ) {
     (async () => {
       this.oracleOrbiterCore.setToken(
