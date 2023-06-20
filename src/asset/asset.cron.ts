@@ -232,12 +232,21 @@ export class AssetCron extends AssetService {
       1000,
     );
     if (users && users.entities && users.entities.length) {
+      let i = 0;
+      let count = 0;
+      let message = '';
       for (const user of users.entities) {
-        const message = `:white_check_mark: address: ${user.address}, health: ${user.health}, supply: ${user.totalSupplyUSD} $, borrow: ${user.totalBorrowUSD}$ \n`;
-        await this.discordService.sendNotification(
-          DISCORD_WEBHOOK_LIQUIDATOR,
-          message,
-        );
+        i++;
+        count++;
+        message += `:white_check_mark: address: ${user.address}, health: ${user.health}, supply: ${user.totalSupplyUSD} $, borrow: ${user.totalBorrowUSD}$ \n`;
+        if (i == 5 || (i < 5 && users.entities.length == count)) {
+          await this.discordService.sendNotification(
+            DISCORD_WEBHOOK_LIQUIDATOR,
+            message,
+          );
+          i = 0;
+          message = '';
+        }
       }
     }
   }
