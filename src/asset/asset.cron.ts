@@ -238,7 +238,11 @@ export class AssetCron extends AssetService {
       for (const user of users.entities) {
         i++;
         count++;
-        message += `:white_check_mark: address: ${user.address}, health: ${user.health}, supply: ${user.totalSupplyUSD} $, borrow: ${user.totalBorrowUSD}$ \n`;
+        message += `:white_check_mark: address: ${user.address}, health: ${
+          user.health
+        }, supply: ${Number.parseFloat(user.totalSupplyUSD).toFixed(
+          2,
+        )} $, borrow: ${Number.parseFloat(user.totalBorrowUSD).toFixed(2)}$ \n`;
         if (i == 5 || (i < 5 && users.entities.length == count)) {
           await this.discordService.sendNotification(
             DISCORD_WEBHOOK_LIQUIDATOR,
