@@ -47,9 +47,19 @@ export class StakeNftEventHandler
         });
       }
       if (event.event == STAKING_NFT_EVENT.CLAIM_REWARD) {
-        const { user, amount } = returnValues;
+        const { user, amount, tokenAddress = null } = returnValues;
 
         const checkUser = await this.userService.createUpdateGetUser(user);
+        const incentive = {
+          address: '',
+          name: '',
+          symbol: '',
+        };
+        if (tokenAddress) {
+          incentive.address = tokenAddress;
+          incentive.name = await this.erc20OrbierCore.name(tokenAddress);
+          incentive.symbol = await this.erc20OrbierCore.symbol(tokenAddress);
+        }
         await this.transactionService.transactionRepository.transactionCreate({
           user: checkUser._id,
           event: event.event,
@@ -57,6 +67,7 @@ export class StakeNftEventHandler
           typeNetwork,
           txHash,
           data: {
+            incentive,
             amount: Decimal128(
               new BigNumber(amount).div(new BigNumber(10).pow(18)).toString(),
             ),
