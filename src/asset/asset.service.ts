@@ -310,6 +310,8 @@ export class AssetService implements OnModuleInit {
   async assetsByAccount(user: User | null): Promise<AssetByAccountResponse> {
     try {
       if (user) {
+        let totalSupplyUSD = new BigNumber('0');
+        let totalBorrowUSD = new BigNumber('0');
         const supplied = [];
         const borrowed = [];
         const assetList = await this.assetsList();
@@ -321,6 +323,13 @@ export class AssetService implements OnModuleInit {
           const asset = assetList.filter(
             (el) => el.oTokenAddress.toLowerCase() == s.oToken.toLowerCase(),
           )[0];
+          const supplyValue = new BigNumber(s.totalSupply).div(
+            Math.pow(10, asset.tokenDecimal),
+          );
+          const supplyValueUsd = supplyValue.multipliedBy(
+            asset.lastPrice.toString(),
+          );
+          totalSupplyUSD = totalSupplyUSD.plus(supplyValueUsd);
           supplied.push({
             token: {
               _id: asset._id,
@@ -344,9 +353,8 @@ export class AssetService implements OnModuleInit {
               }),
             },
             collateral: s.collateral,
-            value: new BigNumber(s.totalSupply)
-              .div(Math.pow(10, asset.tokenDecimal))
-              .toString(),
+            value: supplyValue.toString(),
+            valueUSD: supplyValueUsd.toString(),
             valueCollateral: new BigNumber(s.totalSupply)
               .div(Math.pow(10, asset.tokenDecimal))
               .multipliedBy(asset.collateralFactor / 100)
@@ -360,6 +368,13 @@ export class AssetService implements OnModuleInit {
           const asset = assetList.filter(
             (el) => el.oTokenAddress.toLowerCase() == b.oToken.toLowerCase(),
           )[0];
+          const supplyValue = new BigNumber(b.totalBorrow).div(
+            Math.pow(10, asset.tokenDecimal),
+          );
+          const supplyValueUsd = supplyValue.multipliedBy(
+            asset.lastPrice.toString(),
+          );
+          totalBorrowUSD = totalBorrowUSD.plus(supplyValueUsd);
           borrowed.push({
             token: {
               _id: asset._id,
@@ -383,9 +398,8 @@ export class AssetService implements OnModuleInit {
               }),
             },
             collateral: null,
-            value: new BigNumber(b.totalBorrow)
-              .div(Math.pow(10, asset.tokenDecimal))
-              .toString(),
+            value: supplyValue.toString(),
+            valueUsd: supplyValueUsd.toString(),
           });
         }
 
@@ -409,9 +423,16 @@ export class AssetService implements OnModuleInit {
         return {
           supplied: supplied.sort(comprareFn),
           borrowed: borrowed.sort(comprareFn),
+          totalSupplyUSD: totalSupplyUSD.toString(),
+          totalBorrowUSD: totalBorrowUSD.toString(),
         };
       } else {
-        return { supplied: [], borrowed: [] };
+        return {
+          supplied: [],
+          borrowed: [],
+          totalSupplyUSD: '0',
+          totalBorrowUSD: '0',
+        };
       }
     } catch (err) {
       console.log(err.message);
@@ -512,7 +533,7 @@ export class AssetService implements OnModuleInit {
         ])
       ).pop() || { supplied: [], borrowed: [] };
 
-      return { supplied, borrowed };
+      return { supplied, borrowed, totalSupplyUSD: '0', totalBorrowUSD: '0' };
     }
   }
 
