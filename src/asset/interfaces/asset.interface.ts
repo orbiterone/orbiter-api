@@ -161,6 +161,9 @@ export class SupplyBorrowInfoByAssetAccount {
 
   @ApiProperty()
   value: string;
+
+  @ApiProperty()
+  valueUSD: string;
 }
 
 export class SupplyInfoByAssetAccount extends SupplyBorrowInfoByAssetAccount {
@@ -174,6 +177,12 @@ export class AssetByAccountResponse {
 
   @ApiProperty({ type: [SupplyBorrowInfoByAssetAccount] })
   borrowed: SupplyBorrowInfoByAssetAccount[];
+
+  @ApiProperty()
+  totalSupplyUSD: string;
+
+  @ApiProperty()
+  totalBorrowUSD: string;
 }
 
 class SupplyBorrowInfoCompositionByAssetAccount {
