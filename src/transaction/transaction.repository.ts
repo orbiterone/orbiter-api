@@ -48,6 +48,9 @@ export class TransactionRepository extends BaseRepository {
         data: {
           amount: { $toString: '$data.amount' },
           error: '$data.error',
+          incentive: '$data.incentive',
+          lottery: '$data.lottery',
+          tokenId: '$data.tokenId',
         },
         createdAt: 1,
       },
