@@ -21,11 +21,11 @@ import {
   HandledBlockNumberDocument,
   HandledEventsType,
 } from '../schemas/handled-block-number.schema';
+import { DiscordService } from '@app/core/discord/discord.service';
 import { IncentiveOrbiterCore } from '../orbiter/incentive.orbiter';
 import { ReaderOrbiterCore } from '../orbiter/reader.orbiter';
 import { NftOrbiterCore } from '../orbiter/nft.orbiter';
 import { StakingNftOrbiterCore } from '../orbiter/staking.nft.orbiter';
-import { DiscordService } from '@app/core/discord/discord.service';
 
 @Injectable()
 export abstract class HttpEventService {
