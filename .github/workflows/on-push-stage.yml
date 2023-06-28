@@ -64,8 +64,6 @@ jobs:
             echo CRON_LOTTERY_TIME="${{ secrets.CRON_LOTTERY_TIME_STAGE }}" >> .env
             echo PRICE_FEED_UPDATE="${{ secrets.PRICE_FEED_UPDATE_STAGE }}" >> .env
             echo DISCORD_WEBHOOK_LOTTERY="${{ secrets.DISCORD_WEBHOOK_LOTTERY_STAGE }}" >> .env
-            echo DISCORD_WEBHOOK_DIA_BALANCE="${{ secrets.DISCORD_WEBHOOK_DIA_BALANCE_STAGE }}" >> .env
-            echo DIA_BALANCE_ADDRESS="${{ secrets.DIA_BALANCE_ADDRESS_STAGE }}" >> .env
             echo DISCORD_WEBHOOK_ORBITER="${{ secrets.DISCORD_WEBHOOK_ORBITER_STAGE }}" >> .env
             echo DISCORD_WEBHOOK_DIA_BALANCE="${{ secrets.DISCORD_WEBHOOK_DIA_BALANCE_STAGE }}" >> .env
             echo DISCORD_WEBHOOK_LIQUIDATOR="${{ secrets.DISCORD_WEBHOOK_LIQUIDATOR_STAGE }}" >> .env
