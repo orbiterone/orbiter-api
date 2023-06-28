@@ -44,3 +44,8 @@ export class MarketOverviewResponse {
   @ApiProperty({ type: MostBorrowOrSupply })
   mostBorrow: MostBorrowOrSupply;
 }
+
+export class RatesResponse {
+  @ApiProperty({ type: 'object', additionalProperties: { type: 'string' } })
+  data: Record<string, string>;
+}
