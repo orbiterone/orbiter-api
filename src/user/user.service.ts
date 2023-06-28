@@ -292,8 +292,9 @@ export class UserService {
 
   async getUsersAccounts(
     query: UserAccountDto,
+    maxHealth = '2',
+    perPage = 10,
   ): Promise<PaginatedDto<UsersAccountsResponse>> {
-    const perPage = 10;
     const pageItem = +query.page || 1;
     const skip = (pageItem - 1) * perPage;
 
@@ -419,7 +420,7 @@ export class UserService {
         {
           $match: {
             health: {
-              $lte: Decimal128('2'),
+              $lte: Decimal128(maxHealth),
             },
             totalBorrowUSD: {
               $gt: Decimal128('0'),

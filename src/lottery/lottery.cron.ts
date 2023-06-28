@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression, Interval, Timeout } from '@nestjs/schedule';
+import { Cron, CronExpression, Timeout } from '@nestjs/schedule';
 import moment, { Moment } from 'moment';
 import BigNumber from 'bignumber.js';
 

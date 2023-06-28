@@ -4,7 +4,9 @@
         "Comptroller": "0xeB36b18CceCBbC90885BC2Cf0345933F026050d0",
         "Incentive": "0xa84698A60f613E1113F29c2363c511135c05E056",
         "Reader": "0x4D7d33CD41a49Bf875Cf207B3f43004d74d721aa",
-        "Lottery": "0x79f8d5419D180Be88ebdD2664B651aDeaA0F7FB5"
+        "Lottery": "0x79f8d5419D180Be88ebdD2664B651aDeaA0F7FB5",
+        "NFT": "",
+        "Staking": ""
     },
     "tokens": {
         "ETH": "0x639A647fbe20b6c8ac19E48E2de44ea792c62c5C",
@@ -133,6 +135,11 @@
             "color": "",
             "image": "",
             "fullName" : ""
+        },
+        "ORB": {
+            "color": "#16CDfC",
+            "image": "https://assets.orbiter.one/images/tokens/ORB.svg",
+            "fullName" : "Orbiter"
         }
     }
 }

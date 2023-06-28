@@ -11,6 +11,8 @@ import {
   PRICE_FEED_UPDATE,
 } from '@app/core/constant';
 
+const { DISCORD_WEBHOOK_LIQUIDATOR } = process.env;
+
 BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
 
 @Injectable()
@@ -196,7 +198,7 @@ export class AssetCron extends AssetService {
           case 'xcKBTC':
             symbol = 'BTC';
             break;
-          case 'd2O':
+          case 'd2o':
             symbol = 'USDC';
         }
         if (symbol == 'MAI' || symbol == 'AUSD' || symbol == 'FRAX') continue;
@@ -218,6 +220,37 @@ export class AssetCron extends AssetService {
         await this.wait(30000);
       } catch (err) {
         console.error(err);
+      }
+    }
+  }
+
+  @Cron(CronExpression.EVERY_5_MINUTES)
+  async liquidationLogger() {
+    const users = await this.userService.getUsersAccounts(
+      { page: '1' },
+      '0.95',
+      1000,
+    );
+    if (users && users.entities && users.entities.length) {
+      let i = 0;
+      let count = 0;
+      let message = '';
+      for (const user of users.entities) {
+        i++;
+        count++;
+        message += `:white_check_mark: address: ${user.address}, health: ${
+          user.health
+        }, supply: ${Number.parseFloat(user.totalSupplyUSD).toFixed(
+          2,
+        )} $, borrow: ${Number.parseFloat(user.totalBorrowUSD).toFixed(2)}$ \n`;
+        if (i == 5 || (i < 5 && users.entities.length == count)) {
+          await this.discordService.sendNotification(
+            DISCORD_WEBHOOK_LIQUIDATOR,
+            message,
+          );
+          i = 0;
+          message = '';
+        }
       }
     }
   }
