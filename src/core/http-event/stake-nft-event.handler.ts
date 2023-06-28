@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { EventData } from 'web3-eth-contract';
 
+import { STAKING } from '../constant';
 import { HttpEventService } from './http-event.service';
 import { HandledEventsType } from '../schemas/handled-block-number.schema';
 import { STAKING_NFT_EVENT } from '../event/interfaces/event.interface';
@@ -15,13 +16,16 @@ export class StakeNftEventHandler
   implements OnModuleInit
 {
   onModuleInit() {
-    const contract = this.stakingNftOrbiterCore.contract();
-    this.addListenContract({
-      contract,
-      contractType: HandledEventsType.STAKING_NFT,
-      network: typeNetwork,
-      eventHandlerCallback: (events: EventData[]) => this.handleEvents(events),
-    });
+    if (STAKING) {
+      const contract = this.stakingNftOrbiterCore.contract();
+      this.addListenContract({
+        contract,
+        contractType: HandledEventsType.STAKING_NFT,
+        network: typeNetwork,
+        eventHandlerCallback: (events: EventData[]) =>
+          this.handleEvents(events),
+      });
+    }
   }
 
   private async handleEvents(events: EventData[]): Promise<void> {
