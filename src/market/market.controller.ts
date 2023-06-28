@@ -22,6 +22,7 @@ import { ApiDataResponse } from '@app/core/interface/response';
 import {
   MarketHistoryResponse,
   MarketOverviewResponse,
+  RatesResponse,
 } from './interfaces/market.interface';
 
 @Controller('markets')
@@ -60,5 +61,13 @@ export class MarketController {
     return res
       .status(HttpStatus.OK)
       .json(jsend.success(await this.marketService.getOrbRate()));
+  }
+
+  @Get('rates')
+  @ApiDataResponse(RatesResponse)
+  async rates(@Response() res: any) {
+    return res
+      .status(HttpStatus.OK)
+      .json(jsend.success(await this.marketService.rates()));
   }
 }

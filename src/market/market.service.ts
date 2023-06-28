@@ -8,6 +8,7 @@ import { Decimal128 } from '@app/core/schemas/user.schema';
 import {
   MarketHistoryResponse,
   MarketOverviewResponse,
+  RatesResponse,
 } from './interfaces/market.interface';
 import { MarketRepository } from './market.repository';
 import { ExchangeService } from '@app/core/exchange/exchange.service';
@@ -99,5 +100,22 @@ export class MarketService {
     const WGLMR_USDC = await this.exchangeService.getPrice('WGLMR', 'USDC', 6);
 
     return WGLMR_USDC / WGLMR_ORB;
+  }
+
+  async rates(): Promise<Record<string, string>> {
+    const results = await this.assetRepository
+      .getTokenModel()
+      .find({ isActive: true });
+
+    const assets = {};
+    if (results && results.length) {
+      for (const item of results) {
+        assets[item.symbol] = item.lastPrice;
+      }
+    }
+
+    assets['ORB'] = (await this.getOrbRate()).toString();
+
+    return assets;
   }
 }
