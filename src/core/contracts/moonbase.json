@@ -167,6 +167,11 @@
             "image": "",
             "fullName" : ""
         },
+        "WGLMR": {
+            "color": "#BC2E75",
+            "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
+            "fullName" : "Wrapped GLMR"
+        },
         "ORB": {
             "color": "#16CDfC",
             "image": "https://assets.orbiter.one/images/tokens/ORB.svg",
