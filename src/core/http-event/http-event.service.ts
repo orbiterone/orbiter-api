@@ -89,7 +89,6 @@ export class HttpEventService {
 
       while (true) {
         try {
-          console.log(this.sync, this.subscribers);
           if (!this.sync == true) {
             if (handledCounter > this.autoCleanTarget) {
               await this.cleanHandledBlockNumber(minDate);
@@ -117,7 +116,6 @@ export class HttpEventService {
                 fromBlock,
                 toBlock,
               );
-              console.log(fromBlock, toBlock, events.length);
               if (this.subscribers.length && events.length) {
                 for (const subscriber of this.subscribers) {
                   const filterEvent = events.filter(
