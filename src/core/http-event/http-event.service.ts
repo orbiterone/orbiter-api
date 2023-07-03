@@ -30,7 +30,7 @@ import { DiscordService } from '@app/core/discord/discord.service';
 const { NODE_TYPE: typeNetwork } = process.env;
 
 @Injectable()
-export abstract class HttpEventService {
+export class HttpEventService {
   protected readonly contracts = {
     tokens: TOKENS,
     supportMarkets: SUPPORT_MARKET,
@@ -73,78 +73,84 @@ export abstract class HttpEventService {
     protected readonly discordService: DiscordService,
   ) {}
 
-  async onModuleInit() {
-    const lastProcessedBlockNumberInDB = await this.handledBlockNumberModel
-      .findOne({})
-      .sort({ toBlock: -1 })
-      .limit(1);
+  onModuleInit() {
+    setTimeout(async () => {
+      const lastProcessedBlockNumberInDB = await this.handledBlockNumberModel
+        .findOne({})
+        .sort({ toBlock: -1 })
+        .limit(1);
 
-    let lastProcessedBlockNumber =
-      lastProcessedBlockNumberInDB?.toBlock ||
-      (await this.web3Service.getClient(typeNetwork).eth.getBlockNumber());
+      let lastProcessedBlockNumber =
+        lastProcessedBlockNumberInDB?.toBlock ||
+        (await this.web3Service.getClient(typeNetwork).eth.getBlockNumber());
 
-    let handledCounter = 0;
-    let minDate = new Date();
+      let handledCounter = 0;
+      let minDate = new Date();
 
-    while (true) {
-      try {
-        if (!this.sync == true) {
-          if (handledCounter > this.autoCleanTarget) {
-            await this.cleanHandledBlockNumber(minDate);
-            handledCounter = 0;
-            minDate = new Date();
-          }
+      while (true) {
+        try {
+          console.log(this.sync, this.subscribers);
+          if (!this.sync == true) {
+            if (handledCounter > this.autoCleanTarget) {
+              await this.cleanHandledBlockNumber(minDate);
+              handledCounter = 0;
+              minDate = new Date();
+            }
 
-          const currentBlockNumber = await this.web3Service
-            .getClient(typeNetwork)
-            .eth.getBlockNumber();
+            const currentBlockNumber = await this.web3Service
+              .getClient(typeNetwork)
+              .eth.getBlockNumber();
 
-          const fromBlock = lastProcessedBlockNumber + 1;
+            if (currentBlockNumber > lastProcessedBlockNumber) {
+              const fromBlock = lastProcessedBlockNumber + 1;
 
-          let toBlock = currentBlockNumber;
-          if (toBlock - fromBlock > this.maxBatchBlockNumber) {
-            toBlock = fromBlock + this.maxBatchBlockNumber;
-          }
-          if (fromBlock > toBlock) {
-            toBlock = fromBlock;
-          }
-          this.sync = true;
-
-          const events = await this.handleContractBlockNumbers(
-            fromBlock,
-            toBlock,
-          );
-          if (this.subscribers.length && events.length) {
-            for (const subscriber of this.subscribers) {
-              const filterEvent = events.filter(
-                (el) =>
-                  el.address.toLowerCase() ==
-                  subscriber.contractAddress.toLowerCase(),
-              );
-              if (filterEvent.length) {
-                await subscriber.eventHandlerCallback(filterEvent);
+              let toBlock = currentBlockNumber;
+              if (toBlock - fromBlock > this.maxBatchBlockNumber) {
+                toBlock = fromBlock + this.maxBatchBlockNumber;
               }
+              if (fromBlock > toBlock) {
+                toBlock = fromBlock;
+              }
+              this.sync = true;
+
+              const events = await this.handleContractBlockNumbers(
+                fromBlock,
+                toBlock,
+              );
+              console.log(fromBlock, toBlock, events.length);
+              if (this.subscribers.length && events.length) {
+                for (const subscriber of this.subscribers) {
+                  const filterEvent = events.filter(
+                    (el) =>
+                      el.address.toLowerCase() ==
+                      subscriber.contractAddress.toLowerCase(),
+                  );
+                  if (filterEvent.length) {
+                    await subscriber.eventHandlerCallback(filterEvent);
+                  }
+                }
+              }
+
+              await this.handledBlockNumberModel.create({
+                fromBlock,
+                toBlock,
+              });
+
+              handledCounter++;
+
+              lastProcessedBlockNumber = toBlock;
+              this.sync = false;
             }
           }
-
-          await this.handledBlockNumberModel.create({
-            fromBlock,
-            toBlock,
-          });
-
-          handledCounter++;
-
-          lastProcessedBlockNumber = toBlock;
-          this.sync = false;
+          await this.wait(this.fetchEventsInterval);
+        } catch (err) {
+          console.error(err);
         }
-        await this.wait(this.fetchEventsInterval);
-      } catch (err) {
-        console.error(err);
       }
-    }
+    }, 10000);
   }
 
-  protected async addListenContract({
+  async addListenContract({
     contractAddress,
     eventHandlerCallback,
   }: ISubscriberContract) {

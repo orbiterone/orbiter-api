@@ -3,15 +3,15 @@ import BigNumber from 'bignumber.js';
 import { Log } from 'web3-core';
 
 import { STAKING } from '../constant';
-import { HttpEventService } from './http-event.service';
 import { STAKING_NFT_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
+import { HttpEventAbstractService } from './http-event.abstract.service';
 
 const { NODE_TYPE_LOTTERY: typeNetwork } = process.env;
 
 @Injectable()
 export class StakeNftEventHandler
-  extends HttpEventService
+  extends HttpEventAbstractService
   implements OnModuleInit
 {
   private topics = {
@@ -25,7 +25,7 @@ export class StakeNftEventHandler
 
   async onModuleInit() {
     if (STAKING) {
-      this.addListenContract({
+      this.httpEventService.addListenContract({
         contractAddress: STAKING,
         eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
       });

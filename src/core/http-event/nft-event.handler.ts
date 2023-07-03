@@ -2,13 +2,16 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Log } from 'web3-core';
 
 import { NFT } from '../constant';
-import { HttpEventService } from './http-event.service';
 import { NFT_EVENT } from '../event/interfaces/event.interface';
+import { HttpEventAbstractService } from './http-event.abstract.service';
 
 const { NODE_TYPE_LOTTERY: typeNetwork } = process.env;
 
 @Injectable()
-export class NftEventHandler extends HttpEventService implements OnModuleInit {
+export class NftEventHandler
+  extends HttpEventAbstractService
+  implements OnModuleInit
+{
   private topics = {
     [`${this.web3.utils.sha3('Transfer(address,address,uint256)')}`]:
       NFT_EVENT.TRANSFER,
@@ -16,7 +19,7 @@ export class NftEventHandler extends HttpEventService implements OnModuleInit {
 
   async onModuleInit() {
     if (NFT) {
-      this.addListenContract({
+      this.httpEventService.addListenContract({
         contractAddress: NFT,
         eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
       });

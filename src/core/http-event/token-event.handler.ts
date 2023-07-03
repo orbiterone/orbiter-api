@@ -5,12 +5,13 @@ import { Log } from 'web3-core';
 import { HttpEventService } from './http-event.service';
 import { Decimal128 } from '../schemas/user.schema';
 import { TOKEN_EVENT } from '../event/interfaces/event.interface';
+import { HttpEventAbstractService } from './http-event.abstract.service';
 
 const { NODE_TYPE: typeNetwork } = process.env;
 
 @Injectable()
 export class TokenEventHandler
-  extends HttpEventService
+  extends HttpEventAbstractService
   implements OnModuleInit
 {
   private topics = {
@@ -22,7 +23,7 @@ export class TokenEventHandler
     const { tokens } = this.contracts;
 
     for (const token of Object.values(tokens)) {
-      this.addListenContract({
+      this.httpEventService.addListenContract({
         contractAddress: token,
         eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
       });

@@ -2,16 +2,16 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Log } from 'web3-core';
 import BigNumber from 'bignumber.js';
 
-import { HttpEventService } from './http-event.service';
 import { INCENTIVE_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
 import { INCENTIVE } from '../constant';
+import { HttpEventAbstractService } from './http-event.abstract.service';
 
 const { NODE_TYPE: typeNetwork } = process.env;
 
 @Injectable()
 export class IncentiveEventHandler
-  extends HttpEventService
+  extends HttpEventAbstractService
   implements OnModuleInit
 {
   private topics = {
@@ -24,7 +24,7 @@ export class IncentiveEventHandler
       this.incentiveOrbiterCore.getAllSupportIncentives().then((result) => {
         if (result && result.length) {
           for (const token of result) {
-            this.addListenContract({
+            this.httpEventService.addListenContract({
               contractAddress: token,
               eventHandlerCallback: (events: Log[]) =>
                 this.handleEvents(events),

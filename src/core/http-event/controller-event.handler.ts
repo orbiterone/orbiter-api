@@ -4,17 +4,17 @@ import InputDataDecoder from 'ethereum-input-data-decoder';
 
 import { COMPTROLLER } from '../constant';
 import { comptrollerAbi } from '@app/core/abi/contracts.json';
-import { HttpEventService } from './http-event.service';
 import {
   CONTROLLER_EVENT,
   FAIL_EVENT,
 } from '../event/interfaces/event.interface';
+import { HttpEventAbstractService } from './http-event.abstract.service';
 
 const { NODE_TYPE: typeNetwork } = process.env;
 
 @Injectable()
 export class ControllerEventHandler
-  extends HttpEventService
+  extends HttpEventAbstractService
   implements OnModuleInit
 {
   private topics = {
@@ -28,7 +28,7 @@ export class ControllerEventHandler
   };
 
   async onModuleInit() {
-    this.addListenContract({
+    this.httpEventService.addListenContract({
       contractAddress: COMPTROLLER,
       eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
     });

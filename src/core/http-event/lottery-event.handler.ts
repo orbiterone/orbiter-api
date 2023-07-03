@@ -3,15 +3,15 @@ import BigNumber from 'bignumber.js';
 import { Log } from 'web3-core';
 
 import { LOTTERY } from '../constant';
-import { HttpEventService } from './http-event.service';
 import { LOTTERY_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
+import { HttpEventAbstractService } from './http-event.abstract.service';
 
 const { NODE_TYPE_LOTTERY: typeNetwork } = process.env;
 
 @Injectable()
 export class LotteryEventHandler
-  extends HttpEventService
+  extends HttpEventAbstractService
   implements OnModuleInit
 {
   private topics = {
@@ -28,7 +28,7 @@ export class LotteryEventHandler
 
   async onModuleInit() {
     if (LOTTERY) {
-      this.addListenContract({
+      this.httpEventService.addListenContract({
         contractAddress: LOTTERY,
         eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
       });

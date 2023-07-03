@@ -2,15 +2,15 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import BigNumber from 'bignumber.js';
 import { Log } from 'web3-core';
 
-import { HttpEventService } from './http-event.service';
 import { MARKET_TOKEN_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
+import { HttpEventAbstractService } from './http-event.abstract.service';
 
 const { NODE_TYPE: typeNetwork, DISCORD_WEBHOOK_ORBITER } = process.env;
 
 @Injectable()
 export class MarketEventHandler
-  extends HttpEventService
+  extends HttpEventAbstractService
   implements OnModuleInit
 {
   private topics = {
@@ -30,7 +30,7 @@ export class MarketEventHandler
   async onModuleInit() {
     const { supportMarkets: markets } = this.contracts;
     for (const token of Object.values(markets)) {
-      this.addListenContract({
+      this.httpEventService.addListenContract({
         contractAddress: token,
         eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
       });
