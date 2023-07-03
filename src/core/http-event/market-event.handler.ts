@@ -1,9 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { EventData } from 'web3-eth-contract';
 import BigNumber from 'bignumber.js';
+import { Log } from 'web3-core';
 
 import { HttpEventService } from './http-event.service';
-import { HandledEventsType } from '../schemas/handled-block-number.schema';
 import { MARKET_TOKEN_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
 
@@ -14,67 +13,219 @@ export class MarketEventHandler
   extends HttpEventService
   implements OnModuleInit
 {
-  onModuleInit() {
+  private topics = {
+    [`${this.web3.utils.sha3('Mint(address,uint256,uint256)')}`]:
+      MARKET_TOKEN_EVENT.MINT,
+    [`${this.web3.utils.sha3('Borrow(address,uint256,uint256,uint256)')}`]:
+      MARKET_TOKEN_EVENT.BORROW,
+    [`${this.web3.utils.sha3(
+      'RepayBorrow(address,address,uint256,uint256,uint256)',
+    )}`]: MARKET_TOKEN_EVENT.REPAY_BORROW,
+    [`${this.web3.utils.sha3('Redeem(address,uint256,uint256)')}`]:
+      MARKET_TOKEN_EVENT.REDEEM,
+    [`${this.web3.utils.sha3('Transfer(address,address,uint256)')}`]:
+      MARKET_TOKEN_EVENT.TRANSFER,
+  };
+
+  async onModuleInit() {
     const { supportMarkets: markets } = this.contracts;
     for (const token of Object.values(markets)) {
-      const contract = this.oTokenCore.contract(token);
       this.addListenContract({
-        contract,
-        contractType: HandledEventsType.MARKET_TOKEN,
-        network: typeNetwork,
-        eventHandlerCallback: (events: EventData[]) =>
-          this.handleEvents(events),
+        contractAddress: token,
+        eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
       });
     }
   }
 
-  private async handleEvents(events: EventData[]): Promise<void> {
+  private async handleEvents(events: Log[]): Promise<void> {
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
-      const { returnValues, transactionHash: txHash, address: token } = event;
-      switch (event.event) {
-        case MARKET_TOKEN_EVENT.MINT:
-          await this.handleMintEvent({
-            ...returnValues,
-            token,
-            event: event.event,
-            txHash,
-          } as any);
-          break;
-        case MARKET_TOKEN_EVENT.BORROW:
-          await this.handleBorrowEvent({
-            ...returnValues,
-            token,
-            event: event.event,
-            txHash,
-          } as any);
-          break;
-        case MARKET_TOKEN_EVENT.REPAY_BORROW:
-          await this.handleRepayBorrowEvent({
-            ...returnValues,
-            token,
-            event: event.event,
-            txHash,
-          } as any);
-          break;
-        case MARKET_TOKEN_EVENT.REDEEM:
-          await this.handleRedeemEvent({
-            ...returnValues,
-            token,
-            event: event.event,
-            txHash,
-          } as any);
-          break;
-        case MARKET_TOKEN_EVENT.TRANSFER:
-          await this.handleTransferEvent({
-            ...returnValues,
-            token,
-            event: event.event,
-            txHash,
-          } as any);
-          break;
-        case MARKET_TOKEN_EVENT.LIQUIDATE_BORROW:
-          break;
+      const { transactionHash: txHash, topics, address: token } = event;
+      const checkEvent = this.topics[topics[0]];
+      if (checkEvent) {
+        let returnValues = null;
+        switch (checkEvent) {
+          case MARKET_TOKEN_EVENT.MINT:
+            returnValues = this.web3.eth.abi.decodeLog(
+              [
+                {
+                  indexed: false,
+                  internalType: 'address',
+                  name: 'minter',
+                  type: 'address',
+                },
+                {
+                  indexed: false,
+                  internalType: 'uint256',
+                  name: 'mintAmount',
+                  type: 'uint256',
+                },
+                {
+                  indexed: false,
+                  internalType: 'uint256',
+                  name: 'mintTokens',
+                  type: 'uint256',
+                },
+              ],
+              event.data,
+              [],
+            );
+            await this.handleMintEvent({
+              ...returnValues,
+              token,
+              event: checkEvent,
+              txHash,
+            } as any);
+            break;
+          case MARKET_TOKEN_EVENT.BORROW:
+            returnValues = this.web3.eth.abi.decodeLog(
+              [
+                {
+                  indexed: false,
+                  internalType: 'address',
+                  name: 'borrower',
+                  type: 'address',
+                },
+                {
+                  indexed: false,
+                  internalType: 'uint256',
+                  name: 'borrowAmount',
+                  type: 'uint256',
+                },
+                {
+                  indexed: false,
+                  internalType: 'uint256',
+                  name: 'accountBorrows',
+                  type: 'uint256',
+                },
+                {
+                  indexed: false,
+                  internalType: 'uint256',
+                  name: 'totalBorrows',
+                  type: 'uint256',
+                },
+              ],
+              event.data,
+              [],
+            );
+            await this.handleBorrowEvent({
+              ...returnValues,
+              token,
+              event: checkEvent,
+              txHash,
+            } as any);
+            break;
+          case MARKET_TOKEN_EVENT.REPAY_BORROW:
+            returnValues = this.web3.eth.abi.decodeLog(
+              [
+                {
+                  indexed: false,
+                  internalType: 'address',
+                  name: 'payer',
+                  type: 'address',
+                },
+                {
+                  indexed: false,
+                  internalType: 'address',
+                  name: 'borrower',
+                  type: 'address',
+                },
+                {
+                  indexed: false,
+                  internalType: 'uint256',
+                  name: 'repayAmount',
+                  type: 'uint256',
+                },
+                {
+                  indexed: false,
+                  internalType: 'uint256',
+                  name: 'accountBorrows',
+                  type: 'uint256',
+                },
+                {
+                  indexed: false,
+                  internalType: 'uint256',
+                  name: 'totalBorrows',
+                  type: 'uint256',
+                },
+              ],
+              event.data,
+              [],
+            );
+            await this.handleRepayBorrowEvent({
+              ...returnValues,
+              token,
+              event: checkEvent,
+              txHash,
+            } as any);
+            break;
+          case MARKET_TOKEN_EVENT.REDEEM:
+            returnValues = this.web3.eth.abi.decodeLog(
+              [
+                {
+                  indexed: false,
+                  internalType: 'address',
+                  name: 'redeemer',
+                  type: 'address',
+                },
+                {
+                  indexed: false,
+                  internalType: 'uint256',
+                  name: 'redeemAmount',
+                  type: 'uint256',
+                },
+                {
+                  indexed: false,
+                  internalType: 'uint256',
+                  name: 'redeemTokens',
+                  type: 'uint256',
+                },
+              ],
+              event.data,
+              [],
+            );
+            await this.handleRedeemEvent({
+              ...returnValues,
+              token,
+              event: checkEvent,
+              txHash,
+            } as any);
+            break;
+          case MARKET_TOKEN_EVENT.TRANSFER:
+            returnValues = this.web3.eth.abi.decodeLog(
+              [
+                {
+                  indexed: true,
+                  internalType: 'address',
+                  name: 'from',
+                  type: 'address',
+                },
+                {
+                  indexed: true,
+                  internalType: 'address',
+                  name: 'to',
+                  type: 'address',
+                },
+                {
+                  indexed: false,
+                  internalType: 'uint256',
+                  name: 'amount',
+                  type: 'uint256',
+                },
+              ],
+              event.data,
+              [topics[1], topics[2]],
+            );
+            await this.handleTransferEvent({
+              ...returnValues,
+              token,
+              event: checkEvent,
+              txHash,
+            } as any);
+            break;
+          case MARKET_TOKEN_EVENT.LIQUIDATE_BORROW:
+            break;
+        }
       }
     }
   }
