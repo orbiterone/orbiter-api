@@ -1,4 +1,5 @@
 import { EventData, Contract } from 'web3-eth-contract';
+import { Log } from 'web3-core';
 
 import { HandledEventsType } from '@app/core/schemas/handled-block-number.schema';
 
@@ -7,6 +8,11 @@ export class IAddListenContract {
   contractType: HandledEventsType;
   network: string;
   eventHandlerCallback: (events: EventData[]) => Promise<void>;
+}
+
+export class ISubscriberContract {
+  contractAddress: string;
+  eventHandlerCallback: (events: Log[]) => Promise<void>;
 }
 
 class DefaultEvent {
