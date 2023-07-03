@@ -61,9 +61,9 @@ export class IncentiveEventHandler
               },
             ],
             event.data,
-            [topics[1], topics[2], topics[3]],
+            [topics[1], topics[2]],
           );
-          const { from, to, amount: value } = txDecode;
+          const { from, to, value } = txDecode;
           if (from.toLowerCase() == INCENTIVE.toLowerCase()) {
             const checkUser = await this.userService.createUpdateGetUser(to);
             const result = await this.readerOrbiterCore.incentives(to);
