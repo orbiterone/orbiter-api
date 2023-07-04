@@ -29,10 +29,12 @@ export class ControllerEventHandler
   };
 
   async onModuleInit() {
-    this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
-      contractAddress: COMPTROLLER,
-      eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
-    });
+    setTimeout(() => {
+      this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+        contractAddress: COMPTROLLER,
+        eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
+      });
+    }, 5000);
   }
 
   private readonly CONTROLLER_METHOD_DIC = {

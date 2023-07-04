@@ -30,12 +30,14 @@ export class MarketEventHandler
 
   async onModuleInit() {
     const { supportMarkets: markets } = this.contracts;
-    for (const token of Object.values(markets)) {
-      this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
-        contractAddress: token,
-        eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
-      });
-    }
+    setTimeout(() => {
+      for (const token of Object.values(markets)) {
+        this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+          contractAddress: token,
+          eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
+        });
+      }
+    }, 5000);
   }
 
   private async handleEvents(events: Log[]): Promise<void> {

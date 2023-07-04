@@ -22,17 +22,19 @@ export class IncentiveEventHandler
 
   async onModuleInit() {
     if (INCENTIVE) {
-      this.incentiveOrbiterCore.getAllSupportIncentives().then((result) => {
-        if (result && result.length) {
-          for (const token of result) {
-            this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
-              contractAddress: token,
-              eventHandlerCallback: (events: Log[]) =>
-                this.handleEvents(events),
-            });
+      setTimeout(() => {
+        this.incentiveOrbiterCore.getAllSupportIncentives().then((result) => {
+          if (result && result.length) {
+            for (const token of result) {
+              this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+                contractAddress: token,
+                eventHandlerCallback: (events: Log[]) =>
+                  this.handleEvents(events),
+              });
+            }
           }
-        }
-      });
+        });
+      }, 5000);
     }
   }
 

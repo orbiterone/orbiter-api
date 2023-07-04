@@ -26,10 +26,12 @@ export class StakeNftEventHandler
 
   async onModuleInit() {
     if (STAKING) {
-      this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
-        contractAddress: STAKING,
-        eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
-      });
+      setTimeout(() => {
+        this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+          contractAddress: STAKING,
+          eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
+        });
+      }, 5000);
     }
   }
 

@@ -29,10 +29,12 @@ export class LotteryEventHandler
 
   async onModuleInit() {
     if (LOTTERY) {
-      this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
-        contractAddress: LOTTERY,
-        eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
-      });
+      setTimeout(() => {
+        this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+          contractAddress: LOTTERY,
+          eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
+        });
+      }, 5000);
     }
   }
 
