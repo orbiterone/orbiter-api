@@ -85,7 +85,7 @@ export class LotteryEventHandler
             [topics[1]],
           );
           await this.lotteryService.lotteryRepository.lotteryCreate({
-            lotteryId: returnValues.lotteryId,
+            lotteryId: +returnValues.lotteryId,
             status: 1,
             startTime: new Date(+returnValues.startTime * 1000),
             endTime: new Date(+returnValues.endTime * 1000),
@@ -117,7 +117,7 @@ export class LotteryEventHandler
           await this.lotteryService.lotteryRepository
             .getLotteryModel()
             .findOneAndUpdate(
-              { lotteryId: returnValues.lotteryId },
+              { lotteryId: +returnValues.lotteryId },
               { $set: { status: 2 } },
             );
         } else if (checkEvent == LOTTERY_EVENT.LOTTERY_TICKETS_PURCHASE) {
@@ -147,7 +147,7 @@ export class LotteryEventHandler
           );
           const lottery = await this.lotteryService.lotteryRepository
             .getLotteryModel()
-            .findOne({ lotteryId: returnValues.lotteryId });
+            .findOne({ lotteryId: +returnValues.lotteryId });
           const checkUser = await this.userService.createUpdateGetUser(
             returnValues.buyer,
           );
@@ -167,7 +167,7 @@ export class LotteryEventHandler
               txHash,
               data: {
                 lottery: {
-                  id: returnValues.lotteryId,
+                  id: +returnValues.lotteryId,
                   countTickets: returnValues.numberTickets,
                 },
               },
@@ -179,7 +179,7 @@ export class LotteryEventHandler
           await this.lotteryService.lotteryRepository
             .getLotteryModel()
             .findOneAndUpdate(
-              { lotteryId: returnValues.lotteryId },
+              { lotteryId: +returnValues.lotteryId },
               {
                 $set: {
                   amountCollectedInOrb: Decimal128(
@@ -222,7 +222,7 @@ export class LotteryEventHandler
           await this.lotteryService.lotteryRepository
             .getLotteryModel()
             .findOneAndUpdate(
-              { lotteryId: returnValues.lotteryId },
+              { lotteryId: +returnValues.lotteryId },
               {
                 $set: {
                   finalNumber: returnValues.finalNumber,
