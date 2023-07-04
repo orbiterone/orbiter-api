@@ -20,10 +20,12 @@ export class NftEventHandler
 
   async onModuleInit() {
     if (NFT) {
-      this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
-        contractAddress: NFT,
-        eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
-      });
+      setTimeout(() => {
+        this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+          contractAddress: NFT,
+          eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
+        });
+      }, 5000);
     }
   }
 

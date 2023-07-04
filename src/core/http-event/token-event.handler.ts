@@ -23,12 +23,14 @@ export class TokenEventHandler
   async onModuleInit() {
     const { tokens } = this.contracts;
 
-    for (const token of Object.values(tokens)) {
-      this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
-        contractAddress: token,
-        eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
-      });
-    }
+    setTimeout(() => {
+      for (const token of Object.values(tokens)) {
+        this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+          contractAddress: token,
+          eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
+        });
+      }
+    }, 5000);
   }
 
   private async handleEvents(events: Log[]): Promise<void> {
