@@ -1,82 +1,145 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { EventData } from 'web3-eth-contract';
+import BigNumber from 'bignumber.js';
+import { Log } from 'web3-core';
 
 import { STAKING } from '../constant';
-import { HttpEventService } from './http-event.service';
-import { HandledEventsType } from '../schemas/handled-block-number.schema';
 import { STAKING_NFT_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
-import BigNumber from 'bignumber.js';
+import { HttpEventAbstractService } from './http-event.abstract.service';
 
 const { NODE_TYPE_LOTTERY: typeNetwork } = process.env;
 
 @Injectable()
 export class StakeNftEventHandler
-  extends HttpEventService
+  extends HttpEventAbstractService
   implements OnModuleInit
 {
-  onModuleInit() {
+  private topics = {
+    [`${this.web3.utils.sha3('NftStaked(address,uint256)')}`]:
+      STAKING_NFT_EVENT.STAKING,
+    [`${this.web3.utils.sha3('NftUnstaked(address,uint256)')}`]:
+      STAKING_NFT_EVENT.UNSTAKING,
+    [`${this.web3.utils.sha3('ClaimedRewards(address,address,uint256)')}`]:
+      STAKING_NFT_EVENT.CLAIM_REWARD,
+  };
+
+  async onModuleInit() {
     if (STAKING) {
-      const contract = this.stakingNftOrbiterCore.contract();
-      this.addListenContract({
-        contract,
-        contractType: HandledEventsType.STAKING_NFT,
-        network: typeNetwork,
-        eventHandlerCallback: (events: EventData[]) =>
-          this.handleEvents(events),
+      this.httpEventService.addListenContract({
+        contractAddress: STAKING,
+        eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
       });
     }
   }
 
-  private async handleEvents(events: EventData[]): Promise<void> {
+  private async handleEvents(events: Log[]): Promise<void> {
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
-      const { returnValues, transactionHash: txHash } = event;
-      if (
-        event.event == STAKING_NFT_EVENT.STAKING ||
-        event.event == STAKING_NFT_EVENT.UNSTAKING
-      ) {
-        const { user, tokenId } = returnValues;
+      const { transactionHash: txHash, topics } = event;
+      const checkEvent = this.topics[topics[0]];
+      if (checkEvent) {
+        if (
+          checkEvent == STAKING_NFT_EVENT.STAKING ||
+          checkEvent == STAKING_NFT_EVENT.UNSTAKING
+        ) {
+          const returnValues = this.web3.eth.abi.decodeLog(
+            [
+              {
+                indexed: true,
+                internalType: 'address',
+                name: 'user',
+                type: 'address',
+              },
+              {
+                indexed: true,
+                internalType: 'uint256',
+                name: 'tokenId',
+                type: 'uint256',
+              },
+            ],
+            event.data,
+            [topics[1], topics[2]],
+          );
+          const { user, tokenId } = returnValues;
 
-        const checkUser = await this.userService.createUpdateGetUser(user);
-        await this.transactionService.transactionRepository.transactionCreate({
-          user: checkUser._id,
-          event: event.event,
-          status: true,
-          typeNetwork,
-          txHash,
-          data: {
-            tokenId,
-          },
-        });
-      }
-      if (event.event == STAKING_NFT_EVENT.CLAIM_REWARD) {
-        const { user, amount, tokenAddress = null } = returnValues;
-
-        const checkUser = await this.userService.createUpdateGetUser(user);
-        const incentive = {
-          address: '',
-          name: '',
-          symbol: '',
-        };
-        if (tokenAddress) {
-          incentive.address = tokenAddress;
-          incentive.name = await this.erc20OrbierCore.name(tokenAddress);
-          incentive.symbol = await this.erc20OrbierCore.symbol(tokenAddress);
+          const checkUser = await this.userService.createUpdateGetUser(user);
+          await this.transactionService.transactionRepository
+            .getTransactionModel()
+            .findOneAndUpdate(
+              { txHash },
+              {
+                $set: {
+                  user: checkUser._id,
+                  event: checkEvent,
+                  status: true,
+                  typeNetwork,
+                  txHash,
+                  data: {
+                    tokenId,
+                  },
+                },
+              },
+              {
+                upsert: true,
+              },
+            );
         }
-        await this.transactionService.transactionRepository.transactionCreate({
-          user: checkUser._id,
-          event: event.event,
-          status: true,
-          typeNetwork,
-          txHash,
-          data: {
-            incentive,
-            amount: Decimal128(
-              new BigNumber(amount).div(new BigNumber(10).pow(18)).toString(),
-            ),
-          },
-        });
+        if (checkEvent == STAKING_NFT_EVENT.CLAIM_REWARD) {
+          const returnValues = this.web3.eth.abi.decodeLog(
+            [
+              {
+                indexed: true,
+                internalType: 'address',
+                name: 'tokenAddress',
+                type: 'address',
+              },
+              {
+                indexed: true,
+                internalType: 'address',
+                name: 'user',
+                type: 'address',
+              },
+              {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'amount',
+                type: 'uint256',
+              },
+            ],
+            event.data,
+            [topics[1], topics[2]],
+          );
+          const { user, amount, tokenAddress = null } = returnValues;
+
+          const checkUser = await this.userService.createUpdateGetUser(user);
+          const incentive = {
+            address: '',
+            name: '',
+            symbol: '',
+          };
+          if (tokenAddress) {
+            incentive.address = tokenAddress;
+            incentive.name = await this.erc20OrbierCore.name(tokenAddress);
+            incentive.symbol = await this.erc20OrbierCore.symbol(tokenAddress);
+          }
+          await this.transactionService.transactionRepository.transactionCreate(
+            {
+              user: checkUser._id,
+              event: checkEvent,
+              status: true,
+              typeNetwork,
+              txHash,
+              data: {
+                incentive,
+                amount: Decimal128(
+                  new BigNumber(amount)
+                    .div(new BigNumber(10).pow(18))
+                    .toString(),
+                ),
+              },
+            },
+          );
+        }
       }
     }
   }

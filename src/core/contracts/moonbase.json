@@ -6,7 +6,7 @@
         "Reader": "0xcDC80acDac604B2aC7785a5E92110026d432771C",
         "Lottery": "0xE043A16A598CD79924A59354d2e8539c980987cD",
         "NFT": "0x595884fA93163F6d8e6e14748beDf6FC0f9026fb",
-        "Staking": "0xF949730A433f534E785cD10c83d26F89C81cF47e"
+        "Staking": "0xFD54B81994221247D9b7986331658BBF1AB8Fca5"
     },
     "tokens": {
         "FRAX": "0x3b18F5E81906fc771B1e0886B7B7FD50Fc4849E7",
@@ -166,6 +166,11 @@
             "color": "",
             "image": "",
             "fullName" : ""
+        },
+        "WGLMR": {
+            "color": "#BC2E75",
+            "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
+            "fullName" : "Wrapped GLMR"
         },
         "ORB": {
             "color": "#16CDfC",
