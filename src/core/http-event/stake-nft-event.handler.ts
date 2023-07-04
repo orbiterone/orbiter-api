@@ -63,18 +63,26 @@ export class StakeNftEventHandler
           const { user, tokenId } = returnValues;
 
           const checkUser = await this.userService.createUpdateGetUser(user);
-          await this.transactionService.transactionRepository.transactionCreate(
-            {
-              user: checkUser._id,
-              event: checkEvent,
-              status: true,
-              typeNetwork,
-              txHash,
-              data: {
-                tokenId,
+          await this.transactionService.transactionRepository
+            .getTransactionModel()
+            .findOneAndUpdate(
+              { txHash },
+              {
+                $set: {
+                  user: checkUser._id,
+                  event: checkEvent,
+                  status: true,
+                  typeNetwork,
+                  txHash,
+                  data: {
+                    tokenId,
+                  },
+                },
               },
-            },
-          );
+              {
+                upsert: true,
+              },
+            );
         }
         if (checkEvent == STAKING_NFT_EVENT.CLAIM_REWARD) {
           const returnValues = this.web3.eth.abi.decodeLog(
