@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { Model } from 'mongoose';
+import { Log } from 'web3-core';
 import { InjectModel } from '@nestjs/mongoose';
-import { Contract, EventData } from 'web3-eth-contract';
+import Web3 from 'web3';
 
 import { AssetService } from '@app/asset/asset.service';
 import { TransactionService } from '@app/transaction/transaction.service';
@@ -15,11 +16,13 @@ import { OTokenOrbiterCore } from '../orbiter/oToken.orbiter';
 import { LotteryOrbiterCore } from '../orbiter/lottery.orbiter';
 import { Web3Service } from '../web3/web3.service';
 import { LotteryService } from '@app/lottery/lottery.service';
-import { IAddListenContract } from './interfaces/http-event.interface';
+import {
+  HttpEventListener,
+  ISubscriberContract,
+} from './interfaces/http-event.interface';
 import {
   HandledBlockNumber,
   HandledBlockNumberDocument,
-  HandledEventsType,
 } from '../schemas/handled-block-number.schema';
 import { DiscordService } from '@app/core/discord/discord.service';
 import { IncentiveOrbiterCore } from '../orbiter/incentive.orbiter';
@@ -27,14 +30,24 @@ import { ReaderOrbiterCore } from '../orbiter/reader.orbiter';
 import { NftOrbiterCore } from '../orbiter/nft.orbiter';
 import { StakingNftOrbiterCore } from '../orbiter/staking.nft.orbiter';
 
+const { NODE_TYPE: typeNetwork } = process.env;
+
 @Injectable()
-export abstract class HttpEventService {
+export class HttpEventService {
   protected readonly contracts = {
     tokens: TOKENS,
     supportMarkets: SUPPORT_MARKET,
   };
 
+  protected web3 = new Web3();
+
+  private sync = false;
+
+  private subscribers: ISubscriberContract[] = [];
+
   private fetchEventsInterval = 5000;
+
+  private maxBatchBlockNumber = 50;
 
   private blocksRange = 500;
 
@@ -63,96 +76,104 @@ export abstract class HttpEventService {
     protected readonly discordService: DiscordService,
   ) {}
 
-  protected async addListenContract({
-    contract,
-    contractType,
-    network,
-    eventHandlerCallback,
-  }: IAddListenContract) {
-    const lastProcessedBlockNumberInDB = await this.handledBlockNumberModel
-      .findOne({ type: contractType })
-      .sort({ toBlock: -1 })
-      .limit(1);
+  onModuleInit() {
+    setTimeout(async () => {
+      const lastProcessedBlockNumberInDB = await this.handledBlockNumberModel
+        .findOne({})
+        .sort({ toBlock: -1 })
+        .limit(1);
 
-    let lastProcessedBlockNumber =
-      lastProcessedBlockNumberInDB?.toBlock ||
-      (await this.web3Service.getClient(network).eth.getBlockNumber());
+      let lastProcessedBlockNumber =
+        lastProcessedBlockNumberInDB?.toBlock ||
+        (await this.web3Service.getClient(typeNetwork).eth.getBlockNumber());
 
-    let handledCounter = 0;
-    let minDate = new Date();
+      let handledCounter = 0;
+      let minDate = new Date();
 
-    while (true) {
-      try {
-        if (handledCounter > this.autoCleanTarget) {
-          await this.cleanHandledBlockNumber(minDate, contractType);
-          handledCounter = 0;
-          minDate = new Date();
+      while (true) {
+        try {
+          if (!this.sync == true) {
+            if (handledCounter > this.autoCleanTarget) {
+              await this.cleanHandledBlockNumber(minDate);
+              handledCounter = 0;
+              minDate = new Date();
+            }
+
+            const currentBlockNumber = await this.web3Service
+              .getClient(typeNetwork)
+              .eth.getBlockNumber();
+
+            if (currentBlockNumber > lastProcessedBlockNumber) {
+              const fromBlock = lastProcessedBlockNumber + 1;
+
+              let toBlock = currentBlockNumber;
+              if (toBlock - fromBlock > this.maxBatchBlockNumber) {
+                toBlock = fromBlock + this.maxBatchBlockNumber;
+              }
+              if (fromBlock > toBlock) {
+                toBlock = fromBlock;
+              }
+              this.sync = true;
+
+              const events = await this.handleContractBlockNumbers(
+                fromBlock,
+                toBlock,
+              );
+              if (this.subscribers.length && events.length) {
+                for (const subscriber of this.subscribers) {
+                  const filterEvent = events.filter(
+                    (el) =>
+                      el.address.toLowerCase() ==
+                      subscriber.contractAddress.toLowerCase(),
+                  );
+                  if (filterEvent.length) {
+                    await subscriber.eventHandlerCallback(filterEvent);
+                  }
+                }
+              }
+
+              await this.handledBlockNumberModel.create({
+                fromBlock,
+                toBlock,
+              });
+
+              handledCounter++;
+
+              lastProcessedBlockNumber = toBlock;
+              this.sync = false;
+            }
+          }
+          await this.wait(this.fetchEventsInterval);
+        } catch (err) {
+          console.error(err);
+          this.sync = false;
+          await this.wait(this.fetchEventsInterval);
         }
-
-        const currentBlockNumber = await this.web3Service
-          .getClient(network)
-          .eth.getBlockNumber();
-
-        if (lastProcessedBlockNumber < currentBlockNumber) {
-          const events = await this.handleContractBlockNumbers(
-            lastProcessedBlockNumber + 1,
-            currentBlockNumber,
-            contract,
-          );
-
-          await eventHandlerCallback(events);
-
-          await this.handledBlockNumberModel.create({
-            fromBlock: lastProcessedBlockNumber + 1,
-            toBlock: currentBlockNumber,
-            type: contractType,
-          });
-
-          handledCounter++;
-
-          lastProcessedBlockNumber = currentBlockNumber;
-        }
-
-        await this.wait(this.fetchEventsInterval);
-      } catch (error) {
-        console.error(error);
       }
-    }
+    }, 10000);
+  }
+
+  @OnEvent(HttpEventListener.ADD_LISTEN)
+  async addListenContract({
+    contractAddress,
+    eventHandlerCallback,
+  }: ISubscriberContract) {
+    this.subscribers.push({ contractAddress, eventHandlerCallback });
   }
 
   protected async handleContractBlockNumbers(
-    lastProcessedBlockNumber: number,
-    currentBlockNumber: number,
-    contract: Contract,
-  ): Promise<EventData[]> {
-    const events: EventData[] = [];
-    let fromBlock = lastProcessedBlockNumber;
-
-    while (true) {
-      const toBlock = fromBlock + this.blocksRange;
-
-      const eventsRangeBlocks = await contract.getPastEvents('allEvents', {
-        fromBlock,
-        toBlock,
-      });
-
-      events.push(...eventsRangeBlocks);
-
-      if (currentBlockNumber <= toBlock) {
-        return events;
-      }
-
-      fromBlock = toBlock + 1;
-    }
+    fromBlock: number,
+    toBlock: number,
+  ): Promise<Log[]> {
+    return await this.web3Service.getClient(typeNetwork).eth.getPastLogs({
+      fromBlock,
+      toBlock,
+    });
   }
 
-  protected async cleanHandledBlockNumber(
-    minDate: Date,
-    type: HandledEventsType,
-  ) {
+  protected async cleanHandledBlockNumber(minDate: Date) {
     await this.handledBlockNumberModel.deleteMany({
       createdAt: { $lt: minDate },
-      type,
     });
   }
 

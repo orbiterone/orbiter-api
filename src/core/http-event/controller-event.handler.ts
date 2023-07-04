@@ -1,30 +1,40 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { EventData } from 'web3-eth-contract';
+import { Log } from 'web3-core';
 import InputDataDecoder from 'ethereum-input-data-decoder';
 
+import { COMPTROLLER } from '../constant';
 import { comptrollerAbi } from '@app/core/abi/contracts.json';
-import { HttpEventService } from './http-event.service';
-import { HandledEventsType } from '../schemas/handled-block-number.schema';
 import {
   CONTROLLER_EVENT,
   FAIL_EVENT,
 } from '../event/interfaces/event.interface';
+import { HttpEventAbstractService } from './http-event.abstract.service';
+import { HttpEventListener } from './interfaces/http-event.interface';
 
 const { NODE_TYPE: typeNetwork } = process.env;
 
 @Injectable()
 export class ControllerEventHandler
-  extends HttpEventService
+  extends HttpEventAbstractService
   implements OnModuleInit
 {
-  onModuleInit() {
-    const contract = this.controllerOrbiterCore.contract();
-    this.addListenContract({
-      contract,
-      contractType: HandledEventsType.CONTROLLER,
-      network: typeNetwork,
-      eventHandlerCallback: (events: EventData[]) => this.handleEvents(events),
-    });
+  private topics = {
+    [`${this.web3.utils.sha3('MarketEntered(address,address)')}`]:
+      CONTROLLER_EVENT.MARKET_ENTERED,
+    [`${this.web3.utils.sha3('MarketExited(address,address)')}`]:
+      CONTROLLER_EVENT.MARKET_EXITED,
+    [`${this.web3.utils.sha3('ActionPaused(address,string,bool)')}`]:
+      CONTROLLER_EVENT.ACTION_PAUSED,
+    [`${this.web3.utils.sha3('Failure(uint,uint,uint)')}`]: FAIL_EVENT.FAILURE,
+  };
+
+  async onModuleInit() {
+    setTimeout(() => {
+      this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+        contractAddress: COMPTROLLER,
+        eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
+      });
+    }, 5000);
   }
 
   private readonly CONTROLLER_METHOD_DIC = {
@@ -34,137 +44,207 @@ export class ControllerEventHandler
 
   private decoder = new InputDataDecoder(comptrollerAbi);
 
-  private async handleEvents(events: EventData[]): Promise<void> {
+  private async handleEvents(events: Log[]): Promise<void> {
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
-      const { returnValues, transactionHash: txHash } = event;
-      if (
-        [
-          CONTROLLER_EVENT.MARKET_ENTERED,
-          CONTROLLER_EVENT.MARKET_EXITED,
-        ].includes(event.event as CONTROLLER_EVENT)
-      ) {
-        const { cToken: oToken, account } = returnValues;
-        const checkUser = await this.userService.createUpdateGetUser(account);
-        const checkToken = await this.assetService.assetRepository
-          .getTokenModel()
-          .findOne({ oTokenAddress: { $regex: oToken, $options: 'i' } });
-        if (checkToken) {
-          const checkEnteredAsset =
-            await this.controllerOrbiterCore.checkMembership(account, oToken);
-
-          let collateral = false;
-
-          if (
-            (event.event == CONTROLLER_EVENT.MARKET_ENTERED &&
-              checkEnteredAsset) ||
-            (event.event == CONTROLLER_EVENT.MARKET_EXITED && checkEnteredAsset)
-          ) {
-            collateral = true;
-          }
-
-          await this.userService.userRepository
-            .getUserTokenModel()
-            .findOneAndUpdate(
+      const { transactionHash: txHash, topics } = event;
+      const checkEvent = this.topics[topics[0]];
+      if (checkEvent) {
+        if (
+          [
+            CONTROLLER_EVENT.MARKET_ENTERED,
+            CONTROLLER_EVENT.MARKET_EXITED,
+          ].includes(checkEvent as CONTROLLER_EVENT)
+        ) {
+          const txDecode = this.web3.eth.abi.decodeLog(
+            [
               {
-                user: checkUser._id,
-                token: checkToken._id,
+                indexed: false,
+                internalType: 'contract CToken',
+                name: 'cToken',
+                type: 'address',
               },
               {
-                $set: {
-                  collateral,
-                },
+                indexed: false,
+                internalType: 'address',
+                name: 'account',
+                type: 'address',
               },
-              { new: true },
-            );
-
-          await this.transactionService.transactionRepository.transactionCreate(
-            {
-              token: checkToken._id,
-              user: checkUser._id,
-              event: event.event,
-              status: true,
-              typeNetwork,
-              txHash,
-              data: {
-                oToken,
-                user: account,
-                error:
-                  event.event == CONTROLLER_EVENT.MARKET_EXITED &&
-                  checkEnteredAsset
-                    ? true
-                    : false,
-              },
-            },
+            ],
+            event.data,
+            [],
           );
-        }
-      } else if (event.event == CONTROLLER_EVENT.ACTION_PAUSED) {
-        const { cToken: oToken, action, pauseState } = returnValues;
-        const checkToken = await this.assetService.assetRepository
-          .getTokenModel()
-          .findOne({ oTokenAddress: { $regex: oToken, $options: 'i' } });
-        if (checkToken) {
-          let field = 'supplyPaused';
-          if (action == 'Borrow') {
-            field = 'borrowPaused';
-          }
 
-          await this.assetService.assetRepository
+          const { cToken: oToken, account } = txDecode;
+          const checkUser = await this.userService.createUpdateGetUser(account);
+          const checkToken = await this.assetService.assetRepository
             .getTokenModel()
-            .findOneAndUpdate(
+            .findOne({ oTokenAddress: { $regex: oToken, $options: 'i' } });
+          if (checkToken) {
+            const checkEnteredAsset =
+              await this.controllerOrbiterCore.checkMembership(account, oToken);
+
+            let collateral = false;
+
+            if (
+              (checkEvent == CONTROLLER_EVENT.MARKET_ENTERED &&
+                checkEnteredAsset) ||
+              (checkEvent == CONTROLLER_EVENT.MARKET_EXITED &&
+                checkEnteredAsset)
+            ) {
+              collateral = true;
+            }
+
+            await this.userService.userRepository
+              .getUserTokenModel()
+              .findOneAndUpdate(
+                {
+                  user: checkUser._id,
+                  token: checkToken._id,
+                },
+                {
+                  $set: {
+                    collateral,
+                  },
+                },
+                { new: true },
+              );
+
+            await this.transactionService.transactionRepository.transactionCreate(
               {
-                oTokenAddress: { $regex: oToken, $options: 'i' },
-              },
-              {
-                $set: {
-                  [`${field}`]: pauseState,
+                token: checkToken._id,
+                user: checkUser._id,
+                event: checkEvent,
+                status: true,
+                typeNetwork,
+                txHash,
+                data: {
+                  oToken,
+                  user: account,
+                  error:
+                    checkEvent == CONTROLLER_EVENT.MARKET_EXITED &&
+                    checkEnteredAsset
+                      ? true
+                      : false,
                 },
               },
             );
-        }
-      } else if (event.event == FAIL_EVENT.FAILURE) {
-        const { error } = returnValues;
-        if (error > 0) {
-          const transaction = await this.web3Service
-            .getClient()
-            .eth.getTransaction(txHash);
-          if (transaction && transaction.from && transaction.to) {
-            const { from } = transaction;
-            if (transaction.input && transaction.input.length > 2) {
-              const methodCode = transaction.input.substring(0, 10);
-              if (this.CONTROLLER_METHOD_DIC[methodCode]) {
-                const eventType = this.CONTROLLER_METHOD_DIC[methodCode];
-                const decoder = this.decoder.decodeData(transaction.input);
-                let oToken = '';
-                if (eventType == CONTROLLER_EVENT.MARKET_ENTERED) {
-                  oToken = decoder.inputs[0][0];
-                } else if (eventType == CONTROLLER_EVENT.MARKET_EXITED) {
-                  oToken = decoder.inputs[0];
-                }
-                const checkToken = await this.assetService.assetRepository
-                  .getTokenModel()
-                  .findOne({
-                    oTokenAddress: { $regex: oToken, $options: 'i' },
-                  });
-                if (checkToken) {
-                  const checkUser = await this.userService.createUpdateGetUser(
-                    from,
-                  );
-                  await this.transactionService.transactionRepository.transactionCreate(
-                    {
-                      token: checkToken._id,
-                      user: checkUser._id,
-                      event: eventType,
-                      status: true,
-                      typeNetwork,
-                      txHash,
-                      data: {
-                        oToken,
-                        user: checkUser.address,
-                        error: true,
+          }
+        } else if (checkEvent == CONTROLLER_EVENT.ACTION_PAUSED) {
+          const txDecode = this.web3.eth.abi.decodeLog(
+            [
+              {
+                indexed: false,
+                internalType: 'contract CToken',
+                name: 'cToken',
+                type: 'address',
+              },
+              {
+                indexed: false,
+                internalType: 'string',
+                name: 'action',
+                type: 'string',
+              },
+              {
+                indexed: false,
+                internalType: 'bool',
+                name: 'pauseState',
+                type: 'bool',
+              },
+            ],
+            event.data,
+            [],
+          );
+          const { cToken: oToken, action, pauseState } = txDecode;
+          const checkToken = await this.assetService.assetRepository
+            .getTokenModel()
+            .findOne({ oTokenAddress: { $regex: oToken, $options: 'i' } });
+          if (checkToken) {
+            let field = 'supplyPaused';
+            if (action == 'Borrow') {
+              field = 'borrowPaused';
+            }
+
+            await this.assetService.assetRepository
+              .getTokenModel()
+              .findOneAndUpdate(
+                {
+                  oTokenAddress: { $regex: oToken, $options: 'i' },
+                },
+                {
+                  $set: {
+                    [`${field}`]: pauseState,
+                  },
+                },
+              );
+          }
+        } else if (checkEvent == FAIL_EVENT.FAILURE) {
+          const txDecode = this.web3.eth.abi.decodeLog(
+            [
+              {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'error',
+                type: 'uint256',
+              },
+              {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'info',
+                type: 'uint256',
+              },
+              {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'detail',
+                type: 'uint256',
+              },
+            ],
+            event.data,
+            [],
+          );
+          const { error } = txDecode;
+          if (+error > 0) {
+            const transaction = await this.web3Service
+              .getClient()
+              .eth.getTransaction(txHash);
+            if (transaction && transaction.from && transaction.to) {
+              const { from } = transaction;
+              if (transaction.input && transaction.input.length > 2) {
+                const methodCode = transaction.input.substring(0, 10);
+                if (this.CONTROLLER_METHOD_DIC[methodCode]) {
+                  const eventType = this.CONTROLLER_METHOD_DIC[methodCode];
+                  const decoder = this.decoder.decodeData(transaction.input);
+                  let oToken = '';
+                  if (eventType == CONTROLLER_EVENT.MARKET_ENTERED) {
+                    oToken = decoder.inputs[0][0];
+                  } else if (eventType == CONTROLLER_EVENT.MARKET_EXITED) {
+                    oToken = decoder.inputs[0];
+                  }
+                  const checkToken = await this.assetService.assetRepository
+                    .getTokenModel()
+                    .findOne({
+                      oTokenAddress: { $regex: oToken, $options: 'i' },
+                    });
+                  if (checkToken) {
+                    const checkUser =
+                      await this.userService.createUpdateGetUser(from);
+                    await this.transactionService.transactionRepository.transactionCreate(
+                      {
+                        token: checkToken._id,
+                        user: checkUser._id,
+                        event: eventType,
+                        status: true,
+                        typeNetwork,
+                        txHash,
+                        data: {
+                          oToken,
+                          user: checkUser.address,
+                          error: true,
+                        },
                       },
-                    },
-                  );
+                    );
+                  }
                 }
               }
             }
