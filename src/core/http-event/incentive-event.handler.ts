@@ -6,6 +6,7 @@ import { INCENTIVE_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
 import { INCENTIVE } from '../constant';
 import { HttpEventAbstractService } from './http-event.abstract.service';
+import { HttpEventListener } from './interfaces/http-event.interface';
 
 const { NODE_TYPE: typeNetwork } = process.env;
 
@@ -24,7 +25,7 @@ export class IncentiveEventHandler
       this.incentiveOrbiterCore.getAllSupportIncentives().then((result) => {
         if (result && result.length) {
           for (const token of result) {
-            this.httpEventService.addListenContract({
+            this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
               contractAddress: token,
               eventHandlerCallback: (events: Log[]) =>
                 this.handleEvents(events),

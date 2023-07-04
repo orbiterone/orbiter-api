@@ -4,6 +4,7 @@ import { Log } from 'web3-core';
 import { NFT } from '../constant';
 import { NFT_EVENT } from '../event/interfaces/event.interface';
 import { HttpEventAbstractService } from './http-event.abstract.service';
+import { HttpEventListener } from './interfaces/http-event.interface';
 
 const { NODE_TYPE_LOTTERY: typeNetwork } = process.env;
 
@@ -19,7 +20,7 @@ export class NftEventHandler
 
   async onModuleInit() {
     if (NFT) {
-      this.httpEventService.addListenContract({
+      this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
         contractAddress: NFT,
         eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
       });

@@ -6,6 +6,7 @@ import { HttpEventService } from './http-event.service';
 import { Decimal128 } from '../schemas/user.schema';
 import { TOKEN_EVENT } from '../event/interfaces/event.interface';
 import { HttpEventAbstractService } from './http-event.abstract.service';
+import { HttpEventListener } from './interfaces/http-event.interface';
 
 const { NODE_TYPE: typeNetwork } = process.env;
 
@@ -23,7 +24,7 @@ export class TokenEventHandler
     const { tokens } = this.contracts;
 
     for (const token of Object.values(tokens)) {
-      this.httpEventService.addListenContract({
+      this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
         contractAddress: token,
         eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
       });

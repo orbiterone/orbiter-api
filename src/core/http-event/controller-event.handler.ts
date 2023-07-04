@@ -9,6 +9,7 @@ import {
   FAIL_EVENT,
 } from '../event/interfaces/event.interface';
 import { HttpEventAbstractService } from './http-event.abstract.service';
+import { HttpEventListener } from './interfaces/http-event.interface';
 
 const { NODE_TYPE: typeNetwork } = process.env;
 
@@ -28,7 +29,7 @@ export class ControllerEventHandler
   };
 
   async onModuleInit() {
-    this.httpEventService.addListenContract({
+    this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
       contractAddress: COMPTROLLER,
       eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
     });

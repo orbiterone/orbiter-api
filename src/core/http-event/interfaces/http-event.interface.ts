@@ -24,3 +24,7 @@ export class INftMintedEvent extends DefaultEvent {
   cost: string;
   txHash: string;
 }
+
+export enum HttpEventListener {
+  ADD_LISTEN = 'add.http-event.listen',
+}
