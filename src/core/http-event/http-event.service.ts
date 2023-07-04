@@ -143,6 +143,7 @@ export class HttpEventService {
           await this.wait(this.fetchEventsInterval);
         } catch (err) {
           console.error(err);
+          this.sync = false;
         }
       }
     }, 10000);
