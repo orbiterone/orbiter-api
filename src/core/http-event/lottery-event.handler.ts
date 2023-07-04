@@ -6,6 +6,7 @@ import { LOTTERY } from '../constant';
 import { LOTTERY_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
 import { HttpEventAbstractService } from './http-event.abstract.service';
+import { HttpEventListener } from './interfaces/http-event.interface';
 
 const { NODE_TYPE_LOTTERY: typeNetwork } = process.env;
 
@@ -28,10 +29,12 @@ export class LotteryEventHandler
 
   async onModuleInit() {
     if (LOTTERY) {
-      this.httpEventService.addListenContract({
-        contractAddress: LOTTERY,
-        eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
-      });
+      setTimeout(() => {
+        this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+          contractAddress: LOTTERY,
+          eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
+        });
+      }, 5000);
     }
   }
 
@@ -85,7 +88,7 @@ export class LotteryEventHandler
             [topics[1]],
           );
           await this.lotteryService.lotteryRepository.lotteryCreate({
-            lotteryId: returnValues.lotteryId,
+            lotteryId: +returnValues.lotteryId,
             status: 1,
             startTime: new Date(+returnValues.startTime * 1000),
             endTime: new Date(+returnValues.endTime * 1000),
@@ -117,7 +120,7 @@ export class LotteryEventHandler
           await this.lotteryService.lotteryRepository
             .getLotteryModel()
             .findOneAndUpdate(
-              { lotteryId: returnValues.lotteryId },
+              { lotteryId: +returnValues.lotteryId },
               { $set: { status: 2 } },
             );
         } else if (checkEvent == LOTTERY_EVENT.LOTTERY_TICKETS_PURCHASE) {
@@ -143,11 +146,11 @@ export class LotteryEventHandler
               },
             ],
             event.data,
-            [topics[1]],
+            [topics[1], topics[2]],
           );
           const lottery = await this.lotteryService.lotteryRepository
             .getLotteryModel()
-            .findOne({ lotteryId: returnValues.lotteryId });
+            .findOne({ lotteryId: +returnValues.lotteryId });
           const checkUser = await this.userService.createUpdateGetUser(
             returnValues.buyer,
           );
@@ -167,7 +170,7 @@ export class LotteryEventHandler
               txHash,
               data: {
                 lottery: {
-                  id: returnValues.lotteryId,
+                  id: +returnValues.lotteryId,
                   countTickets: returnValues.numberTickets,
                 },
               },
@@ -179,7 +182,7 @@ export class LotteryEventHandler
           await this.lotteryService.lotteryRepository
             .getLotteryModel()
             .findOneAndUpdate(
-              { lotteryId: returnValues.lotteryId },
+              { lotteryId: +returnValues.lotteryId },
               {
                 $set: {
                   amountCollectedInOrb: Decimal128(
@@ -222,7 +225,7 @@ export class LotteryEventHandler
           await this.lotteryService.lotteryRepository
             .getLotteryModel()
             .findOneAndUpdate(
-              { lotteryId: returnValues.lotteryId },
+              { lotteryId: +returnValues.lotteryId },
               {
                 $set: {
                   finalNumber: returnValues.finalNumber,

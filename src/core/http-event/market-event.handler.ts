@@ -5,6 +5,7 @@ import { Log } from 'web3-core';
 import { MARKET_TOKEN_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
 import { HttpEventAbstractService } from './http-event.abstract.service';
+import { HttpEventListener } from './interfaces/http-event.interface';
 
 const { NODE_TYPE: typeNetwork, DISCORD_WEBHOOK_ORBITER } = process.env;
 
@@ -29,12 +30,14 @@ export class MarketEventHandler
 
   async onModuleInit() {
     const { supportMarkets: markets } = this.contracts;
-    for (const token of Object.values(markets)) {
-      this.httpEventService.addListenContract({
-        contractAddress: token,
-        eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
-      });
-    }
+    setTimeout(() => {
+      for (const token of Object.values(markets)) {
+        this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+          contractAddress: token,
+          eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
+        });
+      }
+    }, 5000);
   }
 
   private async handleEvents(events: Log[]): Promise<void> {

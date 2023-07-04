@@ -6,6 +6,7 @@ import { STAKING } from '../constant';
 import { STAKING_NFT_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
 import { HttpEventAbstractService } from './http-event.abstract.service';
+import { HttpEventListener } from './interfaces/http-event.interface';
 
 const { NODE_TYPE_LOTTERY: typeNetwork } = process.env;
 
@@ -25,10 +26,12 @@ export class StakeNftEventHandler
 
   async onModuleInit() {
     if (STAKING) {
-      this.httpEventService.addListenContract({
-        contractAddress: STAKING,
-        eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
-      });
+      setTimeout(() => {
+        this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+          contractAddress: STAKING,
+          eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
+        });
+      }, 5000);
     }
   }
 
