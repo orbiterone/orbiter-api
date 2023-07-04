@@ -146,7 +146,7 @@ export class LotteryEventHandler
               },
             ],
             event.data,
-            [topics[1]],
+            [topics[1], topics[2]],
           );
           const lottery = await this.lotteryService.lotteryRepository
             .getLotteryModel()
