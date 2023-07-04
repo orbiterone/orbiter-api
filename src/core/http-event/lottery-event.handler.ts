@@ -6,6 +6,7 @@ import { LOTTERY } from '../constant';
 import { LOTTERY_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
 import { HttpEventAbstractService } from './http-event.abstract.service';
+import { HttpEventListener } from './interfaces/http-event.interface';
 
 const { NODE_TYPE_LOTTERY: typeNetwork } = process.env;
 
@@ -28,7 +29,7 @@ export class LotteryEventHandler
 
   async onModuleInit() {
     if (LOTTERY) {
-      this.httpEventService.addListenContract({
+      this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
         contractAddress: LOTTERY,
         eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
       });

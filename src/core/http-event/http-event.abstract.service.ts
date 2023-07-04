@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Model } from 'mongoose';
-import { Log } from 'web3-core';
 import { InjectModel } from '@nestjs/mongoose';
 import Web3 from 'web3';
 
@@ -16,7 +15,6 @@ import { OTokenOrbiterCore } from '../orbiter/oToken.orbiter';
 import { LotteryOrbiterCore } from '../orbiter/lottery.orbiter';
 import { Web3Service } from '../web3/web3.service';
 import { LotteryService } from '@app/lottery/lottery.service';
-import { ISubscriberContract } from './interfaces/http-event.interface';
 import {
   HandledBlockNumber,
   HandledBlockNumberDocument,
@@ -26,7 +24,6 @@ import { ReaderOrbiterCore } from '../orbiter/reader.orbiter';
 import { NftOrbiterCore } from '../orbiter/nft.orbiter';
 import { StakingNftOrbiterCore } from '../orbiter/staking.nft.orbiter';
 import { DiscordService } from '@app/core/discord/discord.service';
-import { HttpEventService } from './http-event.service';
 
 @Injectable()
 export abstract class HttpEventAbstractService {
@@ -58,6 +55,5 @@ export abstract class HttpEventAbstractService {
     protected readonly transactionService: TransactionService,
     protected readonly lotteryService: LotteryService,
     protected readonly discordService: DiscordService,
-    protected readonly httpEventService: HttpEventService,
   ) {}
 }

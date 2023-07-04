@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { Model } from 'mongoose';
 import { Log } from 'web3-core';
 import { InjectModel } from '@nestjs/mongoose';
@@ -16,7 +16,10 @@ import { OTokenOrbiterCore } from '../orbiter/oToken.orbiter';
 import { LotteryOrbiterCore } from '../orbiter/lottery.orbiter';
 import { Web3Service } from '../web3/web3.service';
 import { LotteryService } from '@app/lottery/lottery.service';
-import { ISubscriberContract } from './interfaces/http-event.interface';
+import {
+  HttpEventListener,
+  ISubscriberContract,
+} from './interfaces/http-event.interface';
 import {
   HandledBlockNumber,
   HandledBlockNumberDocument,
@@ -144,11 +147,13 @@ export class HttpEventService {
         } catch (err) {
           console.error(err);
           this.sync = false;
+          await this.wait(this.fetchEventsInterval);
         }
       }
     }, 10000);
   }
 
+  @OnEvent(HttpEventListener.ADD_LISTEN)
   async addListenContract({
     contractAddress,
     eventHandlerCallback,
