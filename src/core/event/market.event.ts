@@ -144,8 +144,8 @@ export class MarketEvent extends EventService {
 
         await this.discordService.sendNotification(
           DISCORD_WEBHOOK_ORBITER,
-          `1. Wallet address: ${minter}\n 2. Type: Supply\n 3. Asset name: ${
-            checkToken.name
+          `1. Wallet address: ${minter}\n 2. Type: Supply\n 3. Asset: ${
+            checkToken.symbol
           }\n 4. Amount: ${new BigNumber(mintAmount)
             .div(new BigNumber(10).pow(checkToken.tokenDecimal))
             .toString()}`,
@@ -226,8 +226,8 @@ export class MarketEvent extends EventService {
 
       await this.discordService.sendNotification(
         DISCORD_WEBHOOK_ORBITER,
-        `1. Wallet address: ${borrower}\n 2. Type: Borrow\n 3. Asset name: ${
-          checkToken.name
+        `1. Wallet address: ${borrower}\n 2. Type: Borrow\n 3. Asset: ${
+          checkToken.symbol
         }\n 4. Amount: ${new BigNumber(borrowAmount)
           .div(new BigNumber(10).pow(checkToken.tokenDecimal))
           .toString()}`,

@@ -296,8 +296,8 @@ export class MarketEventHandler
         await this.assetService.updateAssetInfo(token);
         await this.discordService.sendNotification(
           DISCORD_WEBHOOK_ORBITER,
-          `:white_check_mark: Wallet address: ${minter}\nType: Supply\nAsset name: ${
-            checkToken.name
+          `:white_check_mark: Wallet address: ${minter}\nType: Supply\nAsset: ${
+            checkToken.symbol
           }\nAmount: ${new BigNumber(mintAmount)
             .div(new BigNumber(10).pow(checkToken.tokenDecimal))
             .toString()}`,
@@ -377,8 +377,8 @@ export class MarketEventHandler
       await this.assetService.updateAssetInfo(token);
       await this.discordService.sendNotification(
         DISCORD_WEBHOOK_ORBITER,
-        `:white_check_mark: Wallet address: ${borrower}\nType: Borrow\nAsset name: ${
-          checkToken.name
+        `:white_check_mark: Wallet address: ${borrower}\nType: Borrow\nAsset: ${
+          checkToken.symbol
         }\nAmount: ${new BigNumber(borrowAmount)
           .div(new BigNumber(10).pow(checkToken.tokenDecimal))
           .toString()}`,
