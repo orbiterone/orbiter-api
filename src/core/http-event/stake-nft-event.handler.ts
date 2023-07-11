@@ -120,10 +120,12 @@ export class StakeNftEventHandler
             name: '',
             symbol: '',
           };
+          let decimal = 18;
           if (tokenAddress) {
             incentive.address = tokenAddress;
             incentive.name = await this.erc20OrbierCore.name(tokenAddress);
             incentive.symbol = await this.erc20OrbierCore.symbol(tokenAddress);
+            decimal = +(await this.erc20OrbierCore.decimals(tokenAddress));
           }
           await this.transactionService.transactionRepository.transactionCreate(
             {
@@ -136,7 +138,7 @@ export class StakeNftEventHandler
                 incentive,
                 amount: Decimal128(
                   new BigNumber(amount)
-                    .div(new BigNumber(10).pow(18))
+                    .div(new BigNumber(10).pow(decimal))
                     .toString(),
                 ),
               },
