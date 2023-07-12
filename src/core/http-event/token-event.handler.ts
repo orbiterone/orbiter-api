@@ -71,33 +71,34 @@ export class TokenEventHandler
             const transaction = await this.web3Service
               .getClient()
               .eth.getTransaction(txHash);
+            if (transaction && transaction.to) {
+              const checkToken = await this.assetService.assetRepository
+                .getTokenModel()
+                .findOne({
+                  tokenAddress: { $regex: transaction.to, $options: 'i' },
+                  oTokenAddress: { $regex: spender, $options: 'i' },
+                });
 
-            const checkToken = await this.assetService.assetRepository
-              .getTokenModel()
-              .findOne({
-                tokenAddress: { $regex: transaction.to, $options: 'i' },
-                oTokenAddress: { $regex: spender, $options: 'i' },
-              });
-
-            if (checkToken) {
-              await this.transactionService.transactionRepository.transactionCreate(
-                {
-                  token: checkToken._id,
-                  user: checkUser._id,
-                  event: checkEvent,
-                  status: true,
-                  typeNetwork,
-                  txHash,
-                  data: {
-                    user: owner,
-                    amount: Decimal128(
-                      new BigNumber(value)
-                        .div(new BigNumber(10).pow(checkToken.tokenDecimal))
-                        .toString(),
-                    ),
+              if (checkToken) {
+                await this.transactionService.transactionRepository.transactionCreate(
+                  {
+                    token: checkToken._id,
+                    user: checkUser._id,
+                    event: checkEvent,
+                    status: true,
+                    typeNetwork,
+                    txHash,
+                    data: {
+                      user: owner,
+                      amount: Decimal128(
+                        new BigNumber(value)
+                          .div(new BigNumber(10).pow(checkToken.tokenDecimal))
+                          .toString(),
+                      ),
+                    },
                   },
-                },
-              );
+                );
+              }
             }
 
             break;
