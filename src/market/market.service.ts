@@ -97,7 +97,7 @@ export class MarketService {
 
   async getOrbRate(): Promise<number> {
     const WGLMR_ORB = await this.exchangeService.getPrice('WGLMR', 'ORB', 6);
-    const WGLMR_USDC = await this.exchangeService.getPrice('WGLMR', 'USDC', 6);
+    const WGLMR_USDC = await this.exchangeService.getPrice('GLMR', 'USDC', 1);
 
     return WGLMR_USDC / WGLMR_ORB;
   }
