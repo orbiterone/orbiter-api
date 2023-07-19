@@ -768,7 +768,10 @@ export class AssetService implements OnModuleInit {
               ? Number(
                   tokens.find((obj) => obj.name === item.tokenName)?.lastPrice,
                 ) ||
-                (await this.exchangeService.getPrice(item.tokenSymbol, 'USDT'))
+                (await this.exchangeService.getPrice(
+                  item.tokenSymbol == 'WGLMR' ? 'GLMR' : item.tokenSymbol,
+                  'USDT',
+                ))
               : await this.marketService.getOrbRate(),
           image:
             item.tokenSymbol !== 'ORB'
