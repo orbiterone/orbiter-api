@@ -117,7 +117,7 @@ const SETTINGS =
     : MoonbeamSettings;
 
 const LOTTERY_SETTING = {
-  discount: 2000,
+  discount: 1920,
   rewards: [250, 375, 625, 1250, 2500, 5000],
   treasury: 2000,
 };
