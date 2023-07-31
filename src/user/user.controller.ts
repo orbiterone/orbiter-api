@@ -49,6 +49,8 @@ export class UserController {
   async getUsersAccounts(@Response() res: any, @Query() query: UserAccountDto) {
     return res
       .status(HttpStatus.OK)
-      .json(jsend.success(await this.userService.getUsersAccounts(query)));
+      .json(
+        jsend.success(await this.userService.getUsersAccounts(query, '100')),
+      );
   }
 }
