@@ -1,7 +1,6 @@
 import {
   PipeTransform,
   Injectable,
-  ArgumentMetadata,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
@@ -13,7 +12,7 @@ import { UserRepository } from '@app/user/user.repository';
 export class UserByAddressPipe implements PipeTransform<string> {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async transform(value: string, metadata: ArgumentMetadata) {
+  async transform(value: string) {
     if (!value) return null;
     if (!isEthereumAddress(value))
       throw new HttpException(

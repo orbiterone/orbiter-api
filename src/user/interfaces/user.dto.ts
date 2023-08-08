@@ -9,15 +9,15 @@ export class UserAccountDto {
   @ApiProperty()
   @IsEnum(['asc', 'desc'])
   @IsOptional()
-  order: string;
+  order?: string;
 
   @ApiProperty()
   @IsEnum(['totalSupplyUSD', 'totalBorrowUSD', 'health'])
   @IsOptional()
-  sort: string;
+  sort?: string;
 
   @ApiProperty()
   @IsEnum(['safe', 'unsafe', 'risky'])
   @IsOptional()
-  state: string;
+  state?: string;
 }
