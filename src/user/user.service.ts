@@ -455,7 +455,7 @@ export class UserService {
           },
         },
         {
-          $sort: [sort, order],
+          $sort: { [`${sort}`]: order },
         },
         {
           $facet: {
