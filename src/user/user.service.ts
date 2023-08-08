@@ -299,7 +299,7 @@ export class UserService {
     const pageItem = +query.page || 1;
     const skip = (pageItem - 1) * perPage;
     const sort = query.sort || 'health';
-    const order = query.order || 'desc';
+    const order = query.order && query.order == 'asc' ? 1 : -1;
 
     let healthMatch: any = {
       health: {
