@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Timeout } from '@nestjs/schedule';
 import { BigNumber } from 'bignumber.js';
 
 import { NODE_TYPE } from '../constant';

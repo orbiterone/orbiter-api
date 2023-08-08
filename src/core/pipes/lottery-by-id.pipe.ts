@@ -1,7 +1,6 @@
 import {
   PipeTransform,
   Injectable,
-  ArgumentMetadata,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
@@ -12,7 +11,7 @@ import { LotteryRepository } from '@app/lottery/lottery.repository';
 export class LotteryByIdPipe implements PipeTransform<string> {
   constructor(private readonly lotteryRepository: LotteryRepository) {}
 
-  async transform(value: string, metadata: ArgumentMetadata) {
+  async transform(value: string) {
     if (!value) return null;
     const lottery = await this.lotteryRepository
       .getLotteryModel()
