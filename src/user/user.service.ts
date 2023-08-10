@@ -428,7 +428,7 @@ export class UserService {
         },
         {
           $project: {
-            address: '$user.address',
+            address: 1,
             totalSupplyUSD: 1,
             totalBorrowUSD: 1,
             health: 1,
@@ -439,17 +439,26 @@ export class UserService {
                 else: {
                   $cond: {
                     if: {
-                      $gt: ['$health', Decimal128('0.98')],
-                      $lte: ['$health', Decimal128('1.25')],
+                      $and: [
+                        { $gt: ['$health', Decimal128('0.98')] },
+                        { $lte: ['$health', Decimal128('1.25')] },
+                      ],
                     },
                     then: 'risky',
                     else: {
                       $cond: {
                         if: {
-                          $gt: ['$health', Decimal128('1.25')],
-                          $lte: ['$health', Decimal128(maxHealth)],
+                          $and: [
+                            {
+                              $gt: ['$health', Decimal128('1.25')],
+                            },
+                            {
+                              $lte: ['$health', Decimal128(maxHealth)],
+                            },
+                          ],
                         },
                         then: 'safe',
+                        else: 'safe',
                       },
                     },
                   },
