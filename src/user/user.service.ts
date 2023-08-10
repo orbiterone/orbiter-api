@@ -309,17 +309,17 @@ export class UserService {
 
     if (query.state) {
       for (const state of query.state) {
-        healthMatch = [];
+        healthMatch = { $or: [] };
         switch (state) {
           case StateHealth.unsafe:
-            healthMatch.push({
+            healthMatch.$or.push({
               health: {
                 $lte: Decimal128('0.98'),
               },
             });
             break;
           case StateHealth.risky:
-            healthMatch.push({
+            healthMatch.$or.push({
               health: {
                 $gt: Decimal128('0.98'),
                 $lte: Decimal128('1.25'),
@@ -327,7 +327,7 @@ export class UserService {
             });
             break;
           case StateHealth.safe:
-            healthMatch.push({
+            healthMatch.$or.push({
               health: {
                 $gt: Decimal128('1.25'),
                 $lte: Decimal128(maxHealth),
