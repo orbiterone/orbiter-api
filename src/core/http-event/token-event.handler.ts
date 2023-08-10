@@ -2,7 +2,6 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import BigNumber from 'bignumber.js';
 import { Log } from 'web3-core';
 
-import { HttpEventService } from './http-event.service';
 import { Decimal128 } from '../schemas/user.schema';
 import { TOKEN_EVENT } from '../event/interfaces/event.interface';
 import { HttpEventAbstractService } from './http-event.abstract.service';

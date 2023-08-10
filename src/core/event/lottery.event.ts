@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Timeout } from '@nestjs/schedule';
 import BigNumber from 'bignumber.js';
 
 import { Decimal128 } from '../schemas/user.schema';
@@ -17,7 +16,7 @@ export class LotteryEvent extends EventService {
         console.log(`Lottery successfully connected.`, subscriptionId);
       })
       .on('data', async (event) => {
-        const { returnValues, transactionHash: txHash } = event;
+        const { returnValues } = event;
         if (event.event == LOTTERY_EVENT.LOTTERY_OPEN) {
           await this.lotteryService.lotteryRepository.lotteryCreate({
             lotteryId: returnValues.lotteryId,

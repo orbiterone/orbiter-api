@@ -1,7 +1,6 @@
 import {
   PipeTransform,
   Injectable,
-  ArgumentMetadata,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
@@ -14,7 +13,7 @@ import { isMongoId } from 'class-validator';
 export class TokenByIdPipe implements PipeTransform<string> {
   constructor(private readonly assetRepository: AssetRepository) {}
 
-  async transform(value: string, metadata: ArgumentMetadata) {
+  async transform(value: string) {
     if (!value) return null;
     if (!isMongoId(value))
       throw new HttpException('Token is not correct.', HttpStatus.BAD_REQUEST);
