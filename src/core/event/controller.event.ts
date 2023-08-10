@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Timeout } from '@nestjs/schedule';
 import InputDataDecoder from 'ethereum-input-data-decoder';
 
 import { comptrollerAbi } from '@app/core/abi/contracts.json';

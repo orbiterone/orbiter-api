@@ -5,6 +5,7 @@ import Web3 from 'web3';
 import { UserRepository } from './user.repository';
 import { ControllerOrbiterCore } from '@app/core/orbiter/controller.orbiter';
 import {
+  StateHealth,
   UserBalanceResponse,
   UsersAccountsResponse,
 } from '@app/user/interfaces/user.interface';
@@ -297,6 +298,34 @@ export class UserService {
   ): Promise<PaginatedDto<UsersAccountsResponse>> {
     const pageItem = +query.page || 1;
     const skip = (pageItem - 1) * perPage;
+    const sort = query.sort || 'health';
+    const order = query.order && query.order == 'asc' ? 1 : -1;
+
+    let healthMatch: any = {
+      health: {
+        $lte: Decimal128(maxHealth),
+      },
+    };
+
+    if (query.state) {
+      switch (query.state) {
+        case StateHealth.unsafe:
+          healthMatch = {
+            health: {
+              $lte: Decimal128('0.98'),
+            },
+          };
+          break;
+        case StateHealth.risky:
+          healthMatch = {
+            health: {
+              $gt: Decimal128('0.98'),
+              $lte: Decimal128('1.25'),
+            },
+          };
+          break;
+      }
+    }
 
     let result = (
       await this.userRepository.getAggregateValueUserToken([
@@ -419,13 +448,14 @@ export class UserService {
         },
         {
           $match: {
-            health: {
-              $lte: Decimal128(maxHealth),
-            },
+            ...healthMatch,
             totalBorrowUSD: {
               $gt: Decimal128('0'),
             },
           },
+        },
+        {
+          $sort: { [`${sort}`]: order },
         },
         {
           $facet: {

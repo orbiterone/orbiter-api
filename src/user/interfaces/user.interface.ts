@@ -38,3 +38,9 @@ export class UsersAccountsResponse {
   @ApiProperty()
   health: string;
 }
+
+export enum StateHealth {
+  unsafe = 'unsafe',
+  safe = 'safe',
+  risky = 'risky',
+}

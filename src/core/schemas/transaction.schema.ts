@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { Token } from './token.schema';
-import { decimalObj, User } from './user.schema';
+import { User } from './user.schema';
 
 export type TransactionDocument = Transaction & Document;
 
@@ -36,7 +36,6 @@ export const TransactionSchema = SchemaFactory.createForClass(Transaction).set(
   {
     getters: true,
     transform: (doc, ret) => {
-      console.log(ret);
       if (ret.data && ret.data.amount) {
         ret.data.amount = ret.data.amount.toString();
       }
