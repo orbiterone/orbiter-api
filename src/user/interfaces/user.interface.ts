@@ -37,6 +37,9 @@ export class UsersAccountsResponse {
 
   @ApiProperty()
   health: string;
+
+  @ApiProperty()
+  healthString: string;
 }
 
 export enum StateHealth {
