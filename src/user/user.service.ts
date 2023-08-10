@@ -301,42 +301,11 @@ export class UserService {
     const sort = query.sort || 'health';
     const order = query.order && query.order == 'asc' ? 1 : -1;
 
-    let healthMatch: any = {
+    const healthMatch: any = {
       health: {
         $lte: Decimal128(maxHealth),
       },
     };
-
-    if (query.state) {
-      for (const state of query.state) {
-        healthMatch = { $or: [] };
-        switch (state) {
-          case StateHealth.unsafe:
-            healthMatch.$or.push({
-              health: {
-                $lte: Decimal128('0.98'),
-              },
-            });
-            break;
-          case StateHealth.risky:
-            healthMatch.$or.push({
-              health: {
-                $gt: Decimal128('0.98'),
-                $lte: Decimal128('1.25'),
-              },
-            });
-            break;
-          case StateHealth.safe:
-            healthMatch.$or.push({
-              health: {
-                $gt: Decimal128('1.25'),
-                $lte: Decimal128(maxHealth),
-              },
-            });
-            break;
-        }
-      }
-    }
 
     let result = (
       await this.userRepository.getAggregateValueUserToken([
@@ -458,6 +427,38 @@ export class UserService {
           },
         },
         {
+          $project: {
+            address: '$user.address',
+            totalSupplyUSD: 1,
+            totalBorrowUSD: 1,
+            health: 1,
+            healthString: {
+              $cond: {
+                if: { $lte: ['$health', Decimal128('0.98')] },
+                then: 'unsafe',
+                else: {
+                  $cond: {
+                    if: {
+                      $gt: ['$health', Decimal128('0.98')],
+                      $lte: ['$health', Decimal128('1.25')],
+                    },
+                    then: 'risky',
+                    else: {
+                      $cond: {
+                        if: {
+                          $gt: ['$health', Decimal128('1.25')],
+                          $lte: ['$health', Decimal128(maxHealth)],
+                        },
+                        then: 'safe',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
           $match: {
             $and: [
               {
@@ -465,7 +466,9 @@ export class UserService {
                   $gt: Decimal128('0'),
                 },
               },
-              ...healthMatch,
+              query.state
+                ? { healthString: { $in: query.state } }
+                : { ...healthMatch },
             ],
           },
         },
@@ -489,6 +492,7 @@ export class UserService {
                   totalSupplyUSD: { $toString: '$totalSupplyUSD' },
                   totalBorrowUSD: { $toString: '$totalBorrowUSD' },
                   health: { $toString: '$health' },
+                  healthString: 1,
                 },
               },
             ],
