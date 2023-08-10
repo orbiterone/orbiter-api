@@ -404,8 +404,8 @@ export class UserService {
             totalBorrowUSD: 1,
             health: {
               $cond: [
-                { $eq: [{ $round: ['$totalBorrowUSD', 3] }, 0] },
-                '100',
+                { $eq: [{ $round: ['$totalBorrowUSD', 3] }, Decimal128('0')] },
+                Decimal128('100'),
                 {
                   $cond: [
                     {
@@ -413,10 +413,10 @@ export class UserService {
                         {
                           $divide: ['$totalCollateral', '$totalBorrowUSD'],
                         },
-                        100,
+                        Decimal128('100'),
                       ],
                     },
-                    '100',
+                    Decimal128('100'),
                     {
                       $divide: ['$totalCollateral', '$totalBorrowUSD'],
                     },
