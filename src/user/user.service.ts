@@ -308,22 +308,33 @@ export class UserService {
     };
 
     if (query.state) {
-      switch (query.state) {
-        case StateHealth.unsafe:
-          healthMatch = {
-            health: {
-              $lte: Decimal128('0.98'),
-            },
-          };
-          break;
-        case StateHealth.risky:
-          healthMatch = {
-            health: {
-              $gt: Decimal128('0.98'),
-              $lte: Decimal128('1.25'),
-            },
-          };
-          break;
+      for (const state of query.state) {
+        healthMatch = [];
+        switch (state) {
+          case StateHealth.unsafe:
+            healthMatch.push({
+              health: {
+                $lte: Decimal128('0.98'),
+              },
+            });
+            break;
+          case StateHealth.risky:
+            healthMatch.push({
+              health: {
+                $gt: Decimal128('0.98'),
+                $lte: Decimal128('1.25'),
+              },
+            });
+            break;
+          case StateHealth.safe:
+            healthMatch.push({
+              health: {
+                $gt: Decimal128('1.25'),
+                $lte: Decimal128(maxHealth),
+              },
+            });
+            break;
+        }
       }
     }
 
@@ -448,10 +459,14 @@ export class UserService {
         },
         {
           $match: {
-            ...healthMatch,
-            totalBorrowUSD: {
-              $gt: Decimal128('0'),
-            },
+            $and: [
+              {
+                totalBorrowUSD: {
+                  $gt: Decimal128('0'),
+                },
+              },
+              ...healthMatch,
+            ],
           },
         },
         {
