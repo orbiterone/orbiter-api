@@ -2431,7 +2431,25 @@
         "inputs": [
           {
             "internalType": "address",
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
             "name": "_comptroller",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "_lottery",
             "type": "address"
           }
         ],
@@ -2461,11 +2479,11 @@
         "inputs": [
           {
             "internalType": "address",
-            "name": "newOwner",
+            "name": "_lottery",
             "type": "address"
           }
         ],
-        "name": "transferOwnership",
+        "name": "setLottery",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -2478,6 +2496,84 @@
             "internalType": "address",
             "name": "",
             "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_account",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_lotteryId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_cursor",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_size",
+            "type": "uint256"
+          }
+        ],
+        "name": "ticketsUserByLottery",
+        "outputs": [
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "totalTickets",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "winningTickets",
+                "type": "uint256"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "ticketId",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "ticketNumber",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "claimStatus",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "winning",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bool[]",
+                    "name": "matches",
+                    "type": "bool[]"
+                  }
+                ],
+                "internalType": "struct ReaderOrbiter.TicketsInfo[]",
+                "name": "tickets",
+                "type": "tuple[]"
+              }
+            ],
+            "internalType": "struct ReaderOrbiter.LotteryInfoByAccount",
+            "name": "",
+            "type": "tuple"
           }
         ],
         "stateMutability": "view",
