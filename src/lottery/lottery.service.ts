@@ -182,8 +182,8 @@ export class LotteryService {
 
     const limit = 50;
     const pages = Math.ceil(userTickets.countTickets / limit);
-    for (let i = 1; i <= pages; i++) {
-      const cursor = i == 1 ? '0' : (i * limit).toString();
+    for (let i = 0; i <= pages; i++) {
+      const cursor = (i * limit).toString();
       const { totalTickets, winningTickets, tickets } =
         await this.readerOrbiterCore.ticketsUserByLottery(
           user.address,
@@ -193,7 +193,17 @@ export class LotteryService {
         );
       response.totalTickets += Number(totalTickets);
       response.winningTickets += Number(winningTickets);
-      response.tickets.push(tickets);
+      response.tickets.push(
+        ...tickets.map((el) => {
+          return {
+            ticketId: el.ticketId,
+            ticketNumber: el.ticketNumber,
+            claimStatus: el.claimStatus,
+            winning: el.winning,
+            matcher: el.matches,
+          };
+        }),
+      );
     }
 
     return response;
