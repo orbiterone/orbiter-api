@@ -13,12 +13,14 @@ import { Lottery, LotteryDocument } from '@app/core/schemas/lottery.schema';
 import { User } from '@app/core/schemas/user.schema';
 import { LotteryOrbiterCore } from '@app/core/orbiter/lottery.orbiter';
 import { MarketService } from '@app/market/market.service';
+import { ReaderOrbiterCore } from '@app/core/orbiter/reader.orbiter';
 
 @Injectable()
 export class LotteryService {
   constructor(
     public readonly lotteryRepository: LotteryRepository,
     private readonly lotteryOrbiterCore: LotteryOrbiterCore,
+    private readonly readerOrbiterCore: ReaderOrbiterCore,
     private readonly marketService: MarketService,
   ) {}
 
@@ -178,48 +180,20 @@ export class LotteryService {
       info: await this.infoByLottery(lottery as LotteryDocument),
     };
 
-    const {
-      0: ticketIds,
-      1: ticketNumbers,
-      2: ticketStatuses,
-    } = await this.lotteryOrbiterCore.viewUserInfoForLotteryId(
-      user.address,
-      lottery.lotteryId.toString(),
-      '0',
-      userTickets.countTickets.toString(),
-    );
-
-    if (ticketIds && ticketIds.length) {
-      response.totalTickets = ticketIds.length;
-
-      let i = 0;
-      for (const ticketId of ticketIds) {
-        response.tickets[i] = {
-          ticketId: ticketId,
-          ticketNumber: ticketNumbers[i],
-          claimStatus: ticketStatuses[i],
-          winning: false,
-          matches: [],
-        };
-        for (let bracket = 0; bracket <= 5; bracket++) {
-          const checkReward =
-            await this.lotteryOrbiterCore.viewRewardsForTicketId(
-              lottery.lotteryId.toString(),
-              ticketId.toString(),
-              bracket.toString(),
-            );
-          response.tickets[i].matches[bracket] =
-            +checkReward > 0 ? true : false;
-
-          if (+checkReward > 0) {
-            response.tickets[i].winning = true;
-          }
-        }
-        if (response.tickets[i].winning) {
-          response.winningTickets++;
-        }
-        i++;
-      }
+    const limit = 50;
+    const pages = Math.ceil(userTickets.countTickets / limit);
+    for (let i = 1; i <= pages; i++) {
+      const cursor = i == 1 ? '0' : (i * limit).toString();
+      const { totalTickets, winningTickets, tickets } =
+        await this.readerOrbiterCore.ticketsUserByLottery(
+          user.address,
+          lottery.lotteryId.toString(),
+          cursor,
+          limit.toString(),
+        );
+      response.totalTickets += Number(totalTickets);
+      response.winningTickets += Number(winningTickets);
+      response.tickets.push(tickets);
     }
 
     return response;
