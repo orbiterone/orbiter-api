@@ -182,7 +182,7 @@ export class LotteryService {
 
     const limit = 50;
     const pages = Math.ceil(userTickets.countTickets / limit);
-    for (let i = 0; i <= pages; i++) {
+    for (let i = 0; i < pages; i++) {
       const cursor = (i * limit).toString();
       const { totalTickets, winningTickets, tickets } =
         await this.readerOrbiterCore.ticketsUserByLottery(
