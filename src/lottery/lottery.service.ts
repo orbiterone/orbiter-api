@@ -34,7 +34,7 @@ export class LotteryService {
     for (const i in distributionPrizePercent) {
       const orb = prizePot.multipliedBy(distributionPrizePercent[i] / 100);
       const winningTickets = lottery.countWinnersPerBracket.length
-        ? lottery.countWinnersPerBracket[+i - 1]
+        ? +lottery.countWinnersPerBracket[+i - 1]
         : 0;
       prizeGroups.push({
         group: i,
@@ -200,7 +200,7 @@ export class LotteryService {
             ticketNumber: el.ticketNumber,
             claimStatus: el.claimStatus,
             winning: el.winning,
-            matcher: el.matches,
+            matches: el.matches,
           };
         }),
       );
