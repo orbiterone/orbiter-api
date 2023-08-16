@@ -60,4 +60,27 @@ export class ReaderOrbiterCore {
 
     return result;
   }
+
+  async ticketsUserByLottery(
+    account: string,
+    lotteryId: string,
+    cursor: string,
+    size: string,
+  ): Promise<{
+    totalTickets: string;
+    winningTickets: string;
+    tickets: {
+      ticketId: string;
+      ticketNumber: string;
+      claimStatus: boolean;
+      winning: boolean;
+      matches: boolean[];
+    }[];
+  }> {
+    const result = await this.contract()
+      .methods.ticketsUserByLottery(account, lotteryId, cursor, size)
+      .call();
+
+    return result;
+  }
 }
