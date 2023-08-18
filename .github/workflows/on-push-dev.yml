@@ -53,6 +53,8 @@ jobs:
             echo NODE_MOONRIVER_HOST="${{ secrets.NODE_MOONRIVER_HOST_DEV }}" >> .env
             echo NODE_MOONBASE_HOST="${{ secrets.NODE_MOONBASE_HOST_DEV }}" >> .env
             echo NODE_MOONBEAM_HOST="${{ secrets.NODE_MOONBEAM_HOST_DEV }}" >> .env
+            echo NODE_ZKSYNC_HOST="${{ secrets.NODE_ZKSYNC_HOST_DEV }}" >> .env
+            echo NODE_ARBITRUM_HOST="${{ secrets.NODE_ARBITRUM_HOST_DEV }}" >> .env
             echo NODE_TYPE="${{ secrets.NODE_TYPE_DEV }}" >> .env
             echo NODE_TYPE_LOTTERY="${{ secrets.NODE_TYPE_LOTTERY_DEV }}" >> .env
             echo API_KEY="${{ secrets.API_KEY_DEV }}" >> .env

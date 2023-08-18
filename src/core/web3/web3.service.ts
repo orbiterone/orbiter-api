@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import Web3 from 'web3';
-import { TransactionReceipt } from 'web3-core';
 import { Contract } from 'web3-eth-contract';
 
 const {
@@ -10,6 +9,8 @@ const {
   NODE_MOONRIVER_HOST,
   NODE_MOONBASE_HOST,
   NODE_MOONBEAM_HOST,
+  NODE_ZKSYNC_HOST,
+  NODE_ARBITRUM_HOST,
 } = process.env;
 
 const NODE_GETH_WEBSOCKET = {
@@ -18,10 +19,12 @@ const NODE_GETH_WEBSOCKET = {
   moonbeam: WSS_NODE_MOONBEAM_HOST,
 };
 
-const NODE_GETH = {
+export const NODE_GETH = {
   moonbase: NODE_MOONBASE_HOST,
   moonriver: NODE_MOONRIVER_HOST,
   moonbeam: NODE_MOONBEAM_HOST,
+  zksync: NODE_ZKSYNC_HOST,
+  arbitrum: NODE_ARBITRUM_HOST,
 };
 
 const { NODE_TYPE: typeNetwork } = process.env;

@@ -26,6 +26,7 @@ export class TokenEventHandler
       for (const token of Object.values(tokens)) {
         this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
           contractAddress: token,
+          typeNetwork,
           eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
         });
       }
