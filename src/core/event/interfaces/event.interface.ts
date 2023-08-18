@@ -47,6 +47,12 @@ export enum STAKING_NFT_EVENT {
   CLAIM_REWARD = 'ClaimedRewards',
 }
 
+export enum LP_EVENT {
+  STAKING = 'Staked',
+  UNSTAKING = 'Unstaked',
+  CLAIM_REWARD = 'Claimed',
+}
+
 export enum AVAILABLE_EVENT {
   USER_CREATE_UPDATE = 'UserCreateUpdate',
 }
