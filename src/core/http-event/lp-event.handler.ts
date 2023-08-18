@@ -24,12 +24,14 @@ export class LpEventHandler
   };
 
   async onModuleInit() {
-    if (LP) {
+    if (LP && LP.length) {
       setTimeout(() => {
-        this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
-          contractAddress: LP,
-          eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
-        });
+        for (const result of LP) {
+          this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+            contractAddress: result,
+            eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
+          });
+        }
       }, 5000);
     }
   }
