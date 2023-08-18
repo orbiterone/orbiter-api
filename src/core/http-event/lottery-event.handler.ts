@@ -32,13 +32,18 @@ export class LotteryEventHandler
       setTimeout(() => {
         this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
           contractAddress: LOTTERY,
-          eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
+          typeNetwork,
+          eventHandlerCallback: (events: Log[]) =>
+            this.handleEvents(events, typeNetwork),
         });
       }, 5000);
     }
   }
 
-  private async handleEvents(events: Log[]): Promise<void> {
+  private async handleEvents(
+    events: Log[],
+    typeNetwork: string,
+  ): Promise<void> {
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
       const { transactionHash: txHash, topics } = event;

@@ -23,6 +23,7 @@ export class NftEventHandler
       setTimeout(() => {
         this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
           contractAddress: NFT,
+          typeNetwork,
           eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
         });
       }, 5000);

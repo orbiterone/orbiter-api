@@ -34,13 +34,18 @@ export class MarketEventHandler
       for (const token of Object.values(markets)) {
         this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
           contractAddress: token,
-          eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
+          typeNetwork,
+          eventHandlerCallback: (events: Log[]) =>
+            this.handleEvents(events, typeNetwork),
         });
       }
     }, 5000);
   }
 
-  private async handleEvents(events: Log[]): Promise<void> {
+  private async handleEvents(
+    events: Log[],
+    typeNetwork: string,
+  ): Promise<void> {
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
       const { transactionHash: txHash, topics, address: token } = event;
@@ -78,6 +83,7 @@ export class MarketEventHandler
               token,
               event: checkEvent,
               txHash,
+              typeNetwork,
             } as any);
             break;
           case MARKET_TOKEN_EVENT.BORROW:
@@ -116,6 +122,7 @@ export class MarketEventHandler
               token,
               event: checkEvent,
               txHash,
+              typeNetwork,
             } as any);
             break;
           case MARKET_TOKEN_EVENT.REPAY_BORROW:
@@ -160,6 +167,7 @@ export class MarketEventHandler
               token,
               event: checkEvent,
               txHash,
+              typeNetwork,
             } as any);
             break;
           case MARKET_TOKEN_EVENT.REDEEM:
@@ -192,6 +200,7 @@ export class MarketEventHandler
               token,
               event: checkEvent,
               txHash,
+              typeNetwork,
             } as any);
             break;
           case MARKET_TOKEN_EVENT.TRANSFER:
@@ -224,6 +233,7 @@ export class MarketEventHandler
               token,
               event: checkEvent,
               txHash,
+              typeNetwork,
             } as any);
             break;
           case MARKET_TOKEN_EVENT.LIQUIDATE_BORROW:
@@ -240,6 +250,7 @@ export class MarketEventHandler
     mintTokens,
     event,
     txHash,
+    typeNetwork,
   }) {
     const checkUser = await this.userService.createUpdateGetUser(minter);
     const checkToken = await this.assetService.assetRepository
@@ -314,6 +325,7 @@ export class MarketEventHandler
     token,
     event,
     txHash,
+    typeNetwork,
   }) {
     const checkUser = await this.userService.createUpdateGetUser(borrower);
     const checkToken = await this.assetService.assetRepository
@@ -395,6 +407,7 @@ export class MarketEventHandler
     token,
     event,
     txHash,
+    typeNetwork,
   }) {
     const checkUser = await this.userService.createUpdateGetUser(borrower);
     const checkToken = await this.assetService.assetRepository
@@ -465,6 +478,7 @@ export class MarketEventHandler
     token,
     event,
     txHash,
+    typeNetwork,
   }) {
     const checkUser = await this.userService.createUpdateGetUser(redeemer);
     const checkToken = await this.assetService.assetRepository
@@ -530,6 +544,7 @@ export class MarketEventHandler
     token,
     event,
     txHash,
+    typeNetwork,
   }) {
     const checkFrom = this.web3Service.getClient().utils.isAddress(from);
     const checkTo = this.web3Service.getClient().utils.isAddress(to);
@@ -541,6 +556,7 @@ export class MarketEventHandler
         mintAmount: 0,
         event,
         txHash,
+        typeNetwork,
       });
 
       await this.assetService.wait(5000);
@@ -552,6 +568,7 @@ export class MarketEventHandler
         mintAmount: 0,
         event,
         txHash,
+        typeNetwork,
       });
     }
   }

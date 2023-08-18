@@ -21,6 +21,9 @@ export class HandledBlockNumber {
   @Prop({ required: true })
   toBlock: number;
 
+  @Prop({ required: true })
+  typeNetwork: string;
+
   @Prop({ default: Date.now })
   createdAt?: Date;
 

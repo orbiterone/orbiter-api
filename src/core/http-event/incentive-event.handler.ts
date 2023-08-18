@@ -28,8 +28,9 @@ export class IncentiveEventHandler
             for (const token of result) {
               this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
                 contractAddress: token,
+                typeNetwork,
                 eventHandlerCallback: (events: Log[]) =>
-                  this.handleEvents(events),
+                  this.handleEvents(events, typeNetwork),
               });
             }
           }
@@ -38,7 +39,10 @@ export class IncentiveEventHandler
     }
   }
 
-  private async handleEvents(events: Log[]): Promise<void> {
+  private async handleEvents(
+    events: Log[],
+    typeNetwork: string,
+  ): Promise<void> {
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
       const { transactionHash: txHash, topics, address: token } = event;
