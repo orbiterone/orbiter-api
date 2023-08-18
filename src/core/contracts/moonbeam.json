@@ -16,6 +16,7 @@
         },
         "OrbConverter": "0x780B7afD9C222202E4bCeeeDa59888c52f4BBF06"
     },
+    "supportNetworks": ["moonbeam", "zksync", "arbitrum"],
     "tokens": {
         "xcDOT": "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080",
         "xcUSDT": "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d",

@@ -24,19 +24,30 @@ export class LpEventHandler
   };
 
   async onModuleInit() {
-    if (LP && LP.length) {
+    if (LP) {
+      const networks = Object.keys(LP);
       setTimeout(() => {
-        for (const result of LP) {
-          this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
-            contractAddress: result,
-            eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
-          });
+        for (const network of networks) {
+          const lps = LP[network];
+          if (lps && lps.length > 0) {
+            for (const result of lps) {
+              this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+                contractAddress: result,
+                typeNetwork: network,
+                eventHandlerCallback: (events: Log[]) =>
+                  this.handleEvents(events, network),
+              });
+            }
+          }
         }
       }, 5000);
     }
   }
 
-  private async handleEvents(events: Log[]): Promise<void> {
+  private async handleEvents(
+    events: Log[],
+    typeNetwork: string,
+  ): Promise<void> {
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
       const { transactionHash: txHash, topics } = event;

@@ -1,4 +1,5 @@
 import {
+  supportNetworks as MoonbaseSupportNetworks,
   contracts as MoonbaseContracts,
   defaultMarket as MoonbaseDefaultMarket,
   supportMarkets as MoonbaseSupportMarket,
@@ -6,6 +7,7 @@ import {
   settings as MoonbaseSettings,
 } from '@app/core/contracts/moonbase.json';
 import {
+  supportNetworks as MoonriverSupportNetworks,
   contracts as MoonriverContracts,
   defaultMarket as MoonriverDefaultMarket,
   supportMarkets as MoonriverSupportMarket,
@@ -13,6 +15,7 @@ import {
   settings as MoonriverSettings,
 } from '@app/core/contracts/moonriver.json';
 import {
+  supportNetworks as MoonbeamSupportNetworks,
   contracts as MoonbeamContracts,
   defaultMarket as MoonbeamDefaultMarket,
   supportMarkets as MoonbeamSupportMarket,
@@ -102,6 +105,13 @@ const LP =
     ? MoonriverContracts.LP
     : MoonbeamContracts.LP;
 
+const SUPPORT_NETWORKS =
+  NODE_TYPE == 'moonbase'
+    ? MoonbaseSupportNetworks
+    : NODE_TYPE == 'moonriver'
+    ? MoonriverSupportNetworks
+    : MoonbeamSupportNetworks;
+
 const DEFAULT_TOKEN =
   NODE_TYPE == 'moonbase'
     ? MoonbaseDefaultMarket
@@ -146,6 +156,7 @@ export {
   INCENTIVE,
   DEFAULT_TOKEN,
   SUPPORT_MARKET,
+  SUPPORT_NETWORKS,
   TOKENS,
   NODE_TYPE,
   SETTINGS,

@@ -19,6 +19,7 @@
         },
         "OrbConverter": "0xf0b426AAf13a93afD13890a6b9804a1A26eCB84a"
     },
+    "supportNetworks": ["moonbase", "zksync", "arbitrum"],
     "tokens": {
         "FRAX": "0x3b18F5E81906fc771B1e0886B7B7FD50Fc4849E7",
         "BUSD": "0xb489C860a76c9f4a0fCCbbc399FAa8E6E860192c",

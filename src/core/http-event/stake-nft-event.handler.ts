@@ -29,6 +29,7 @@ export class StakeNftEventHandler
       setTimeout(() => {
         this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
           contractAddress: STAKING,
+          typeNetwork,
           eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
         });
       }, 5000);

@@ -19,6 +19,7 @@
         },
         "OrbConverter": ""
     },
+    "supportNetworks": ["moonriver", "zksync", "arbitrum"],
     "tokens": {
         "ETH": "0x639A647fbe20b6c8ac19E48E2de44ea792c62c5C",
         "BNB": "0x2bF9b864cdc97b08B6D79ad4663e71B8aB65c45c",
