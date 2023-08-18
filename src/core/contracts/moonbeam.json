@@ -6,7 +6,8 @@
         "Reader": "0x114430Ff96083C664f273837d961D207Cf607616",
         "Lottery": "0xAA0c247E385F2995Fb0d88921470bFb450729A13",
         "NFT": "0x6CC6C17d25bd3646b3710D6188d0467f5D398642",
-        "Staking": "0xb71bCC1fE5e9020B9EbaCe1C1D299b317CBAAB6C"
+        "Staking": "0xb71bCC1fE5e9020B9EbaCe1C1D299b317CBAAB6C",
+        "LP": ""
     },
     "tokens": {
         "xcDOT": "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080",

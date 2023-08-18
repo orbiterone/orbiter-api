@@ -6,7 +6,8 @@
         "Reader": "0x4D7d33CD41a49Bf875Cf207B3f43004d74d721aa",
         "Lottery": "0x79f8d5419D180Be88ebdD2664B651aDeaA0F7FB5",
         "NFT": "",
-        "Staking": ""
+        "Staking": "",
+        "LP": ""
     },
     "tokens": {
         "ETH": "0x639A647fbe20b6c8ac19E48E2de44ea792c62c5C",

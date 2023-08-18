@@ -88,6 +88,13 @@ const STAKING =
     ? MoonriverContracts.Staking
     : MoonbeamContracts.Staking;
 
+const LP =
+  NODE_TYPE == 'moonbase'
+    ? MoonbaseContracts.LP
+    : NODE_TYPE == 'moonriver'
+    ? MoonriverContracts.LP
+    : MoonbeamContracts.LP;
+
 const DEFAULT_TOKEN =
   NODE_TYPE == 'moonbase'
     ? MoonbaseDefaultMarket
@@ -146,4 +153,5 @@ export {
   PRICE_FEED_UPDATE,
   NFT,
   STAKING,
+  LP,
 };

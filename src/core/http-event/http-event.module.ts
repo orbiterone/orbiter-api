@@ -20,6 +20,7 @@ import { IncentiveEventHandler } from './incentive-event.handler';
 import { NftEventHandler } from './nft-event.handler';
 import { StakeNftEventHandler } from './stake-nft-event.handler';
 import { HttpEventService } from './http-event.service';
+import { LpEventHandler } from './lp-event.handler';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { HttpEventService } from './http-event.service';
     NftEventHandler,
     StakeNftEventHandler,
     HttpEventService,
+    LpEventHandler,
   ],
   exports: [
     ControllerEventHandler,
@@ -52,6 +54,7 @@ import { HttpEventService } from './http-event.service';
     NftEventHandler,
     StakeNftEventHandler,
     HttpEventService,
+    LpEventHandler,
   ],
 })
 export class HttpEventModule {}
