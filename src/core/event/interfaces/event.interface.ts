@@ -51,6 +51,7 @@ export enum LP_EVENT {
   STAKING = 'Staked',
   UNSTAKING = 'Unstaked',
   CLAIM_REWARD = 'Claimed',
+  UNSTAKE_REQUEST = 'UnstakeRequested',
 }
 
 export enum AVAILABLE_EVENT {

@@ -45,6 +45,7 @@ export class TransactionRepository extends BaseRepository {
         txHash: 1,
         event: 1,
         status: 1,
+        typeNetwork: 1,
         data: {
           amount: { $toString: '$data.amount' },
           error: '$data.error',
