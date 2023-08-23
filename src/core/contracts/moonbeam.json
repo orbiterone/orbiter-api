@@ -67,7 +67,7 @@
         },
         "WETH": {
             "color": "#939DC2",
-            "image": "https://assets.orbiter.one/images/tokens/ETH.svg",
+            "image": "https://assets.orbiter.one/images/tokens/eth.svg",
             "fullName" : "Ethereum",
             "symbol": "WETH.wh"
         },
@@ -79,12 +79,12 @@
         },
         "GLMR": {
             "color": "#BC2E75",
-            "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
+            "image": "https://assets.orbiter.one/images/tokens/glmr.svg",
             "fullName" : "Glimmer"
         },
         "WGLMR": {
             "color": "#BC2E75",
-            "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
+            "image": "https://assets.orbiter.one/images/tokens/glmr.svg",
             "fullName" : "Wrapped GLMR"
         },
         "d2O": {
