@@ -25,6 +25,9 @@ export class TransactionResponse {
   txHash: string;
 
   @ApiProperty()
+  typeNetwork: string;
+
+  @ApiProperty()
   event: string;
 
   @ApiProperty()
