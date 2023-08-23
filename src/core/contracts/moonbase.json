@@ -91,7 +91,7 @@
         },
         "ETH": {
             "color": "#939DC2",
-            "image": "https://assets.orbiter.one/images/tokens/ETH.svg",
+            "image": "https://assets.orbiter.one/images/tokens/eth.svg",
             "fullName" : "Ethereum"
         },
         "ETH_LP": {
@@ -187,7 +187,7 @@
         },
         "WGLMR": {
             "color": "#BC2E75",
-            "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
+            "image": "https://assets.orbiter.one/images/tokens/glmr.svg",
             "fullName" : "Wrapped GLMR"
         },
         "GLMR_LP": {
