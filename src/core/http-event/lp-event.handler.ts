@@ -55,7 +55,8 @@ export class LpEventHandler
       if (checkEvent) {
         if (
           checkEvent == LP_EVENT.STAKING ||
-          checkEvent == LP_EVENT.UNSTAKING
+          checkEvent == LP_EVENT.UNSTAKING ||
+          checkEvent == LP_EVENT.UNSTAKE_REQUEST
         ) {
           const returnValues = this.web3.eth.abi.decodeLog(
             [

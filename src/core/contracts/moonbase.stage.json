@@ -8,9 +8,9 @@
         "NFT": "0x595884fA93163F6d8e6e14748beDf6FC0f9026fb",
         "Staking": "0xf095c44a271aD40757698E55D0012C2aF314624e",
         "LP": {
-            "moonbase": ["0x744D17CA4E0856C78656eE9cD30D40a4D2B65257", "0x9b42C58e4df8Fe313AE0CdD115E2098aB94175fF", "0xA22E3B41804a7FD1913632164054669f93453Eef"],
-            "zksync": ["0x057d84FE5d8E5f50F642d2c1bc88E4644F14b597", "0xe1329503d128555354f5B730900EA08C2A3264b9", "0x042450F7257d256b2E5233d00A80EAFb5102B2Aa"],
-            "arbitrum": ["0xD65B2a03d1E901Dd8dC86827b87a1fC411E21Da2", "0x1AfE3a492178984836B94A0a574a217DECbAE935", "0xA070C438e97471F8e01531Be9ceC0e322A17Df63"]
+            "moonbase": ["0x9b42C58e4df8Fe313AE0CdD115E2098aB94175fF", "0xF11D2917dC26E30B1866811A6C7E44AbA1ff7c9e", "0x538DE60dBc80D77AE2744B38A533f285b0121a77"],
+            "zksync": ["0x0251e13Cd0f029E007db344F24A60fB938B61CfB", "0x613275Bb380963a5b150e336d79F90BAedaA9265", "0x042450F7257d256b2E5233d00A80EAFb5102B2Aa"],
+            "arbitrum": ["0x0D69e4aCebc5a439Be48be437e67729F6752540a", "0x6E5e76c033BdD3e4F56b6211C4414c30f617c273", "0xA070C438e97471F8e01531Be9ceC0e322A17Df63"]
         }
     },
     "supportNetworks": ["moonbase", "zksync", "arbitrum"],
@@ -84,7 +84,7 @@
         },
         "ETH": {
             "color": "#939DC2",
-            "image": "https://assets.orbiter.one/images/tokens/ETH.svg",
+            "image": "https://assets.orbiter.one/images/tokens/eth.svg",
             "fullName" : "Ethereum"
         },
         "BNB": {
@@ -169,9 +169,14 @@
             "symbol": "d2o"
         },
         "GLMR": {
-            "color": "",
-            "image": "",
-            "fullName" : ""
+            "color": "#BC2E75",
+            "image": "https://assets.orbiter.one/images/tokens/glmr.svg",
+            "fullName" : "GLMR"
+        },
+        "WGLMR": {
+            "color": "#BC2E75",
+            "image": "https://assets.orbiter.one/images/tokens/glmr.svg",
+            "fullName" : "Wrapped GLMR"
         }
     }
 }
