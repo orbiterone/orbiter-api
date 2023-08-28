@@ -77,6 +77,11 @@
         },
         "ETH": {
             "color": "#939DC2",
+            "image": "https://assets.orbiter.one/images/tokens/ETH.svg",
+            "fullName" : "Ethereum"
+        },
+        "ETH_LP": {
+            "color": "#939DC2",
             "image": "https://assets.orbiter.one/images/tokens/eth.svg",
             "fullName" : "Ethereum"
         },
