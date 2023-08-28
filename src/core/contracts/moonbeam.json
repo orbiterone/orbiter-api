@@ -59,9 +59,14 @@
         },
         "WETH": {
             "color": "#939DC2",
-            "image": "https://assets.orbiter.one/images/tokens/eth.svg",
+            "image": "https://assets.orbiter.one/images/tokens/ETH.svg",
             "fullName" : "Ethereum",
             "symbol": "WETH.wh"
+        },
+        "ETH_LP": {
+            "color": "#939DC2",
+            "image": "https://assets.orbiter.one/images/tokens/eth.svg",
+            "fullName" : "Ethereum"
         },
         "USDC": {
             "color": "#5493F7",
@@ -71,12 +76,17 @@
         },
         "GLMR": {
             "color": "#BC2E75",
+            "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
+            "fullName" : "Glimmer"
+        },
+        "GLMR_LP": {
+            "color": "#BC2E75",
             "image": "https://assets.orbiter.one/images/tokens/glmr.svg",
             "fullName" : "Glimmer"
         },
         "WGLMR": {
             "color": "#BC2E75",
-            "image": "https://assets.orbiter.one/images/tokens/glmr.svg",
+            "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
             "fullName" : "Wrapped GLMR"
         },
         "d2O": {
