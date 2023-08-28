@@ -19,6 +19,8 @@ export class LpEventHandler
     [`${this.web3.utils.sha3('Staked(address,uint256)')}`]: LP_EVENT.STAKING,
     [`${this.web3.utils.sha3('Unstaked(address,uint256)')}`]:
       LP_EVENT.UNSTAKING,
+    [`${this.web3.utils.sha3('UnstakeRequested(address,uint256)')}`]:
+      LP_EVENT.UNSTAKE_REQUEST,
     [`${this.web3.utils.sha3('Claimed(address,address,uint256)')}`]:
       LP_EVENT.CLAIM_REWARD,
   };
