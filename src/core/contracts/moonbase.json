@@ -99,11 +99,6 @@
             "image": "https://assets.orbiter.one/images/tokens/eth.svg",
             "fullName" : "Ethereum"
         },
-        "ETH_LP": {
-            "color": "#939DC2",
-            "image": "https://assets.orbiter.one/images/tokens/eth.svg",
-            "fullName" : "Ethereum"
-        },
         "BNB": {
             "color": "#FBC028",
             "image": "https://assets.orbiter.one/images/tokens/BNB.svg",
@@ -191,11 +186,6 @@
             "fullName" : "GLMR"
         },
         "WGLMR": {
-            "color": "#BC2E75",
-            "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
-            "fullName" : "Wrapped GLMR"
-        },
-        "GLMR_LP": {
             "color": "#BC2E75",
             "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
             "fullName" : "Wrapped GLMR"

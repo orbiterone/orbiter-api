@@ -91,11 +91,6 @@
             "image": "https://assets.orbiter.one/images/tokens/glmr.svg",
             "fullName" : "Glimmer"
         },
-        "GLMR_LP": {
-            "color": "#BC2E75",
-            "image": "https://assets.orbiter.one/images/tokens/glmr.svg",
-            "fullName" : "Glimmer"
-        },
         "WGLMR": {
             "color": "#BC2E75",
             "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
