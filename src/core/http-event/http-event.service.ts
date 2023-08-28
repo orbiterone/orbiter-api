@@ -30,8 +30,6 @@ import { NftOrbiterCore } from '../orbiter/nft.orbiter';
 import { StakingNftOrbiterCore } from '../orbiter/staking.nft.orbiter';
 import { DiscordService } from '@app/core/discord/discord.service';
 
-const { NODE_TYPE: typeNetwork } = process.env;
-
 @Injectable()
 export class HttpEventService {
   protected readonly contracts = {

@@ -2,13 +2,11 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import BigNumber from 'bignumber.js';
 import { Log } from 'web3-core';
 
-import { LP } from '../constant';
-import { LP_EVENT } from '../event/interfaces/event.interface';
+import { FP, LP } from '../constant';
+import { LP_EVENT, TOKEN_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
 import { HttpEventAbstractService } from './http-event.abstract.service';
 import { HttpEventListener } from './interfaces/http-event.interface';
-
-const { NODE_TYPE_LOTTERY: typeNetwork } = process.env;
 
 @Injectable()
 export class LpEventHandler
@@ -23,16 +21,19 @@ export class LpEventHandler
       LP_EVENT.UNSTAKE_REQUEST,
     [`${this.web3.utils.sha3('Claimed(address,address,uint256)')}`]:
       LP_EVENT.CLAIM_REWARD,
+    [`${this.web3.utils.sha3('Approval(address,address,uint256)')}`]:
+      TOKEN_EVENT.APPROVAL,
   };
 
   async onModuleInit() {
-    if (LP) {
-      const networks = Object.keys(LP);
+    if (FP && LP) {
+      const fpNetworks = Object.keys(FP);
       setTimeout(() => {
-        for (const network of networks) {
-          const lps = LP[network];
-          if (lps && lps.length > 0) {
-            for (const result of lps) {
+        for (const network of fpNetworks) {
+          const fps = FP[network];
+          const lp = LP[network];
+          if (fps && fps.length > 0) {
+            for (const result of fps) {
               this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
                 contractAddress: result,
                 typeNetwork: network,
@@ -41,6 +42,12 @@ export class LpEventHandler
               });
             }
           }
+          this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+            contractAddress: lp,
+            typeNetwork: network,
+            eventHandlerCallback: (events: Log[]) =>
+              this.handleEvents(events, network),
+          });
         }
       }, 5000);
     }
@@ -52,7 +59,11 @@ export class LpEventHandler
   ): Promise<void> {
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
-      const { transactionHash: txHash, topics } = event;
+      const {
+        transactionHash: txHash,
+        topics,
+        address: contractAddress,
+      } = event;
       const checkEvent = this.topics[topics[0]];
       if (checkEvent) {
         if (
@@ -142,9 +153,18 @@ export class LpEventHandler
           let decimal = 18;
           if (asset) {
             incentive.address = asset;
-            incentive.name = await this.erc20OrbierCore.name(asset);
-            incentive.symbol = await this.erc20OrbierCore.symbol(asset);
-            decimal = +(await this.erc20OrbierCore.decimals(asset));
+            incentive.name = await this.erc20OrbierCore.name(
+              asset,
+              typeNetwork,
+            );
+            incentive.symbol = await this.erc20OrbierCore.symbol(
+              asset,
+              typeNetwork,
+            );
+            decimal = +(await this.erc20OrbierCore.decimals(
+              asset,
+              typeNetwork,
+            ));
           }
           await this.transactionService.transactionRepository.transactionCreate(
             {
@@ -157,6 +177,58 @@ export class LpEventHandler
                 incentive,
                 amount: Decimal128(
                   new BigNumber(amount)
+                    .div(new BigNumber(10).pow(decimal))
+                    .toString(),
+                ),
+              },
+            },
+          );
+        }
+        if (checkEvent == TOKEN_EVENT.APPROVAL) {
+          const returnValues = this.web3.eth.abi.decodeLog(
+            [
+              {
+                indexed: true,
+                internalType: 'address',
+                name: 'owner',
+                type: 'address',
+              },
+              {
+                indexed: true,
+                internalType: 'address',
+                name: 'spender',
+                type: 'address',
+              },
+              {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'value',
+                type: 'uint256',
+              },
+            ],
+            event.data,
+            [topics[1], topics[2]],
+          );
+          const { owner, value } = returnValues;
+          if (+value == 0) return;
+          const checkUser = await this.userService.createUpdateGetUser(owner);
+
+          const decimal = +(await this.erc20OrbierCore.decimals(
+            contractAddress,
+            typeNetwork,
+          ));
+
+          await this.transactionService.transactionRepository.transactionCreate(
+            {
+              user: checkUser._id,
+              event: checkEvent,
+              status: true,
+              typeNetwork,
+              txHash,
+              data: {
+                user: owner,
+                amount: Decimal128(
+                  new BigNumber(value)
                     .div(new BigNumber(10).pow(decimal))
                     .toString(),
                 ),
