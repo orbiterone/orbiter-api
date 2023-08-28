@@ -7,10 +7,15 @@
         "Lottery": "0x79f8d5419D180Be88ebdD2664B651aDeaA0F7FB5",
         "NFT": "",
         "Staking": "",
-        "LP": {
+        "FP": {
             "moonriver": [],
             "zksync": [],
             "arbitrum": []
+        },
+        "LP": {
+            "moonriver": "",
+            "zksync": "",
+            "arbitrum": ""
         }
     },
     "supportNetworks": ["moonriver", "zksync", "arbitrum"],
