@@ -221,7 +221,7 @@ export class LpEventHandler
           await this.transactionService.transactionRepository.transactionCreate(
             {
               user: checkUser._id,
-              event: checkEvent,
+              event: `LP_${checkEvent}`,
               status: true,
               typeNetwork,
               txHash,
