@@ -97,6 +97,13 @@ const ORB_CONVERTER =
     : NODE_TYPE == 'moonriver'
     ? MoonriverContracts.OrbConverter
     : MoonbeamContracts.OrbConverter;
+    
+const FP =
+  NODE_TYPE == 'moonbase'
+    ? MoonbaseContracts.FP
+    : NODE_TYPE == 'moonriver'
+    ? MoonriverContracts.FP
+    : MoonbeamContracts.FP;
 
 const LP =
   NODE_TYPE == 'moonbase'
@@ -171,6 +178,10 @@ export {
   PRICE_FEED_UPDATE,
   NFT,
   STAKING,
+<<<<<<< HEAD
   ORB_CONVERTER,
+=======
+  FP,
+>>>>>>> 55810d2 (FIX | FIX get decimals and add LP Approve #OB-890)
   LP,
 };

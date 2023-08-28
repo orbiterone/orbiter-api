@@ -30,8 +30,6 @@ import { ReaderOrbiterCore } from '../orbiter/reader.orbiter';
 import { NftOrbiterCore } from '../orbiter/nft.orbiter';
 import { StakingNftOrbiterCore } from '../orbiter/staking.nft.orbiter';
 
-const { NODE_TYPE: typeNetwork } = process.env;
-
 @Injectable()
 export class HttpEventService {
   protected readonly contracts = {
