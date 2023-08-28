@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import BigNumber from 'bignumber.js';
 import { Log } from 'web3-core';
 
-import { FP, LP } from '../constant';
+import { FP, LP, SETTINGS } from '../constant';
 import { LP_EVENT, TOKEN_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
 import { HttpEventAbstractService } from './http-event.abstract.service';
@@ -17,6 +17,8 @@ export class LpEventHandler
     [`${this.web3.utils.sha3('Staked(address,uint256)')}`]: LP_EVENT.STAKING,
     [`${this.web3.utils.sha3('Unstaked(address,uint256)')}`]:
       LP_EVENT.UNSTAKING,
+    [`${this.web3.utils.sha3('ClaimedLpTokens(address,uint256)')}`]:
+      LP_EVENT.CLAIM_LP_TOKEN,
     [`${this.web3.utils.sha3('UnstakeRequested(address,uint256)')}`]:
       LP_EVENT.UNSTAKE_REQUEST,
     [`${this.web3.utils.sha3('Claimed(address,address,uint256)')}`]:
@@ -69,7 +71,8 @@ export class LpEventHandler
         if (
           checkEvent == LP_EVENT.STAKING ||
           checkEvent == LP_EVENT.UNSTAKING ||
-          checkEvent == LP_EVENT.UNSTAKE_REQUEST
+          checkEvent == LP_EVENT.UNSTAKE_REQUEST ||
+          checkEvent == LP_EVENT.CLAIM_LP_TOKEN
         ) {
           const returnValues = this.web3.eth.abi.decodeLog(
             [
@@ -109,6 +112,15 @@ export class LpEventHandler
                         .div(new BigNumber(10).pow(18))
                         .toString(),
                     ),
+                    incentive: {
+                      address: '',
+                      name: 'LP_TOKEN',
+                      symbol: 'LP_TOKEN',
+                      image:
+                        typeNetwork == 'moonbeam' || typeNetwork == 'moonbase'
+                          ? SETTINGS.GLMR_LP
+                          : SETTINGS.ETH_LP,
+                    },
                   },
                 },
               },
@@ -211,6 +223,10 @@ export class LpEventHandler
           );
           const { owner, value } = returnValues;
           if (+value == 0) return;
+          const transaction = await this.web3Service
+            .getClient(typeNetwork)
+            .eth.getTransactionReceipt(txHash);
+          if (transaction.logs && transaction.logs.length > 1) return;
           const checkUser = await this.userService.createUpdateGetUser(owner);
 
           const decimal = +(await this.erc20OrbierCore.decimals(
@@ -232,6 +248,15 @@ export class LpEventHandler
                     .div(new BigNumber(10).pow(decimal))
                     .toString(),
                 ),
+                incentive: {
+                  address: '',
+                  name: 'LP_TOKEN',
+                  symbol: 'LP_TOKEN',
+                  image:
+                    typeNetwork == 'moonbeam' || typeNetwork == 'moonbase'
+                      ? SETTINGS.GLMR_LP
+                      : SETTINGS.ETH_LP,
+                },
               },
             },
           );
