@@ -191,7 +191,7 @@
         },
         "GLMR_LP": {
             "color": "#BC2E75",
-            "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
+            "image": "https://assets.orbiter.one/images/tokens/glmr.svg",
             "fullName" : "Wrapped GLMR"
         },
         "ORB": {
