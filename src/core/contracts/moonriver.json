@@ -152,6 +152,11 @@
             "image": "",
             "fullName" : ""
         },
+        "GLMR_LP": {
+            "color": "",
+            "image": "",
+            "fullName" : ""
+        },
         "ORB": {
             "color": "#16CDfC",
             "image": "https://assets.orbiter.one/images/tokens/ORB.svg",
