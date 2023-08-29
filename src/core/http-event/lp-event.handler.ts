@@ -225,8 +225,9 @@ export class LpEventHandler
           if (+value == 0) continue;
           const transaction = await this.web3Service
             .getClient(typeNetwork)
-            .eth.getTransactionReceipt(txHash);
-          if (transaction.logs && transaction.logs.length > 1) continue;
+            .eth.getTransaction(txHash);
+          const methodCode = transaction.input.substring(0, 10);
+          if (methodCode != '0x095ea7b3') continue;
           const checkUser = await this.userService.createUpdateGetUser(owner);
 
           const decimal = +(await this.erc20OrbierCore.decimals(
