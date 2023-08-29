@@ -95,39 +95,31 @@ export class LpEventHandler
           const { user, amount } = returnValues;
 
           const checkUser = await this.userService.createUpdateGetUser(user);
-          await this.transactionService.transactionRepository
-            .getTransactionModel()
-            .findOneAndUpdate(
-              { txHash },
-              {
-                $set: {
-                  user: checkUser._id,
-                  event: `LP_${checkEvent}`,
-                  status: true,
-                  typeNetwork,
-                  txHash,
-                  data: {
-                    amount: Decimal128(
-                      new BigNumber(amount)
-                        .div(new BigNumber(10).pow(18))
-                        .toString(),
-                    ),
-                    incentive: {
-                      address: '',
-                      name: 'LP_TOKEN',
-                      symbol: 'LP_TOKEN',
-                      image:
-                        typeNetwork == 'moonbeam' || typeNetwork == 'moonbase'
-                          ? SETTINGS.GLMR_LP
-                          : SETTINGS.ETH_LP,
-                    },
-                  },
+          await this.transactionService.transactionRepository.transactionCreate(
+            {
+              user: checkUser._id,
+              event: `LP_${checkEvent}`,
+              status: true,
+              typeNetwork,
+              txHash,
+              data: {
+                amount: Decimal128(
+                  new BigNumber(amount)
+                    .div(new BigNumber(10).pow(18))
+                    .toString(),
+                ),
+                incentive: {
+                  address: '',
+                  name: 'LP_TOKEN',
+                  symbol: 'LP_TOKEN',
+                  image:
+                    typeNetwork == 'moonbeam' || typeNetwork == 'moonbase'
+                      ? SETTINGS.GLMR_LP
+                      : SETTINGS.ETH_LP,
                 },
               },
-              {
-                upsert: true,
-              },
-            );
+            },
+          );
         }
         if (checkEvent == LP_EVENT.CLAIM_REWARD) {
           const returnValues = this.web3.eth.abi.decodeLog(
