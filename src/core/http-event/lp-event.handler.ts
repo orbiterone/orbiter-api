@@ -222,11 +222,11 @@ export class LpEventHandler
             [topics[1], topics[2]],
           );
           const { owner, value } = returnValues;
-          if (+value == 0) return;
+          if (+value == 0) continue;
           const transaction = await this.web3Service
             .getClient(typeNetwork)
             .eth.getTransactionReceipt(txHash);
-          if (transaction.logs && transaction.logs.length > 1) return;
+          if (transaction.logs && transaction.logs.length > 1) continue;
           const checkUser = await this.userService.createUpdateGetUser(owner);
 
           const decimal = +(await this.erc20OrbierCore.decimals(
