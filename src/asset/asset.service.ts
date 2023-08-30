@@ -589,6 +589,34 @@ export class AssetService implements OnModuleInit {
                   image: '$token.image',
                   color: '$token.color',
                 },
+                supply: {
+                  $divide: [
+                    {
+                      $multiply: [
+                        {
+                          $multiply: ['$totalSupply', Decimal128('100000000')],
+                        },
+                        {
+                          $multiply: [
+                            '$token.exchangeRate',
+                            {
+                              $pow: [
+                                10,
+                                {
+                                  $subtract: [
+                                    { $add: [18, '$token.tokenDecimal'] },
+                                    8,
+                                  ],
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                    Decimal128('1e18'),
+                  ],
+                },
                 usd: {
                   $multiply: [
                     {
@@ -622,7 +650,12 @@ export class AssetService implements OnModuleInit {
               $filter: {
                 input: '$supplied',
                 as: 'item',
-                cond: { $gt: ['$$item.usd', Decimal128('0')] },
+                cond: {
+                  $and: [
+                    { $gt: ['$$item.usd', Decimal128('0')] },
+                    { $gt: ['$$item.supply', Decimal128('1')] },
+                  ],
+                },
               },
             },
             borrowed: {
