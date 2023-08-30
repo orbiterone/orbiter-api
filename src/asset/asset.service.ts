@@ -565,21 +565,6 @@ export class AssetService implements OnModuleInit {
         {
           $group: {
             _id: null,
-            totalSupplyUSD: {
-              $sum: {
-                $multiply: [
-                  {
-                    $multiply: ['$totalSupply', '$token.exchangeRate'],
-                  },
-                  '$token.lastPrice',
-                ],
-              },
-            },
-            totalBorrowUSD: {
-              $sum: {
-                $multiply: ['$totalBorrow', '$token.lastPrice'],
-              },
-            },
             supplied: {
               $push: {
                 token: {
@@ -644,8 +629,6 @@ export class AssetService implements OnModuleInit {
         {
           $project: {
             _id: 0,
-            totalSupplyUSD: 1,
-            totalBorrowUSD: 1,
             supplied: {
               $filter: {
                 input: '$supplied',
@@ -663,6 +646,31 @@ export class AssetService implements OnModuleInit {
                 input: '$borrowed',
                 as: 'item',
                 cond: { $gt: ['$$item.usd', Decimal128('0')] },
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            supplied: 1,
+            borrowed: 1,
+            totalSupplyUSD: {
+              $reduce: {
+                input: '$supplied',
+                initialValue: Decimal128('0'),
+                in: {
+                  $add: ['$$value', '$$this.usd'],
+                },
+              },
+            },
+            totalBorrowUSD: {
+              $reduce: {
+                input: '$borrowed',
+                initialValue: Decimal128('0'),
+                in: {
+                  $add: ['$$value', '$$this.usd'],
+                },
               },
             },
           },
