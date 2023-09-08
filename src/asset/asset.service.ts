@@ -766,7 +766,7 @@ export class AssetService implements OnModuleInit {
       if (
         filterSupply.length &&
         !filterSupply[0].collateral &&
-        +availableToWithdraw == 0
+        +availableToWithdraw >= 0
       ) {
         minUSD = minUSD.plus(tokenSupplyUSD);
       } else {
