@@ -33,6 +33,7 @@ import { IncentiveOrbiterCore } from '@app/core/orbiter/incentive.orbiter';
 import { MarketService } from '@app/market/market.service';
 import { UserService } from '@app/user/user.service';
 import { DiscordService } from '@app/core/discord/discord.service';
+import { StakingNftOrbiterCore } from '@app/core/orbiter/staking.nft.orbiter';
 
 const web3 = new Web3();
 
@@ -52,6 +53,7 @@ export class AssetService implements OnModuleInit {
     public readonly incentiveOrbiterCore: IncentiveOrbiterCore,
     public readonly controllerOrbiterCore: ControllerOrbiterCore,
     public readonly oracleOrbiterCore: OracleOrbiterCore,
+    public readonly stakingNftOrbiterCore: StakingNftOrbiterCore,
     public readonly userRepository: UserRepository,
     public readonly userService: UserService,
     public readonly marketService: MarketService,
