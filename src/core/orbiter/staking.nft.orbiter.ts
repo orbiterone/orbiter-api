@@ -17,4 +17,8 @@ export class StakingNftOrbiterCore {
         return this.web3Service.getContract(STAKING, stakeNftAbi);
     }
   }
+
+  async getRewardAssets(): Promise<string[]> {
+    return await this.contract().methods.getRewardAssets().call();
+  }
 }
