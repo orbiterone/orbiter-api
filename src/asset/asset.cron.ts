@@ -6,12 +6,14 @@ import { BigNumber } from 'bignumber.js';
 import { Decimal128 } from '@app/core/schemas/user.schema';
 import { AssetService } from './asset.service';
 import {
+  INCENTIVE,
   NODE_TYPE,
   PRICE_FEED_OWNER_KEY,
   PRICE_FEED_UPDATE,
+  STAKING,
 } from '@app/core/constant';
 
-const { DISCORD_WEBHOOK_LIQUIDATOR } = process.env;
+const { DISCORD_WEBHOOK_LIQUIDATOR, DISCORD_WEBHOOK_REWARDS } = process.env;
 
 BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
 
@@ -251,6 +253,69 @@ export class AssetCron extends AssetService {
           i = 0;
           message = '';
         }
+      }
+    }
+  }
+
+  @Cron(CronExpression.EVERY_30_MINUTES)
+  async balanceLogger() {
+    console.log(`Job DEFI balanceLogger start - ${new Date()}`);
+
+    const supportInentives =
+      await this.incentiveOrbiterCore.getAllSupportIncentives();
+
+    if (supportInentives && supportInentives.length) {
+      for (const item of supportInentives) {
+        const decimals = Number(await this.erc20OrbierCore.decimals(item));
+        let symbol = await this.erc20OrbierCore.symbol(item);
+        const balance = new BigNumber(
+          await this.erc20OrbierCore.balanceOf(item, INCENTIVE),
+        ).div(Math.pow(10, decimals));
+
+        let incentivePrice = 0;
+        if (symbol.toLowerCase() == 'orb') {
+          incentivePrice = await this.marketService.getOrbRate();
+        } else {
+          if (symbol.toLowerCase() == 'd2o') {
+            symbol = 'USDC';
+          }
+          incentivePrice = await this.exchangeService.getPrice(symbol, 'USDT');
+        }
+        const valueUSD = balance.multipliedBy(incentivePrice);
+        if (valueUSD.lt(10)) {
+          await this.discordService.sendNotification(
+            DISCORD_WEBHOOK_REWARDS,
+            `:warning: Incentive ${item} ${symbol} needs to be replenish. Balance - ${balance} ${symbol}(${valueUSD.toString()}$)`,
+          );
+        }
+      }
+    }
+
+    const supportStakingRewards =
+      await this.stakingNftOrbiterCore.getRewardAssets();
+
+    for (const item of supportStakingRewards) {
+      const decimals = Number(await this.erc20OrbierCore.decimals(item));
+      let symbol = await this.erc20OrbierCore.symbol(item);
+      const balance = new BigNumber(
+        await this.erc20OrbierCore.balanceOf(item, STAKING),
+      ).div(Math.pow(10, decimals));
+
+      let stakingPrice = 0;
+      if (symbol.toLowerCase() == 'orb') {
+        stakingPrice = await this.marketService.getOrbRate();
+      } else {
+        if (symbol.toLowerCase() == 'd2o') {
+          symbol = 'USDC';
+        }
+        stakingPrice = await this.exchangeService.getPrice(symbol, 'USDT');
+      }
+      const valueUSD = balance.multipliedBy(stakingPrice);
+      if (valueUSD.lt(10)) {
+        await this.discordService.sendNotification(
+          DISCORD_WEBHOOK_REWARDS,
+          `:warning: Staking Reward ${item} ${symbol} needs to be replenish. Balance - ${balance} ${symbol}(${valueUSD.toString()}$)`,
+        );
       }
     }
   }
