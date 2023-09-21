@@ -98,10 +98,23 @@ export class AssetCron extends AssetService {
 
     await this.userRepository
       .getUserModel()
-      .find({ lastRequest: { $gte: moment().subtract(7, 'days').toDate() } })
+      .find({
+        $or: [
+          { lastRequest: { $gte: moment().subtract(7, 'days').toDate() } },
+          { lastRequest: { $eq: null } },
+        ],
+      })
       .cursor()
       .eachAsync(
         async (user) => {
+          if (!user.lastRequest) {
+            const findUserTokens = await this.userRepository
+              .getUserTokenModel()
+              .find({ user: user._id });
+            if (findUserTokens.length == 0) {
+              return;
+            }
+          }
           const assets = await this.assetRepository.find({});
           for (const asset of assets) {
             try {
@@ -164,7 +177,7 @@ export class AssetCron extends AssetService {
                 },
                 { upsert: true },
               );
-              await this.wait(5000);
+              await this.wait(3000);
             } catch (err) {
               console.error(err);
             }
@@ -229,8 +242,8 @@ export class AssetCron extends AssetService {
   @Cron(CronExpression.EVERY_5_MINUTES)
   async liquidationLogger() {
     const users = await this.userService.getUsersAccounts(
-      { page: '1' },
-      '0.95',
+      { page: '1', state: ['unsafe'] },
+      '0.98',
       1000,
     );
     if (users && users.entities && users.entities.length) {
