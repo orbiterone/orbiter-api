@@ -22,7 +22,8 @@
         "FRAX": "0x322E86852e492a7Ee17f28a78c663da38FB33bfb",
         "USDC.wh": "0x931715FEE2d06333043d11F658C8CE934aC61D0c",
         "ETH.wh": "0xab3f0245B83feB11d15AAffeFD7AD465a59817eD",
-        "d2O": "0xc806B0600cbAfA0B197562a9F7e3B9856866E9bF"
+        "d2O": "0xc806B0600cbAfA0B197562a9F7e3B9856866E9bF",
+        "xcIBTC": "0xFFFFFfFf5AC1f9A51A93F5C527385edF7Fe98A52"
     },
     "markets": {
         "oGLMR": "0xCc444ca6bba3764Fc55BeEFe4FFA27435cF6c259",
@@ -31,7 +32,8 @@
         "oxcUSDT": "0xDf2B90E2eD9a77054bE91aA00bD52F78A86886B7",
         "oETH": "0xe48451B26E140b9B2f1A55f2879fe0cA66a43Efe",
         "oUSDC": "0x0bD102515503F1bD2B37bc723Ba5EE7Cfb198419",
-        "od2O": "0x64Cff24763227511475B345498f71b987EbdB693"
+        "od2O": "0x64Cff24763227511475B345498f71b987EbdB693",
+        "oxcIBTC": "0x13C61b2920250ba023C29a6531B8Afc45a4555bF"
     },
     "supportMarkets": {
         "oGLMR": "0xCc444ca6bba3764Fc55BeEFe4FFA27435cF6c259",
@@ -40,7 +42,8 @@
         "oxcUSDT": "0xDf2B90E2eD9a77054bE91aA00bD52F78A86886B7",
         "oETH": "0xe48451B26E140b9B2f1A55f2879fe0cA66a43Efe",
         "oUSDC": "0x0bD102515503F1bD2B37bc723Ba5EE7Cfb198419",
-        "od2O": "0x64Cff24763227511475B345498f71b987EbdB693"
+        "od2O": "0x64Cff24763227511475B345498f71b987EbdB693",
+        "oxcIBTC": "0x13C61b2920250ba023C29a6531B8Afc45a4555bF"
     },
     "defaultMarket": "0xCc444ca6bba3764Fc55BeEFe4FFA27435cF6c259",
     "settings": {
@@ -106,6 +109,11 @@
             "color": "#16CDfC",
             "image": "https://assets.orbiter.one/images/tokens/ORB.svg",
             "fullName" : "Orbiter"
+        },
+        "xcIBTC": {
+            "color": "#FB8D28",
+            "image": "https://assets.orbiter.one/images/tokens/WBTC.svg",
+            "fullName" : "interBTC"
         }
     }
 }
