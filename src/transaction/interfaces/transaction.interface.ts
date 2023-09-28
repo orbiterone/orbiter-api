@@ -28,6 +28,9 @@ export class TransactionResponse {
   event: string;
 
   @ApiProperty()
+  typeNetwork: string;
+
+  @ApiProperty()
   status: boolean;
 
   @ApiProperty()
