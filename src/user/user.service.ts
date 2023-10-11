@@ -433,13 +433,13 @@ export class UserService {
             health: 1,
             healthString: {
               $cond: {
-                if: { $lte: ['$health', Decimal128('0.98')] },
+                if: { $lte: ['$health', Decimal128('0.985')] },
                 then: 'unsafe',
                 else: {
                   $cond: {
                     if: {
                       $and: [
-                        { $gt: ['$health', Decimal128('0.98')] },
+                        { $gt: ['$health', Decimal128('0.985')] },
                         { $lte: ['$health', Decimal128('1.25')] },
                       ],
                     },
