@@ -16,7 +16,8 @@
             "moonriver": "",
             "zksync": "",
             "arbitrum": ""
-        }
+        },
+        "OrbConverter": ""
     },
     "supportNetworks": ["moonriver", "zksync", "arbitrum"],
     "tokens": {
@@ -33,7 +34,9 @@
         "xcKBTC": "0xFFFfFfFfF6E528AD57184579beeE00c5d5e646F0",
         "FXS": "0x6f1D1Ee50846Fcbc3de91723E61cb68CFa6D0E98",
         "wstKSM": "0x3bfd113ad0329a7994a681236323fb16E16790e3",
-        "LDO": "0x6Ccf12B480A99C54b23647c995f4525D544A7E72"
+        "LDO": "0x6Ccf12B480A99C54b23647c995f4525D544A7E72",
+        "ORB": "",
+        "xORB": ""
     },
     "markets": {
         "oBNB": "0xF5983ea5826338E20dbA6B337Fe3662765048185",
@@ -161,6 +164,11 @@
             "color": "#16CDfC",
             "image": "https://assets.orbiter.one/images/tokens/ORB.svg",
             "fullName" : "Orbiter"
+        },
+        "xORB": {
+            "color": "#16CDfC",
+            "image": "https://assets.orbiter.one/images/tokens/xORB.svg",
+            "fullName" : "xORB"
         }
     }
 }

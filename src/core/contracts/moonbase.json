@@ -16,7 +16,8 @@
             "moonbase": "0xec557514f3399797D4cD41C98524E88b463844F5",
             "zksync": "0xBE634603a25B72De83A5336159D18A6388587e5C",
             "arbitrum": "0x2b8cfdF5519560c1557e94E4A8E42C390e4d6C4A"
-        }
+        },
+        "OrbConverter": "0x6f582F5B14e9BD4ea25bFACd4CDE603C10DbD158"
     },
     "supportNetworks": ["moonbase", "zksync", "arbitrum"],
     "tokens": {
@@ -32,12 +33,13 @@
         "USDC": "0xB4839B64349612e7091d9E8BA739C9bE3f00935C",
         "FTM": "0xc3e5b869A04B0305aA918A3Fda70021A3d61FaD5",
         "xcKSM": "0xe2246cB9970d46032367c1fAd3d4F29D4BD17482",
-        "ORBIT": "0x734EbdbB1258e91Db663a9D5740cc62326ada02a",
+        "ORB": "0xb752E60E8abead5FD6f6b2a25e29359D89858136",
         "xcAUSD": "0xfAb721CF62B58D4C11E06dc217B2e199493dFEab",
         "MAI": "0xCb10810e1B83f81858994Ced3dE2EeC8328F161A",
         "xcKBTC": "0x4aDe7E5637618a9Ca55503026c4bAE5820Bf81d6",
         "wstKSM": "0x1a6B75Bc537bAA6B29e9b543891abE9c96F6beD3",
-        "D2O": "0x607F26BC84035088e3AD308e6d9439Da507190dB"
+        "D2O": "0x607F26BC84035088e3AD308e6d9439Da507190dB",
+        "xORB": "0x10ad9b62e3398bba54922e68833a19ebba95e497"
     },
     "markets": {
         "oBNB": "0xf4fAc89B19f508c0EBeF532aeF11919847b53dBd",
@@ -56,7 +58,7 @@
         "oxcAUSD": "0x2Fcf5c8E2B7e900c7Cecd8c43f62fBE7a5a53fdb",
         "oMAI": "0x3102fb9dd9Fb2a7D7c73514C4A497E7e155fA012",
         "oxcKBTC": "0x51c33d730e29Be69B2Ebb2A90f0cAa949a855c96",
-        "oORBIT": "",
+        "oORB": "",
         "owstKSM": "0xf2c6C36baEcca9a7d0C832CD987B1113D9f1498F",
         "od2O": "0x6E530D67276011bb94355B7F21289D40C0e14dB1"
     },
@@ -197,6 +199,11 @@
             "color": "#16CDfC",
             "image": "https://assets.orbiter.one/images/tokens/ORB.svg",
             "fullName" : "Orbiter"
+        },
+        "xORB": {
+            "color": "#16CDfC",
+            "image": "https://assets.orbiter.one/images/tokens/xORB.svg",
+            "fullName" : "xORB"
         }
     }
 }
