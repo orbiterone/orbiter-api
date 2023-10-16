@@ -105,6 +105,13 @@ const LP =
     ? MoonriverContracts.LP
     : MoonbeamContracts.LP;
 
+const ORB_CONVERTER =
+  NODE_TYPE == 'moonbase'
+    ? MoonbaseContracts.OrbConverter
+    : NODE_TYPE == 'moonriver'
+    ? MoonriverContracts.OrbConverter
+    : MoonbeamContracts.OrbConverter;
+
 const SUPPORT_NETWORKS =
   NODE_TYPE == 'moonbase'
     ? MoonbaseSupportNetworks
@@ -173,4 +180,5 @@ export {
   STAKING,
   FP,
   LP,
+  ORB_CONVERTER,
 };

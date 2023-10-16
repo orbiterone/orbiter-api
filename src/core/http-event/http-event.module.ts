@@ -10,7 +10,6 @@ import { LotteryModule } from '@app/lottery/lottery.module';
 import { ControllerEventHandler } from './controller-event.handler';
 import { LotteryEventHandler } from './lottery-event.handler';
 import { MarketEventHandler } from './market-event.handler';
-
 import {
   HandledBlockNumber,
   HandledBlockNumberSchema,
@@ -21,6 +20,7 @@ import { NftEventHandler } from './nft-event.handler';
 import { StakeNftEventHandler } from './stake-nft-event.handler';
 import { HttpEventService } from './http-event.service';
 import { LpEventHandler } from './lp-event.handler';
+import { OrbConverterEventHandler } from './orb-converter-event.handler';
 
 @Module({
   imports: [
@@ -44,6 +44,7 @@ import { LpEventHandler } from './lp-event.handler';
     StakeNftEventHandler,
     HttpEventService,
     LpEventHandler,
+    OrbConverterEventHandler,
   ],
   exports: [
     ControllerEventHandler,
@@ -55,6 +56,7 @@ import { LpEventHandler } from './lp-event.handler';
     StakeNftEventHandler,
     HttpEventService,
     LpEventHandler,
+    OrbConverterEventHandler,
   ],
 })
 export class HttpEventModule {}

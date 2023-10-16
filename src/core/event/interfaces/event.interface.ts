@@ -58,3 +58,10 @@ export enum LP_EVENT {
 export enum AVAILABLE_EVENT {
   USER_CREATE_UPDATE = 'UserCreateUpdate',
 }
+
+export enum ORB_CONVERTER_EVENT {
+  CONVERT = 'Convert',
+  REDEEM = 'Redeem',
+  CANCEL_REDEEM = 'CancelRedeem',
+  CLAIM = 'Claim',
+}
