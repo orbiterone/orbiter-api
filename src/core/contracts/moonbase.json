@@ -16,7 +16,8 @@
             "moonbase": "0xec557514f3399797D4cD41C98524E88b463844F5",
             "zksync": "0xBE634603a25B72De83A5336159D18A6388587e5C",
             "arbitrum": "0x2b8cfdF5519560c1557e94E4A8E42C390e4d6C4A"
-        }
+        },
+        "OrbConverter": ""
     },
     "supportNetworks": ["moonbase", "zksync", "arbitrum"],
     "tokens": {
