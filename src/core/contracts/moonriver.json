@@ -6,7 +6,18 @@
         "Reader": "0x4D7d33CD41a49Bf875Cf207B3f43004d74d721aa",
         "Lottery": "0x79f8d5419D180Be88ebdD2664B651aDeaA0F7FB5",
         "NFT": "",
-        "Staking": ""
+        "Staking": "",
+        "FP": {
+            "moonriver": [],
+            "zksync": [],
+            "arbitrum": []
+        },
+        "LP": {
+            "moonriver": "",
+            "zksync": "",
+            "arbitrum": ""
+        },
+        "OrbConverter": ""
     },
     "tokens": {
         "ETH": "0x639A647fbe20b6c8ac19E48E2de44ea792c62c5C",
@@ -22,7 +33,9 @@
         "xcKBTC": "0xFFFfFfFfF6E528AD57184579beeE00c5d5e646F0",
         "FXS": "0x6f1D1Ee50846Fcbc3de91723E61cb68CFa6D0E98",
         "wstKSM": "0x3bfd113ad0329a7994a681236323fb16E16790e3",
-        "LDO": "0x6Ccf12B480A99C54b23647c995f4525D544A7E72"
+        "LDO": "0x6Ccf12B480A99C54b23647c995f4525D544A7E72",
+        "ORB": "",
+        "xORB": ""
     },
     "markets": {
         "oBNB": "0xF5983ea5826338E20dbA6B337Fe3662765048185",
@@ -140,6 +153,11 @@
             "color": "#16CDfC",
             "image": "https://assets.orbiter.one/images/tokens/ORB.svg",
             "fullName" : "Orbiter"
+        },
+        "xORB": {
+            "color": "#16CDfC",
+            "image": "https://assets.orbiter.one/images/tokens/xORB.svg",
+            "fullName" : "xORB"
         }
     }
 }
