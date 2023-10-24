@@ -286,7 +286,7 @@ export class AssetCron extends AssetService {
         ).div(Math.pow(10, decimals));
 
         let incentivePrice = 0;
-        if (symbol.toLowerCase() == 'orb') {
+        if (symbol.toLowerCase() == 'orb' || symbol.toLowerCase() == 'xorb') {
           incentivePrice = await this.marketService.getOrbRate();
         } else {
           if (symbol.toLowerCase() == 'd2o') {
@@ -315,7 +315,7 @@ export class AssetCron extends AssetService {
       ).div(Math.pow(10, decimals));
 
       let stakingPrice = 0;
-      if (symbol.toLowerCase() == 'orb') {
+      if (symbol.toLowerCase() == 'orb' || symbol.toLowerCase() == 'xorb') {
         stakingPrice = await this.marketService.getOrbRate();
       } else {
         if (symbol.toLowerCase() == 'd2o') {
