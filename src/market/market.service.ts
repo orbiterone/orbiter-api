@@ -114,7 +114,10 @@ export class MarketService {
       }
     }
 
-    assets['ORB'] = (await this.getOrbRate()).toString();
+    const orbPrice = (await this.getOrbRate()).toString();
+
+    assets['ORB'] = orbPrice;
+    assets['xORB'] = orbPrice;
 
     return assets;
   }
