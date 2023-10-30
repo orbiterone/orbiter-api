@@ -24,6 +24,7 @@ import { ReaderOrbiterCore } from '../orbiter/reader.orbiter';
 import { NftOrbiterCore } from '../orbiter/nft.orbiter';
 import { StakingNftOrbiterCore } from '../orbiter/staking.nft.orbiter';
 import { DiscordService } from '@app/core/discord/discord.service';
+import { FpOrbiterCore } from '../orbiter/fp.orbiter';
 
 @Injectable()
 export abstract class HttpEventAbstractService {
@@ -48,6 +49,7 @@ export abstract class HttpEventAbstractService {
     protected readonly incentiveOrbiterCore: IncentiveOrbiterCore,
     protected readonly readerOrbiterCore: ReaderOrbiterCore,
     protected readonly nftOrbiterCore: NftOrbiterCore,
+    protected readonly fpOrbiterCore: FpOrbiterCore,
     protected readonly stakingNftOrbiterCore: StakingNftOrbiterCore,
     protected readonly eventEmitter: EventEmitter2,
     protected readonly userService: UserService,
