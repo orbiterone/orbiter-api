@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import BigNumber from 'bignumber.js';
 import { Log } from 'web3-core';
 
-import { FP, LP, SETTINGS } from '../constant';
+import { FP, LP, SETTINGS, TOKENS } from '../constant';
 import { LP_EVENT, TOKEN_EVENT } from '../event/interfaces/event.interface';
 import { Decimal128 } from '../schemas/user.schema';
 import { HttpEventAbstractService } from './http-event.abstract.service';
@@ -95,6 +95,29 @@ export class LpEventHandler
           const { user, amount } = returnValues;
 
           const checkUser = await this.userService.createUpdateGetUser(user);
+          const incentive = {
+            address: '',
+            name: 'LP_TOKEN',
+            symbol: 'LP_TOKEN',
+            image:
+              typeNetwork == 'moonbeam' || typeNetwork == 'moonbase'
+                ? SETTINGS.GLMR_LP
+                : SETTINGS.ETH_LP,
+          };
+          try {
+            const stakingAsset = await this.fpOrbiterCore.stakingAsset(
+              contractAddress,
+            );
+            if (
+              stakingAsset &&
+              stakingAsset.toLowerCase() == TOKENS.xORB.toLowerCase()
+            ) {
+              incentive.name = 'xORB';
+              incentive.symbol = 'xORB';
+              incentive.image = SETTINGS.xORB;
+            }
+          } catch (err) {}
+
           await this.transactionService.transactionRepository.transactionCreate(
             {
               user: checkUser._id,
@@ -108,15 +131,7 @@ export class LpEventHandler
                     .div(new BigNumber(10).pow(18))
                     .toString(),
                 ),
-                incentive: {
-                  address: '',
-                  name: 'LP_TOKEN',
-                  symbol: 'LP_TOKEN',
-                  image:
-                    typeNetwork == 'moonbeam' || typeNetwork == 'moonbase'
-                      ? SETTINGS.GLMR_LP
-                      : SETTINGS.ETH_LP,
-                },
+                incentive,
               },
             },
           );

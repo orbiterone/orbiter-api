@@ -10,6 +10,7 @@ import { OTokenOrbiterCore } from './oToken.orbiter';
 import { ReaderOrbiterCore } from './reader.orbiter';
 import { NftOrbiterCore } from './nft.orbiter';
 import { StakingNftOrbiterCore } from './staking.nft.orbiter';
+import { FpOrbiterCore } from './fp.orbiter';
 
 @Module({
   imports: [CoreModule],
@@ -23,6 +24,7 @@ import { StakingNftOrbiterCore } from './staking.nft.orbiter';
     LotteryOrbiterCore,
     NftOrbiterCore,
     StakingNftOrbiterCore,
+    FpOrbiterCore,
   ],
   exports: [
     OTokenOrbiterCore,
@@ -34,6 +36,7 @@ import { StakingNftOrbiterCore } from './staking.nft.orbiter';
     LotteryOrbiterCore,
     NftOrbiterCore,
     StakingNftOrbiterCore,
+    FpOrbiterCore,
   ],
 })
 export class OrbiterModule {}
