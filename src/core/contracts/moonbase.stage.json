@@ -17,7 +17,7 @@
             "zksync": "0xBE634603a25B72De83A5336159D18A6388587e5C",
             "arbitrum": "0x2b8cfdF5519560c1557e94E4A8E42C390e4d6C4A"
         },
-        "OrbConverter": "0x6f582F5B14e9BD4ea25bFACd4CDE603C10DbD158"
+        "OrbConverter": "0x54289Fd7a150E802e97968941c3F52231953F451"
     },
     "tokens": {
         "FRAX": "0x3b18F5E81906fc771B1e0886B7B7FD50Fc4849E7",
