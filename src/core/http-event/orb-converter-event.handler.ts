@@ -18,7 +18,7 @@ export class OrbConverterEventHandler
   private topics = {
     [`${this.web3.utils.sha3('Convert(address,uint256)')}`]:
       ORB_CONVERTER_EVENT.CONVERT,
-    [`${this.web3.utils.sha3('Redeem(address,uint8,uint256)')}`]:
+    [`${this.web3.utils.sha3('Redeem(address,uint8,uint256,uint256)')}`]:
       ORB_CONVERTER_EVENT.REDEEM,
     [`${this.web3.utils.sha3('CancelRedeem(address,uint256)')}`]:
       ORB_CONVERTER_EVENT.CANCEL_REDEEM,
