@@ -150,12 +150,7 @@ export class OrbConverterEventHandler
             name: '',
             symbol: '',
           };
-          let tokenAddress: string;
-          if (+option == 0) {
-            tokenAddress = TOKENS.ORB;
-          } else {
-            tokenAddress = TOKENS.xORB;
-          }
+          const tokenAddress: string = TOKENS.ORB;
           incentive.address = tokenAddress;
           incentive.name = await this.erc20OrbierCore.name(tokenAddress);
           incentive.symbol = await this.erc20OrbierCore.symbol(tokenAddress);
@@ -171,14 +166,17 @@ export class OrbConverterEventHandler
                   status: true,
                   typeNetwork,
                   txHash,
-                  data: {
-                    incentive,
-                    amount: Decimal128(
-                      new BigNumber(amountToMint)
-                        .div(new BigNumber(10).pow(decimal))
-                        .toString(),
-                    ),
-                  },
+                  data:
+                    +option == 0
+                      ? {
+                          incentive,
+                          amount: Decimal128(
+                            new BigNumber(amountToMint)
+                              .div(new BigNumber(10).pow(decimal))
+                              .toString(),
+                          ),
+                        }
+                      : { incentive },
                 },
               },
               {
