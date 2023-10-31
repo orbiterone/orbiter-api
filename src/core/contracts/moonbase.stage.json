@@ -175,11 +175,6 @@
             "symbol": "d2o"
         },
         "GLMR": {
-<<<<<<< HEAD
-            "color": "",
-            "image": "",
-            "fullName" : ""
-=======
             "color": "#BC2E75",
             "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
             "fullName" : "GLMR"
@@ -198,7 +193,6 @@
             "color": "#16CDfC",
             "image": "https://assets.orbiter.one/images/tokens/xORB.svg",
             "fullName" : "xORB"
->>>>>>> 2401378 (ADD | add event handler orb converter #OB-1137)
         }
     }
 }
