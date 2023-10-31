@@ -81,7 +81,7 @@ export class OrbConverterEventHandler
           let tokenAddress: string;
           if (
             checkEvent == ORB_CONVERTER_EVENT.CONVERT ||
-            checkEvent == ORB_CONVERTER_EVENT.CLAIM
+            checkEvent == ORB_CONVERTER_EVENT.CANCEL_REDEEM
           ) {
             tokenAddress = TOKENS.xORB;
           } else {
