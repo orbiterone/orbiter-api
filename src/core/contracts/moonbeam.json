@@ -14,7 +14,7 @@
         "LP": {
             "moonbeam": "0xC5fa9673A835192420235ACCA6bE43A404610b04"
         },
-        "OrbConverter": ""
+        "OrbConverter": "0x780B7afD9C222202E4bCeeeDa59888c52f4BBF06"
     },
     "supportNetworks": ["moonbeam", "zksync", "arbitrum"],
     "tokens": {
@@ -26,7 +26,7 @@
         "d2O": "0xc806B0600cbAfA0B197562a9F7e3B9856866E9bF",
         "xcIBTC": "0xFFFFFfFf5AC1f9A51A93F5C527385edF7Fe98A52",
         "ORB": "0x4EEaa1fd27c50C64E77272BCdDe68c28F0A3c3D7",
-        "xORB": ""
+        "xORB": "0x9BFEB5cd9A81011FdE1BA193a1CA0CB893Af0e50"
     },
     "markets": {
         "oGLMR": "0xCc444ca6bba3764Fc55BeEFe4FFA27435cF6c259",

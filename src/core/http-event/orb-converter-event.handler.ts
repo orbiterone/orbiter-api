@@ -135,14 +135,20 @@ export class OrbConverterEventHandler
               {
                 indexed: false,
                 internalType: 'uint256',
-                name: 'amount',
+                name: 'redeemAmount',
+                type: 'uint256',
+              },
+              {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'amountToMint',
                 type: 'uint256',
               },
             ],
             event.data,
             [topics[1], topics[2]],
           );
-          const { user, option, amount } = returnValues;
+          const { user, option, amountToMint } = returnValues;
           const checkUser = await this.userService.createUpdateGetUser(user);
 
           const decimal = 18;
@@ -175,7 +181,7 @@ export class OrbConverterEventHandler
                   data: {
                     incentive,
                     amount: Decimal128(
-                      new BigNumber(amount)
+                      new BigNumber(amountToMint)
                         .div(new BigNumber(10).pow(decimal))
                         .toString(),
                     ),
