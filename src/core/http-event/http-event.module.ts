@@ -19,11 +19,7 @@ import { IncentiveEventHandler } from './incentive-event.handler';
 import { NftEventHandler } from './nft-event.handler';
 import { StakeNftEventHandler } from './stake-nft-event.handler';
 import { HttpEventService } from './http-event.service';
-<<<<<<< HEAD
-=======
-import { LpEventHandler } from './lp-event.handler';
 import { OrbConverterEventHandler } from './orb-converter-event.handler';
->>>>>>> 2401378 (ADD | add event handler orb converter #OB-1137)
 
 @Module({
   imports: [
@@ -46,11 +42,7 @@ import { OrbConverterEventHandler } from './orb-converter-event.handler';
     NftEventHandler,
     StakeNftEventHandler,
     HttpEventService,
-<<<<<<< HEAD
-=======
-    LpEventHandler,
     OrbConverterEventHandler,
->>>>>>> 2401378 (ADD | add event handler orb converter #OB-1137)
   ],
   exports: [
     ControllerEventHandler,
@@ -61,11 +53,7 @@ import { OrbConverterEventHandler } from './orb-converter-event.handler';
     NftEventHandler,
     StakeNftEventHandler,
     HttpEventService,
-<<<<<<< HEAD
-=======
-    LpEventHandler,
     OrbConverterEventHandler,
->>>>>>> 2401378 (ADD | add event handler orb converter #OB-1137)
   ],
 })
 export class HttpEventModule {}
