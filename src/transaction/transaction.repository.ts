@@ -82,6 +82,9 @@ export class TransactionRepository extends BaseRepository {
                 'token.isActive': true,
               },
               {
+                'token.isTxView': true,
+              },
+              {
                 token: { $eq: null },
               },
             ],
