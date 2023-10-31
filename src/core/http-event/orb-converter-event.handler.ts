@@ -78,15 +78,8 @@ export class OrbConverterEventHandler
             name: '',
             symbol: '',
           };
-          let tokenAddress: string;
-          if (
-            checkEvent == ORB_CONVERTER_EVENT.CONVERT ||
-            checkEvent == ORB_CONVERTER_EVENT.CLAIM
-          ) {
-            tokenAddress = TOKENS.xORB;
-          } else {
-            tokenAddress = TOKENS.ORB;
-          }
+          const tokenAddress: string = TOKENS.xORB;
+
           incentive.address = tokenAddress;
           incentive.name = await this.erc20OrbierCore.name(tokenAddress);
           incentive.symbol = await this.erc20OrbierCore.symbol(tokenAddress);
