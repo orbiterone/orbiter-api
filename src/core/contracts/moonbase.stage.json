@@ -6,7 +6,18 @@
         "Reader": "0x6494e692773653E161A54bf434ffc295450ED9Fd",
         "Lottery": "0x5A5FbAF0735Ff2D807094272Fa39c4D8AeECE07a",
         "NFT": "0x595884fA93163F6d8e6e14748beDf6FC0f9026fb",
-        "Staking": "0xf095c44a271aD40757698E55D0012C2aF314624e"
+        "Staking": "0xf095c44a271aD40757698E55D0012C2aF314624e",
+        "FP": {
+            "moonbase": ["0x2D69Fb9C551fDeA7F50eA49beFE3C94c153053c9", "0xBf0F1BFD81be1Cf3BabbA4CcD01AE596cBa5159e", "0x5B7673D46Cde8E124340df0C0f16268f45840dAb"],
+            "zksync": ["0xF368FEA10299FDc1d55980B11BA0dB2040aBC063", "0x023dCdeF0697741CDBb226fAa9B50b253A8Ffc28", "0x44178e3F17Ef2E9eEf0752301d43B1728725CEfC"],
+            "arbitrum": ["0xf63914AA3072410D5F46dD831446fa6118AC01D4", "0xC482fBC9225e56e83B84aa09B4a0B4668ccfa4c5", "0x3274D60577a68a9ccbd3604BFCbF44Cf822499f1"]
+        },
+        "LP": {
+            "moonbase": "0xec557514f3399797D4cD41C98524E88b463844F5",
+            "zksync": "0xBE634603a25B72De83A5336159D18A6388587e5C",
+            "arbitrum": "0x2b8cfdF5519560c1557e94E4A8E42C390e4d6C4A"
+        },
+        "OrbConverter": "0xf0b426AAf13a93afD13890a6b9804a1A26eCB84a"
     },
     "tokens": {
         "FRAX": "0x3b18F5E81906fc771B1e0886B7B7FD50Fc4849E7",
@@ -21,12 +32,13 @@
         "USDC": "0xB4839B64349612e7091d9E8BA739C9bE3f00935C",
         "FTM": "0xc3e5b869A04B0305aA918A3Fda70021A3d61FaD5",
         "xcKSM": "0xe2246cB9970d46032367c1fAd3d4F29D4BD17482",
-        "ORBIT": "0x734EbdbB1258e91Db663a9D5740cc62326ada02a",
+        "ORB": "0xb752E60E8abead5FD6f6b2a25e29359D89858136",
         "xcAUSD": "0xfAb721CF62B58D4C11E06dc217B2e199493dFEab",
         "MAI": "0xCb10810e1B83f81858994Ced3dE2EeC8328F161A",
         "xcKBTC": "0x4aDe7E5637618a9Ca55503026c4bAE5820Bf81d6",
         "wstKSM": "0x1a6B75Bc537bAA6B29e9b543891abE9c96F6beD3",
-        "D2O": "0x607F26BC84035088e3AD308e6d9439Da507190dB"
+        "D2O": "0x607F26BC84035088e3AD308e6d9439Da507190dB",
+        "xORB": "0x10ad9b62e3398bba54922e68833a19ebba95e497"
     },
     "markets": {
         "oBNB": "0xad1f41DeB6f99e8fEf47df686B6C9cCD55665c65",
@@ -45,7 +57,7 @@
         "oxcAUSD": "0x53B2b7B18C4E603eb69341f3F683d82E1218b4fB",
         "oMAI": "0x885Bff0F16d64fFD7318B40cD2B55e6A88630278",
         "oxcKBTC": "0xac95984eDEC26AA160476b3CAc04F6B7a5Fb2bf7",
-        "oORBIT": "",
+        "oORB": "",
         "owstKSM": "0x4F6408e0E0Ce01125bccEf0a85f6D3B1f247Ca24",
         "od2O": "0x0324e5D76796eE95a93e6cAd128AE1b973f2786B"
     },
@@ -163,9 +175,24 @@
             "symbol": "d2o"
         },
         "GLMR": {
-            "color": "",
-            "image": "",
-            "fullName" : ""
+            "color": "#BC2E75",
+            "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
+            "fullName" : "GLMR"
+        },
+        "GLMR_LP": {
+            "color": "#BC2E75",
+            "image": "https://assets.orbiter.one/images/tokens/glmr.svg",
+            "fullName" : "GLMR"
+        },
+        "WGLMR": {
+            "color": "#BC2E75",
+            "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
+            "fullName" : "Wrapped GLMR"
+        },
+        "xORB": {
+            "color": "#16CDfC",
+            "image": "https://assets.orbiter.one/images/tokens/xORB.svg",
+            "fullName" : "xORB"
         }
     }
 }

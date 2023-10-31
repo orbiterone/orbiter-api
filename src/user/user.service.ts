@@ -5,7 +5,6 @@ import Web3 from 'web3';
 import { UserRepository } from './user.repository';
 import { ControllerOrbiterCore } from '@app/core/orbiter/controller.orbiter';
 import {
-  StateHealth,
   UserBalanceResponse,
   UsersAccountsResponse,
 } from '@app/user/interfaces/user.interface';

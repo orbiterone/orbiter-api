@@ -8,7 +8,6 @@ import { Decimal128 } from '@app/core/schemas/user.schema';
 import {
   MarketHistoryResponse,
   MarketOverviewResponse,
-  RatesResponse,
 } from './interfaces/market.interface';
 import { MarketRepository } from './market.repository';
 import { ExchangeService } from '@app/core/exchange/exchange.service';
@@ -114,7 +113,10 @@ export class MarketService {
       }
     }
 
-    assets['ORB'] = (await this.getOrbRate()).toString();
+    const orbPrice = (await this.getOrbRate()).toString();
+
+    assets['ORB'] = orbPrice;
+    assets['xORB'] = orbPrice;
 
     return assets;
   }

@@ -202,7 +202,10 @@ export class AssetService implements OnModuleInit {
             borrowSpeed = borrowSpeed.div(Math.pow(10, +incentiveDecimals));
             supplySpeed = supplySpeed.div(Math.pow(10, +incentiveDecimals));
             let incentivePrice = 0;
-            if (incentiveSymbol.toLowerCase() == 'orb') {
+            if (
+              incentiveSymbol.toLowerCase() == 'orb' ||
+              incentiveSymbol.toLowerCase() == 'xorb'
+            ) {
               incentivePrice = await this.marketService.getOrbRate();
             } else {
               if (incentiveSymbol.toLowerCase() == 'd2o') {
@@ -806,16 +809,15 @@ export class AssetService implements OnModuleInit {
           reward: new BigNumber(item.reward)
             .div(Math.pow(10, +item.tokenDecimal))
             .toString(),
-          lastPrice:
-            item.tokenSymbol !== 'ORB'
-              ? Number(
-                  tokens.find((obj) => obj.name === item.tokenName)?.lastPrice,
-                ) ||
-                (await this.exchangeService.getPrice(
-                  item.tokenSymbol == 'WGLMR' ? 'GLMR' : item.tokenSymbol,
-                  'USDT',
-                ))
-              : await this.marketService.getOrbRate(),
+          lastPrice: !['ORB', 'xORB'].includes(item.tokenSymbol)
+            ? Number(
+                tokens.find((obj) => obj.name === item.tokenName)?.lastPrice,
+              ) ||
+              (await this.exchangeService.getPrice(
+                item.tokenSymbol == 'WGLMR' ? 'GLMR' : item.tokenSymbol,
+                'USDT',
+              ))
+            : await this.marketService.getOrbRate(),
           image:
             item.tokenSymbol !== 'ORB'
               ? tokens.find((obj) => obj.name === item.tokenName)?.image ||
