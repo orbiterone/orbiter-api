@@ -121,7 +121,9 @@ export class LpEventHandler
           await this.transactionService.transactionRepository.transactionCreate(
             {
               user: checkUser._id,
-              event: `LP_${checkEvent}`,
+              event: `${
+                incentive.name == 'xORB' ? 'XORB' : 'LP'
+              }_${checkEvent}`,
               status: true,
               typeNetwork,
               txHash,
