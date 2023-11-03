@@ -9,7 +9,6 @@
         "Staking": "0xb71bCC1fE5e9020B9EbaCe1C1D299b317CBAAB6C",
         "FP": {
             "moonbeam": ["0xb33b456177A6EB24c7CC84Bdfee7fa20F15f5398", "0xF322588A786e47331A2b16F695F854b104941407", "0xa5Ef2d529A2BDA334A622dae58BFA08876994da6"]
-  
         },
         "LP": {
             "moonbeam": "0xC5fa9673A835192420235ACCA6bE43A404610b04"
