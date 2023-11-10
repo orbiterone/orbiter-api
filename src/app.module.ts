@@ -9,6 +9,7 @@ import { MarketModule } from './market/market.module';
 import { UserModule } from './user/user.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { HttpEventModule } from './core/http-event/http-event.module';
+import { HealthCheckModule } from './health-check/health-check.module';
 
 const { REDIS_URI, MONGO_URL } = process.env;
 
@@ -21,6 +22,7 @@ const { REDIS_URI, MONGO_URL } = process.env;
     AssetModule,
     MarketModule,
     UserModule,
+    HealthCheckModule,
     TransactionModule,
     HttpEventModule,
   ],
