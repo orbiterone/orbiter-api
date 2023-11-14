@@ -6,6 +6,7 @@ import { Decimal128 } from '../schemas/user.schema';
 import { TOKEN_EVENT } from '../event/interfaces/event.interface';
 import { HttpEventAbstractService } from './http-event.abstract.service';
 import { HttpEventListener } from './interfaces/http-event.interface';
+import { FP } from '../constant';
 
 const { NODE_TYPE: typeNetwork } = process.env;
 
@@ -26,6 +27,7 @@ export class TokenEventHandler
       for (const token of Object.values(tokens)) {
         this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
           contractAddress: token,
+          typeNetwork,
           eventHandlerCallback: (events: Log[]) => this.handleEvents(events),
         });
       }
@@ -75,10 +77,14 @@ export class TokenEventHandler
                 .getTokenModel()
                 .findOne({
                   tokenAddress: { $regex: transaction.to, $options: 'i' },
-                  oTokenAddress: { $regex: spender, $options: 'i' },
                 });
 
-              if (checkToken) {
+              if (
+                checkToken &&
+                (checkToken.oTokenAddress.toLowerCase() ==
+                  spender.toLowerCase() ||
+                  this.isApproveToFp(spender))
+              ) {
                 await this.transactionService.transactionRepository.transactionCreate(
                   {
                     token: checkToken._id,
@@ -103,6 +109,24 @@ export class TokenEventHandler
             break;
         }
       }
+    }
+  }
+
+  private isApproveToFp(spender: string): boolean {
+    if (FP) {
+      const fpNetworks = Object.keys(FP);
+      for (const network of fpNetworks) {
+        const fps = FP[network];
+        if (fps && fps.length > 0) {
+          for (const item of fps) {
+            if (item.toLowerCase() == spender.toLowerCase()) {
+              return true;
+            }
+          }
+        }
+      }
+
+      return false;
     }
   }
 }

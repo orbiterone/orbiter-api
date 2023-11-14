@@ -25,10 +25,10 @@ export class TransactionResponse {
   txHash: string;
 
   @ApiProperty()
-  event: string;
+  typeNetwork: string;
 
   @ApiProperty()
-  typeNetwork: string;
+  event: string;
 
   @ApiProperty()
   status: boolean;

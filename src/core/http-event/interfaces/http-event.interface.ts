@@ -12,6 +12,7 @@ export class IAddListenContract {
 
 export class ISubscriberContract {
   contractAddress: string;
+  typeNetwork: string;
   eventHandlerCallback: (events: Log[]) => Promise<void>;
 }
 

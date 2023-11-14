@@ -8,7 +8,7 @@ import Web3 from 'web3';
 import { AssetService } from '@app/asset/asset.service';
 import { TransactionService } from '@app/transaction/transaction.service';
 import { UserService } from '@app/user/user.service';
-import { TOKENS, SUPPORT_MARKET } from '../constant';
+import { TOKENS, SUPPORT_MARKET, SUPPORT_NETWORKS } from '../constant';
 import { ControllerOrbiterCore } from '../orbiter/controller.orbiter';
 import { Erc20OrbiterCore } from '../orbiter/erc20.orbiter';
 import { OracleOrbiterCore } from '../orbiter/oracle.orbiter';
@@ -30,8 +30,6 @@ import { ReaderOrbiterCore } from '../orbiter/reader.orbiter';
 import { NftOrbiterCore } from '../orbiter/nft.orbiter';
 import { StakingNftOrbiterCore } from '../orbiter/staking.nft.orbiter';
 
-const { NODE_TYPE: typeNetwork } = process.env;
-
 @Injectable()
 export class HttpEventService {
   protected readonly contracts = {
@@ -41,9 +39,9 @@ export class HttpEventService {
 
   protected web3 = new Web3();
 
-  private sync = false;
+  private sync = {};
 
-  private subscribers: ISubscriberContract[] = [];
+  private subscribers: Record<string, ISubscriberContract[]> = {};
 
   private fetchEventsInterval = 5000;
 
@@ -77,93 +75,111 @@ export class HttpEventService {
   ) {}
 
   onModuleInit() {
-    setTimeout(async () => {
-      const lastProcessedBlockNumberInDB = await this.handledBlockNumberModel
-        .findOne({})
-        .sort({ toBlock: -1 })
-        .limit(1);
+    const networks = SUPPORT_NETWORKS;
 
-      let lastProcessedBlockNumber =
-        lastProcessedBlockNumberInDB?.toBlock ||
-        (await this.web3Service.getClient(typeNetwork).eth.getBlockNumber());
+    if (networks && networks.length) {
+      for (const network of networks) {
+        setTimeout(async () => {
+          const lastProcessedBlockNumberInDB =
+            await this.handledBlockNumberModel
+              .findOne({ typeNetwork: network })
+              .sort({ toBlock: -1 })
+              .limit(1);
 
-      let handledCounter = 0;
-      let minDate = new Date();
+          let lastProcessedBlockNumber =
+            lastProcessedBlockNumberInDB?.toBlock ||
+            (await this.web3Service.getClient(network).eth.getBlockNumber());
 
-      while (true) {
-        try {
-          if (!this.sync == true) {
-            if (handledCounter > this.autoCleanTarget) {
-              await this.cleanHandledBlockNumber(minDate);
-              handledCounter = 0;
-              minDate = new Date();
-            }
+          let handledCounter = 0;
+          let minDate = new Date();
 
-            const currentBlockNumber = await this.web3Service
-              .getClient(typeNetwork)
-              .eth.getBlockNumber();
+          while (true) {
+            try {
+              if (!this.sync[network] == true) {
+                if (handledCounter > this.autoCleanTarget) {
+                  await this.cleanHandledBlockNumber(minDate, network);
+                  handledCounter = 0;
+                  minDate = new Date();
+                }
 
-            if (currentBlockNumber > lastProcessedBlockNumber) {
-              const fromBlock = lastProcessedBlockNumber + 1;
+                const currentBlockNumber = await this.web3Service
+                  .getClient(network)
+                  .eth.getBlockNumber();
 
-              let toBlock = currentBlockNumber;
-              if (toBlock - fromBlock > this.maxBatchBlockNumber) {
-                toBlock = fromBlock + this.maxBatchBlockNumber;
-              }
-              if (fromBlock > toBlock) {
-                toBlock = fromBlock;
-              }
-              this.sync = true;
+                if (currentBlockNumber > lastProcessedBlockNumber) {
+                  const fromBlock = lastProcessedBlockNumber + 1;
 
-              const events = await this.handleContractBlockNumbers(
-                fromBlock,
-                toBlock,
-              );
-              if (this.subscribers.length && events.length) {
-                for (const subscriber of this.subscribers) {
-                  const filterEvent = events.filter(
-                    (el) =>
-                      el.address.toLowerCase() ==
-                      subscriber.contractAddress.toLowerCase(),
-                  );
-                  if (filterEvent.length) {
-                    await subscriber.eventHandlerCallback(filterEvent);
+                  let toBlock = currentBlockNumber;
+                  if (toBlock - fromBlock > this.maxBatchBlockNumber) {
+                    toBlock = fromBlock + this.maxBatchBlockNumber;
                   }
+                  if (fromBlock > toBlock) {
+                    toBlock = fromBlock;
+                  }
+                  this.sync[network] = true;
+
+                  const events = await this.handleContractBlockNumbers(
+                    fromBlock,
+                    toBlock,
+                    network,
+                  );
+                  if (this.subscribers[network]?.length && events.length) {
+                    for (const subscriber of this.subscribers[network]) {
+                      const filterEvent = events.filter(
+                        (el) =>
+                          el.address.toLowerCase() ==
+                          subscriber.contractAddress.toLowerCase(),
+                      );
+                      if (filterEvent.length) {
+                        await subscriber.eventHandlerCallback(filterEvent);
+                      }
+                    }
+                  }
+
+                  await this.handledBlockNumberModel.create({
+                    fromBlock,
+                    toBlock,
+                    typeNetwork: network,
+                  });
+
+                  handledCounter++;
+
+                  lastProcessedBlockNumber = toBlock;
+                  this.sync[network] = false;
                 }
               }
-
-              await this.handledBlockNumberModel.create({
-                fromBlock,
-                toBlock,
-              });
-
-              handledCounter++;
-
-              lastProcessedBlockNumber = toBlock;
-              this.sync = false;
+              await this.wait(this.fetchEventsInterval);
+            } catch (err) {
+              console.error(err);
+              this.sync[network] = false;
+              await this.wait(this.fetchEventsInterval);
             }
           }
-          await this.wait(this.fetchEventsInterval);
-        } catch (err) {
-          console.error(err);
-          this.sync = false;
-          await this.wait(this.fetchEventsInterval);
-        }
+        }, 10000);
       }
-    }, 10000);
+    }
   }
 
   @OnEvent(HttpEventListener.ADD_LISTEN)
   async addListenContract({
     contractAddress,
+    typeNetwork,
     eventHandlerCallback,
   }: ISubscriberContract) {
-    this.subscribers.push({ contractAddress, eventHandlerCallback });
+    if (!this.subscribers[typeNetwork]) {
+      this.subscribers[typeNetwork] = [];
+    }
+    this.subscribers[typeNetwork].push({
+      contractAddress,
+      typeNetwork,
+      eventHandlerCallback,
+    });
   }
 
   protected async handleContractBlockNumbers(
     fromBlock: number,
     toBlock: number,
+    typeNetwork: string,
   ): Promise<Log[]> {
     return await this.web3Service.getClient(typeNetwork).eth.getPastLogs({
       fromBlock,
@@ -171,9 +187,10 @@ export class HttpEventService {
     });
   }
 
-  protected async cleanHandledBlockNumber(minDate: Date) {
+  protected async cleanHandledBlockNumber(minDate: Date, typeNetwork: string) {
     await this.handledBlockNumberModel.deleteMany({
       createdAt: { $lt: minDate },
+      typeNetwork,
     });
   }
 

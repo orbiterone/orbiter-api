@@ -8,7 +8,7 @@
         "NFT": "0x595884fA93163F6d8e6e14748beDf6FC0f9026fb",
         "Staking": "0xf095c44a271aD40757698E55D0012C2aF314624e",
         "FP": {
-            "moonbase": ["0x2D69Fb9C551fDeA7F50eA49beFE3C94c153053c9", "0xBf0F1BFD81be1Cf3BabbA4CcD01AE596cBa5159e", "0x5B7673D46Cde8E124340df0C0f16268f45840dAb"],
+            "moonbase": ["0xf92b53662Df5Ca9bBF405bb5B3354BFec8eF33C0", "0xBf0F1BFD81be1Cf3BabbA4CcD01AE596cBa5159e", "0x5B7673D46Cde8E124340df0C0f16268f45840dAb", "0x5C9932D879084c4D502bea1DC1AE5120a7e59FB0"],
             "zksync": ["0xF368FEA10299FDc1d55980B11BA0dB2040aBC063", "0x023dCdeF0697741CDBb226fAa9B50b253A8Ffc28", "0x44178e3F17Ef2E9eEf0752301d43B1728725CEfC"],
             "arbitrum": ["0xf63914AA3072410D5F46dD831446fa6118AC01D4", "0xC482fBC9225e56e83B84aa09B4a0B4668ccfa4c5", "0x3274D60577a68a9ccbd3604BFCbF44Cf822499f1"]
         },
@@ -19,6 +19,7 @@
         },
         "OrbConverter": "0xf0b426AAf13a93afD13890a6b9804a1A26eCB84a"
     },
+    "supportNetworks": ["moonbase", "zksync", "arbitrum"],
     "tokens": {
         "FRAX": "0x3b18F5E81906fc771B1e0886B7B7FD50Fc4849E7",
         "BUSD": "0xb489C860a76c9f4a0fCCbbc399FAa8E6E860192c",
@@ -91,6 +92,11 @@
         "ETH": {
             "color": "#939DC2",
             "image": "https://assets.orbiter.one/images/tokens/ETH.svg",
+            "fullName" : "Ethereum"
+        },
+        "ETH_LP": {
+            "color": "#939DC2",
+            "image": "https://assets.orbiter.one/images/tokens/eth.svg",
             "fullName" : "Ethereum"
         },
         "BNB": {
@@ -175,13 +181,18 @@
             "symbol": "d2o"
         },
         "GLMR": {
-            "color": "",
-            "image": "",
-            "fullName" : ""
+            "color": "#BC2E75",
+            "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
+            "fullName" : "GLMR"
         },
         "WGLMR": {
             "color": "#BC2E75",
             "image": "https://assets.orbiter.one/images/tokens/moonbeam.svg",
+            "fullName" : "Wrapped GLMR"
+        },
+        "GLMR_LP": {
+            "color": "#BC2E75",
+            "image": "https://assets.orbiter.one/images/tokens/glmr.svg",
             "fullName" : "Wrapped GLMR"
         },
         "ORB": {
