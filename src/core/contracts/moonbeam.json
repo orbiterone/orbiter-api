@@ -11,7 +11,7 @@
             "moonbeam": ["0x8040B28c0c6a6FBb9303542e0b6fF32a9487Ac4d", "0x29E66C7C28Dcd6b78Bb74E6A63bD41Dc0Dab93E4"]
         },
         "LP": {
-            "moonbeam": ["0x9BFEB5cd9A81011FdE1BA193a1CA0CB893Af0e50", "0xC5fa9673A835192420235ACCA6bE43A404610b04"]
+            "moonbeam": ["0xC5fa9673A835192420235ACCA6bE43A404610b04"]
         },
         "OrbConverter": "0x780B7afD9C222202E4bCeeeDa59888c52f4BBF06"
     },
