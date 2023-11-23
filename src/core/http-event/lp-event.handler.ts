@@ -40,7 +40,7 @@ export class LpEventHandler
                 contractAddress: fp,
                 typeNetwork: network,
                 eventHandlerCallback: (events: Log[]) =>
-                  this.handleEvents(events, network, fp),
+                  this.handleEvents(events, network),
               });
             }
           }
@@ -50,7 +50,7 @@ export class LpEventHandler
                 contractAddress: lp,
                 typeNetwork: network,
                 eventHandlerCallback: (events: Log[]) =>
-                  this.handleEvents(events, network, lp),
+                  this.handleEvents(events, network),
               });
             }
           }
@@ -62,7 +62,6 @@ export class LpEventHandler
   private async handleEvents(
     events: Log[],
     typeNetwork: string,
-    cA: string,
   ): Promise<void> {
     for (let i = 0; i < events.length; i++) {
       const event = events[i];
@@ -71,9 +70,6 @@ export class LpEventHandler
         topics,
         address: contractAddress,
       } = event;
-      if (cA.toLowerCase() != contractAddress.toLowerCase()) {
-        continue;
-      }
       const checkEvent = this.topics[topics[0]];
       if (checkEvent) {
         if (
