@@ -33,23 +33,27 @@ export class LpEventHandler
       setTimeout(() => {
         for (const network of fpNetworks) {
           const fps = FP[network];
-          const lp = LP[network];
+          const lps = LP[network];
           if (fps && fps.length > 0) {
-            for (const result of fps) {
+            for (const fp of fps) {
               this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
-                contractAddress: result,
+                contractAddress: fp,
                 typeNetwork: network,
                 eventHandlerCallback: (events: Log[]) =>
                   this.handleEvents(events, network),
               });
             }
           }
-          this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
-            contractAddress: lp,
-            typeNetwork: network,
-            eventHandlerCallback: (events: Log[]) =>
-              this.handleEvents(events, network),
-          });
+          if (lps && lps.length > 0) {
+            for (const lp of lps) {
+              this.eventEmitter.emit(HttpEventListener.ADD_LISTEN, {
+                contractAddress: lp,
+                typeNetwork: network,
+                eventHandlerCallback: (events: Log[]) =>
+                  this.handleEvents(events, network),
+              });
+            }
+          }
         }
       }, 5000);
     }
