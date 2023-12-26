@@ -68,45 +68,22 @@ export class LotteryCron {
 
   async cronLottery() {
     console.log(`Job cronLottery start - ${new Date()}`);
+    const web3 = this.web3Service.getClient(typeNetwork);
 
     const now = moment();
-    this.web3Service
-      .getClient(typeNetwork)
-      .eth.accounts.wallet.add('0x' + LOTTERY_OPERATOR_KEY);
+    web3.eth.accounts.wallet.add('0x' + LOTTERY_OPERATOR_KEY);
 
-    const myWalletAddress =
-      this.web3Service.getClient(typeNetwork).eth.accounts.wallet[0].address;
+    const myWalletAddress = web3.eth.accounts.wallet[0].address;
 
     const fromMyWallet: any = {
       from: myWalletAddress,
-      gasLimit: this.web3Service.getClient(typeNetwork).utils.toHex(12990000),
+      gasLimit: web3.utils.toHex(210000),
+      gasPrice: web3.utils.toHex(750000000000),
     };
-    if (typeNetwork == 'moonbeam') {
-      try {
-        const getGasPrice = await this.httpRequestService.requestGet(
-          'https://gmbeam.blockscan.com/gasapi.ashx?apikey=key&method=gasoracle',
-        );
-        if (
-          getGasPrice &&
-          getGasPrice.result &&
-          getGasPrice.result.ProposeGasPrice
-        ) {
-          fromMyWallet.gasPrice = this.web3Service
-            .getClient(typeNetwork)
-            .utils.toHex(
-              parseInt(
-                (+getGasPrice.result.ProposeGasPrice * 1000000000).toString(),
-              ),
-            );
-        }
-      } catch (err) {
-        console.error(`Error get gas price: ${err.message}`);
-        await this.discordService.sendNotification(
-          DISCORD_WEBHOOK_LOTTERY,
-          `:warning: Error get gas price: ${err.message}`,
-        );
-      }
-    }
+
+    const gasPrice = await web3.eth.getGasPrice();
+
+    fromMyWallet.gasPrice = web3.utils.toHex(gasPrice);
 
     try {
       const lotteryContract = this.lotteryOrbiterCore.contract();
@@ -120,6 +97,11 @@ export class LotteryCron {
         try {
           if (lotteryInfo.status == 1) {
             await this.wait(60000);
+            const estimateGas = await lotteryContract.methods
+              .closeLottery(currentLotteryId)
+              .estimateGas({ from: fromMyWallet.from });
+            fromMyWallet.gasLimit = web3.utils.toHex(estimateGas);
+
             await lotteryContract.methods
               .closeLottery(currentLotteryId)
               .send(fromMyWallet);
@@ -144,6 +126,11 @@ export class LotteryCron {
 
         try {
           if (lotteryInfo.status == 1 || lotteryInfo.status == 2) {
+            const estimateGas = await lotteryContract.methods
+              .drawFinalNumberAndMakeLotteryClaimable(currentLotteryId, true)
+              .estimateGas({ from: fromMyWallet.from });
+            fromMyWallet.gasLimit = web3.utils.toHex(estimateGas);
+
             await lotteryContract.methods
               .drawFinalNumberAndMakeLotteryClaimable(currentLotteryId, true)
               .send(fromMyWallet);
@@ -193,6 +180,25 @@ export class LotteryCron {
   private async createLottery(now: Moment, fromMyWallet, lotteryContract) {
     try {
       const period: any = CRON_LOTTERY_TIME.split(' ');
+      const estimateGas = await lotteryContract.methods
+        .startLottery(
+          now
+            .add(+period[0], period[1])
+            .startOf('minute')
+            .unix(),
+          new BigNumber(LOTTERY_TICKET_PRICE_ORB)
+            .multipliedBy(Math.pow(10, 18))
+            .toString(),
+          LOTTERY_SETTING.discount,
+          LOTTERY_SETTING.rewards,
+          LOTTERY_SETTING.treasury,
+        )
+        .estimateGas({ from: fromMyWallet.from });
+
+      fromMyWallet.gasLimit = this.web3Service
+        .getClient(typeNetwork)
+        .utils.toHex(estimateGas);
+
       await lotteryContract.methods
         .startLottery(
           now
