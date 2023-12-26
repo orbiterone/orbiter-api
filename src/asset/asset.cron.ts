@@ -281,6 +281,7 @@ export class AssetCron extends AssetService {
       for (const item of supportInentives) {
         const decimals = Number(await this.erc20OrbierCore.decimals(item));
         let symbol = await this.erc20OrbierCore.symbol(item);
+        const originalSymbol = symbol;
         const balance = new BigNumber(
           await this.erc20OrbierCore.balanceOf(item, INCENTIVE),
         ).div(Math.pow(10, decimals));
@@ -298,7 +299,7 @@ export class AssetCron extends AssetService {
         if (valueUSD.lt(10)) {
           await this.discordService.sendNotification(
             DISCORD_WEBHOOK_REWARDS,
-            `:warning: Incentive ${item} ${symbol} needs to be replenish. Balance - ${balance} ${symbol}(${valueUSD.toString()}$)`,
+            `:warning: Incentive ${item} ${symbol} needs to be replenish. Balance - ${balance} ${originalSymbol}(${valueUSD.toString()}$)`,
           );
         }
       }
