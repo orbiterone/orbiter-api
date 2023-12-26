@@ -180,12 +180,13 @@ export class LotteryCron {
   private async createLottery(now: Moment, fromMyWallet, lotteryContract) {
     try {
       const period: any = CRON_LOTTERY_TIME.split(' ');
+      const endLottery = now
+        .add(+period[0], period[1])
+        .startOf('minute')
+        .unix();
       const estimateGas = await lotteryContract.methods
         .startLottery(
-          now
-            .add(+period[0], period[1])
-            .startOf('minute')
-            .unix(),
+          endLottery,
           new BigNumber(LOTTERY_TICKET_PRICE_ORB)
             .multipliedBy(Math.pow(10, 18))
             .toString(),
@@ -201,10 +202,7 @@ export class LotteryCron {
 
       await lotteryContract.methods
         .startLottery(
-          now
-            .add(+period[0], period[1])
-            .startOf('minute')
-            .unix(),
+          endLottery,
           new BigNumber(LOTTERY_TICKET_PRICE_ORB)
             .multipliedBy(Math.pow(10, 18))
             .toString(),
