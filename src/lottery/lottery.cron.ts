@@ -153,12 +153,12 @@ export class LotteryCron {
           throw err;
         }
 
-        await this.createLottery(now, fromMyWallet, lotteryContract);
+        // await this.createLottery(now, fromMyWallet, lotteryContract);
       }
 
-      if (lotteryInfo && lotteryInfo.status == 3) {
-        await this.createLottery(now, fromMyWallet, lotteryContract);
-      }
+      // if (lotteryInfo && lotteryInfo.status == 3) {
+      // await this.createLottery(now, fromMyWallet, lotteryContract);
+      // }
     } catch (err) {
       if (this.reinitCount == 5) {
         this.reinitCount = 0;
