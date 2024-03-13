@@ -11,6 +11,7 @@ import {
   PRICE_FEED_OWNER_KEY,
   PRICE_FEED_UPDATE,
   STAKING,
+  TOKENS,
 } from '@app/core/constant';
 
 const { DISCORD_WEBHOOK_LIQUIDATOR, DISCORD_WEBHOOK_REWARDS } = process.env;
@@ -274,8 +275,14 @@ export class AssetCron extends AssetService {
   async balanceLogger() {
     console.log(`Job DEFI balanceLogger start - ${new Date()}`);
 
-    const supportInentives =
+    let supportInentives =
       await this.incentiveOrbiterCore.getAllSupportIncentives();
+
+    if (NODE_TYPE === 'moonbeam') {
+      supportInentives = supportInentives.filter(
+        (el) => el.toLowerCase() !== (TOKENS as any).d2O.toLowerCase(),
+      );
+    }
 
     if (supportInentives && supportInentives.length) {
       for (const item of supportInentives) {
